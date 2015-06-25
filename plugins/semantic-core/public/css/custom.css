@@ -1,0 +1,86 @@
+/* ------------------------------------------------------------------
+Project: Semantic
+Place here your custom CSS styles
+------------------------------------------------------------------ */
+
+/* ------------------------------------------------------------------
+Navbar
+------------------------------------------------------------------- */
+.navbar-custom .nav > li > a:focus,
+.navbar-custom .nav > li > a:hover,
+.navbar-custom .nav .open > a,
+.navbar-custom .nav .open > a:focus,
+.navbar-custom .nav .open > a:hover,
+.navbar-custom .dropdown-menu > li > a:focus,
+.navbar-custom .dropdown-menu > li > a:hover {
+	background: none;
+	color: #00B8D4;
+}
+
+.navbar-brand {
+	font-family: "Montserrat", sans-serif;
+	letter-spacing: 0.1em;
+	font-weight: 400;
+	font-size: 20px;
+  padding: 5px 15px;
+  background: url('/public/semantic-core/imgs/respiro-blue.png') no-repeat center;
+  width: 200px;
+	color: #000;
+}
+
+@media (min-width: 768px) {
+
+	.navbar-transparent .navbar-brand {
+		color: #fff;
+    background: url('/public/semantic-core/imgs/respiro-white.png') no-repeat center;
+	}
+
+}
+/* ------------------------------------------------------------------
+End Navbar
+------------------------------------------------------------------- */
+
+/* ------------------------------------------------------------------
+Filter
+------------------------------------------------------------------- */
+.filter {
+	text-align: center;
+	list-style: none;
+	padding: 0;
+	margin: 0 0 10px;
+}
+
+.filter > li {
+	display: inline-block;
+	padding: 5px 0;
+	margin: 0 15px;
+}
+.filter > li a {
+	text-transform: uppercase;
+	font-size: 11px;
+	color: rgba(102, 102, 102, 0.5);
+}
+
+.filter > li a:hover,
+.filter > li a.current {
+	color: #00B8D4;
+}
+/* ------------------------------------------------------------------
+End Filter
+------------------------------------------------------------------- */
+
+/* ------------------------------------------------------------------
+Content
+------------------------------------------------------------------- */
+
+.module-title {
+	position: relative;
+	margin: 0 0 70px;
+	letter-spacing: 0.15em;
+	font-size: 30px;
+	color: #00B8D4;
+}
+
+/* ------------------------------------------------------------------
+End Content
+------------------------------------------------------------------- */

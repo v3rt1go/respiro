@@ -1,0 +1,26 @@
+{
+  "uid": "scroll2top",
+  "name": "Scroll 2 Top",
+  "description": "Scroll to top anchor with animation that shows when a page is scrolled",
+  "version": "0.0.1",
+  "pb_version": "0.4.x",
+  "icon": "/imgs/sample.ico",
+  "author": {
+    "name": "Alex Griciuc",
+    "email": "agriciuc@gmail.com",
+    "website": "https://plus.google.com/u/0/+AlexGriciuc/"
+  },
+  "settings": [{
+    "name": "animation_style",
+    "value": ""
+  }],
+  "permissions": {
+    "ACCESS_USER": [],
+    "ACCESS_WRITER": [],
+    "ACCESS_EDITOR": [],
+    "ACCESS_MANAGING_EDITOR": []
+  },
+  "main_module": {
+    "path": "scroll2top.js"
+  }
+}

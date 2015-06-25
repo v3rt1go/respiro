@@ -55,6 +55,7 @@
   },
   "scripts": {
     "start": "node pencilblue.js",
+    "postinstall": "npm install bower && bower install",
     "test": "istanbul cover ./node_modules/mocha/bin/_mocha -- -R spec --recursive"
   },
   "licenses": [
