@@ -127,27 +127,27 @@ module.exports = function TopMenuServiceModule(pb) {
                 else {
                     accountButtons =
                     [
-                        {
-                            icon: 'user',
-                            title: ls.get('ACCOUNT'),
-                            href: '/user/sign_up'
-                        },
-                        {
-                            icon: 'rss',
-                            title: ls.get('SUBSCRIBE'),
-                            href: '/feed'
-                        }
+                        // {
+                        //     icon: 'user',
+                        //     title: ls.get('ACCOUNT'),
+                        //     href: '/user/sign_up'
+                        // },
+                        // {
+                        //     icon: 'rss',
+                        //     title: ls.get('SUBSCRIBE'),
+                        //     href: '/feed'
+                        // }
                     ];
                 }
             }
             else {
                 accountButtons =
                 [
-                    {
-                        icon: 'rss',
-                        title: ls.get('SUBSCRIBE'),
-                        href: '/feed'
-                    }
+                    // {
+                    //     icon: 'rss',
+                    //     title: ls.get('SUBSCRIBE'),
+                    //     href: '/feed'
+                    // }
                 ];
             }
             cb(null, accountButtons);
@@ -167,7 +167,7 @@ module.exports = function TopMenuServiceModule(pb) {
             cb = options;
             options = {};
         }
-        
+
         var ts = new pb.TemplateService(options);
         ts.load('elements/top_menu/link', function(err, linkTemplate) {
             ts.load('elements/top_menu/dropdown', function(err, dropdownTemplate) {
@@ -230,7 +230,7 @@ module.exports = function TopMenuServiceModule(pb) {
             });
         });
     };
-    
+
     /**
      * @method getNavItems
      * @param {Object} options
