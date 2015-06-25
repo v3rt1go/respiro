@@ -106,16 +106,16 @@ module.exports = function TopMenuServiceModule(pb) {
             if(contentSettings.allow_comments) {
                 if(pb.security.isAuthenticated(session)) {
                     accountButtons = [
-                        {
-                            icon: 'user',
-                            title: ls.get('ACCOUNT'),
-                            href: '/user/manage_account'
-                        },
-                        {
-                            icon: 'rss',
-                            title: ls.get('SUBSCRIBE'),
-                            href: '/feed'
-                        },
+                        // {
+                        //     icon: 'user',
+                        //     title: ls.get('ACCOUNT'),
+                        //     href: '/user/manage_account'
+                        // },
+                        // {
+                        //     icon: 'rss',
+                        //     title: ls.get('SUBSCRIBE'),
+                        //     href: '/feed'
+                        // },
                         {
                             icon: 'power-off',
                             title: ls.get('LOGOUT'),
