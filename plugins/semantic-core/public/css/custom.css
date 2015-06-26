@@ -28,6 +28,16 @@ Navbar
 	color: #000;
 }
 
+.nabar-dark .nav > li > a,
+.nabar-dark .navbar-brand {
+	color: #000;
+}
+
+.nabar-dark .navbar-brand {
+	background: url('/public/semantic-core/imgs/respiro-black.png') no-repeat center !important;
+}
+
+
 @media (min-width: 768px) {
 
 	.navbar-transparent .navbar-brand {
