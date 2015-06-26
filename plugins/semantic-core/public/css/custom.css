@@ -37,6 +37,9 @@ Navbar
 	background: url('/public/semantic-core/imgs/respiro-black.png') no-repeat center !important;
 }
 
+.navbar {
+	padding: 5px;
+}
 
 @media (min-width: 768px) {
 
@@ -78,6 +81,26 @@ Filter
 /* ------------------------------------------------------------------
 End Filter
 ------------------------------------------------------------------- */
+
+.isoDescription{
+    position:absolute; /* absolute position (so we can position it where we want)*/
+    bottom:0px; /* position will be on bottom */
+    left:0px;
+    width:100%;
+    /* styling bellow */
+    background-color:white;
+    opacity:0.8; /* transparency */
+    filter:alpha(opacity=80); /* IE transparency */
+}
+.isoDescription_content{
+    padding:10px;
+    margin:0px;
+		text-align: center;
+		opacity: 1 !important;
+}
+.work-item:hover .isoDescription {
+	display: none;
+}
 
 /* ------------------------------------------------------------------
 Content
