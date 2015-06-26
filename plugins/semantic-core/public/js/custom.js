@@ -285,6 +285,7 @@
 
 		worksgrid.imagesLoaded(function() {
 			worksgrid.isotope({
+				filter: ".regenerare,.implantologie,.endodontie,.protetica,.chirurgie,.ortodontie,.estetica,.pedodontie",
 				layoutMode: worksgrid_mode,
 				itemSelector: '.work-item',
 			});
