@@ -49,7 +49,7 @@
     "value": "/public/semantic-core/js/jqBootstrapValidation.js"
   }, {
     "name": "gmaps_api_js_src",
-    "value": "http://maps.google.com/maps/api/js?sensor=true"
+    "value": "https://maps.google.com/maps/api/js?sensor=true"
   }, {
     "name": "gmaps_custom_js_src",
     "value": "/public/semantic-core/js/gmaps.js"
