@@ -8,6 +8,16 @@ General
 a {
 	color: #00B8D4;
 }
+
+.dropdown-menu>.active>a {
+	background-color: #00B8D4;
+	color: #fff;
+}
+
+.progress-bar span:after {
+	display: inline-block;
+	content: '' !important;
+}
 /* ------------------------------------------------------------------
 End General
 ------------------------------------------------------------------- */

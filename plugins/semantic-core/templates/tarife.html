@@ -1,0 +1,39 @@
+<!-- HEADER -->
+^tmp_head^
+<!-- /HEADER -->
+<!-- PRELOADER: page-loader plugin -->
+^tmp_elements=page-loader^
+<!-- /PRELOADER -->
+<!-- NAVIGATION: Varying depending on the installed navigation plugin -->
+^tmp_navigation=top_menu^
+<!-- /NAVIGATION -->
+<div class="wrapper">
+<!-- HOME: Varying depending on the installed home plugin -->
+  ^tmp_elements=headers=home-short-header-tarife^
+<!-- /HOME -->
+<!-- ABONAMENTE -->
+  ^tmp_elements=abonamente^
+<!-- /ABONAMENTE -->
+<!-- DIVIDER -->
+<hr class="divider-w">
+<!-- /DIVIDER -->
+<!-- ARTICLES -->
+<section class="module-small m-b-0 p-b-0">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-10 col-sm-offset-1">
+        ^articles^
+      </div>
+    </div>
+  </div>
+</section>
+<!-- /ARTICLES -->
+
+<!-- DIVIDER -->
+<hr class="divider-w">
+<!-- /DIVIDER -->
+
+<!-- CONTACT: Varying depending on the installed contact plugin -->
+^tmp_elements=contact^
+<!-- /CONTACT -->
+^infinite_scroll^ ^angular^ ^tmp_footer^

@@ -107,6 +107,22 @@
     {
       "file": "galerie",
       "name": "Gallery"
+    },
+    {
+      "file": "csr",
+      "name": "CSR Template"
+    },
+    {
+      "file": "tarife",
+      "name": "Tarife Template"
+    },
+    {
+      "file": "media",
+      "name": "Media Template"
+    },
+    {
+      "file": "contact",
+      "name": "Contact Template"
     }]
   }
 }
