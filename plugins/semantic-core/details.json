@@ -98,7 +98,15 @@
     },
     {
       "file": "about",
-      "name": "About Us"
+      "name": "About"
+    },
+    {
+      "file": "section",
+      "name": "Section"
+    },
+    {
+      "file": "galerie",
+      "name": "Gallery"
     }]
   }
 }
