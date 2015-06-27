@@ -1,4 +1,4 @@
-<div id="article_^article_id^" class="article" article-index="^article_index^">
+<!-- <div id="article_^article_id^" class="article" article-index="^article_index^">
     <div class="col-md-8 col-md-offset-2">
         <h1>^article_headline^</h1>
         <h3 style="^article_subheading_display^">^article_subheading^</h3>
@@ -10,5 +10,18 @@
         ^comments^
         <div class="spacer"></div>
     </div>
-</div>
+</div> -->
 
+<div id="article_^article_id^" class="post" article-index="^article_index^">
+    <h1 class="font-alt">^article_headline^</h1>
+    <h3 class="font-inc">^article_subheading^</h3>
+    <div class="post-entry">
+        ^tmp_elements=article=byline^
+        <div class="timestamp" style="^article_timestamp_display^">^article_timestamp^</div>
+        ^article_layout^
+    </div>
+    ^comments^
+  <!-- DIVIDER -->
+  	<hr class="divider-w">
+  <!-- /DIVIDER -->
+</div>

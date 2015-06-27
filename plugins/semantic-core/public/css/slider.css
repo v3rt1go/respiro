@@ -107,13 +107,13 @@ General Styles
 .hero-slider-dark .flex-direction-nav .flex-prev {
 	opacity: 0;
 	left: 0;
-	cursor: url(../images/prev-dark.png), e-resize;
+	cursor: url(/public/semantic-core/imgs/prev-dark.png), e-resize;
 }
 
 .hero-slider-dark .flex-direction-nav .flex-next {
 	opacity: 0;
 	right: 0;
-	cursor: url(../images/next-dark.png), e-resize;
+	cursor: url(/public/semantic-core/imgs/next-dark.png), e-resize;
 }
 
 .hero-slider-dark .flex-control-nav > li > a {

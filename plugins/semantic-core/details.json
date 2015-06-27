@@ -95,6 +95,10 @@
     "content_templates": [{
       "file": "index",
       "name": "Default"
+    },
+    {
+      "file": "about",
+      "name": "About Us"
     }]
   }
 }

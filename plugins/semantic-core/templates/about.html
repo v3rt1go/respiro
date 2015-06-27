@@ -1,0 +1,60 @@
+<!-- HEADER -->
+  ^tmp_head^
+<!-- /HEADER -->
+
+<!-- PRELOADER: page-loader plugin -->
+  ^tmp_elements=page-loader^
+<!-- /PRELOADER -->
+
+<!-- NAVIGATION: Varying depending on the installed navigation plugin -->
+  ^tmp_navigation=top_menu^
+<!-- /NAVIGATION -->
+
+<div class="wrapper">
+  <!-- HOME: Varying depending on the installed home plugin -->
+    ^tmp_elements=home-short-header^
+  <!-- /HOME -->
+
+  <!-- ARTICLES -->
+  <section class="module-small">
+  	<div class="container">
+  		<div class="row">
+  			<div class="col-sm-10 col-sm-offset-1">
+          ^articles^
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- /ARTICLES -->
+
+  <!-- TESTIMONIALS: Varying depending on the installed testimonials plugin -->
+    ^tmp_elements=testimonials^
+  <!-- /TESTIMONIALS -->
+
+  <!-- DIVIDER -->
+  	<hr class="divider-w">
+  <!-- /DIVIDER -->
+
+  <!-- SERVICES -->
+    ^tmp_elements=services^
+  <!-- /SERVICES -->
+
+  <!-- COUNTERS -->
+    ^tmp_elements=counters^
+  <!-- /COUNTERS -->
+
+  <!-- TEAM -->
+    ^tmp_elements=team^
+  <!-- /TEAM -->
+
+  <!-- DIVIDER -->
+  	<hr class="divider-w">
+  <!-- /DIVIDER -->
+
+  <!-- CONTACT: Varying depending on the installed contact plugin -->
+    ^tmp_elements=contact^
+  <!-- /CONTACT -->
+
+  ^infinite_scroll^
+  ^angular^
+  ^tmp_footer^
