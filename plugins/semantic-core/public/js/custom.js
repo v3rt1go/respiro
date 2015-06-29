@@ -321,7 +321,7 @@
 		 * Google Map
 		/* ---------------------------------------------- */
 
-		var mapLocation = new google.maps.LatLng(34.031428,-118.2071542,17);
+		var mapLocation = new google.maps.LatLng(44.4347786,26.1069936,40);
 
 		var $mapis = $('#map');
 
@@ -349,9 +349,9 @@
 			map.addMarker({
 				position: mapLocation,
 				icon: image,
-				title: 'Rival',
+				title: 'Respiro Dental Clinic',
 				infoWindow: {
-					content: '<p><strong>Semantic</strong><br/>121 Somewhere Ave, Suite 123<br/>P: (123) 456-7890<br/>Australia</p>'
+					content: '<p><strong>Respiro Dental Clinic</strong><br/>Bd. Hristo Botev, 7, Bucuresti-Sector 3, 030231<br/>T: +40 727 DENTAL (336 825)<br/>Bucuresti</p>'
 				}
 			});
 
