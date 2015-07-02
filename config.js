@@ -11,7 +11,7 @@
 
 module.exports = {
     "siteName": "RespiroDental",
-    "siteRoot": "http://respirodental.herokuapp.com",
+    "siteRoot": "http://www.respirodental.ro",
     "logging": {
         "level": "info"
     },
