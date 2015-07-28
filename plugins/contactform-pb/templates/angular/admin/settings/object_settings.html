@@ -1,0 +1,52 @@
+<script type="text/javascript">
+
+    var module = angular.module('pencilblueApp', [])
+    
+    module.service('SettingService', ['$http', function($http){
+        this.save = function(settings){
+            var url = '/plugin/contact/api/settings/objects';
+            return $http.post(url, settings);
+        };
+        this.create = function(data){
+            var url = '/plugin/contact/api/settings/objects/type';
+            return $http.post(url, data);
+        };
+    }]);
+
+    module.controller('PencilBlueController', ['$scope', 'SettingService', function($scope, service){
+        
+        ^angular_objects^
+
+        $scope.setEnabled = function(enabled) {
+            $scope.settings.enabled = enabled;
+        };
+
+        $scope.save = function(){
+            $scope.saving = true;
+            service.save($scope.settings)
+            .success(function(result) {
+                $scope.successMessage = result.message;
+                $scope.saving = false;
+            })
+            .error(function(error, status) {
+                $scope.errorMessage = error.message;
+                $scope.saving = false;
+            });
+        };
+
+        $scope.create = function(){
+            $scope.creating = true;
+            service.create({ type: $scope.settings.type })
+            .success(function(result) {
+                $scope.successMessage = result.message;
+                $scope.creating = false;
+            })
+            .error(function(error, status) {
+                $scope.errorMessage = error.message;
+                $scope.creating = false;
+            });
+        };
+
+    }]);
+
+</script>

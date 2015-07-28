@@ -1,0 +1,46 @@
+{
+    "CF_API_VALIDATION": "There was a validation error. Please check the form fields.",
+    "CF_API_CAPTCHA_VALIDATION": "The Captcha was incorrect. Please try again.",
+    "CF_API_ERROR": "An error occured on the server. Please try again later.",
+    "CF_API_SENT": "The contact form was sent successfully.",
+    "CF_API_CREATED": "Created",
+    "CF_API_ERROR_CREATING": "There was an error creating.",
+
+
+
+    "CF_CLIENT_TITLE": "Contact Form",
+    "CF_CLIENT_SUBTITLE": "Please fill out the form below and we will get back to you.",
+    "CF_CLIENT_ALERT_ERROR": "An error occured when contacting the server. Please try again later.",
+    "CF_CLIENT_ALERT_SUCCESS": "Thank you for your inquiry.",
+    "CF_CLIENT_ALERT_SENDING": "Sending...",
+    "CF_CLIENT_SEND_BUTTON": "Send",
+    "CF_ADMIN_CREATE_BUTTON": "Create",
+    "CF_CLIENT_NAME_LABEL": "Name",
+    "CF_CLIENT_NAME_PROMPT": "Enter your name",
+    "CF_CLIENT_PHONE_LABEL": "Phone (Optional)",
+    "CF_CLIENT_PHONE_PROMPT": "Enter your phone (Optional)",
+    "CF_CLIENT_EMAIL_LABEL": "Email Address",
+    "CF_CLIENT_EMAIL_PROMPT": "Enter your email",
+    "CF_CLIENT_SUBJECT_LABEL": "Subject",
+    "CF_CLIENT_SUBJECT_PROMPT": "Enter the subject",
+    "CF_CLIENT_MESSAGE_LABEL": "Message",
+    "CF_CLIENT_MESSAGE_PROMPT": "Enter your message",
+    "CF_CLIENT_PHONE_VALIDATION": "Please specify a valid phone number",
+    "CF_ADMIN_ENABLE_LABEL": "Enable",
+    "CF_ADMIN_CONTACT_FORM_SETTINGS": "Contact Form",
+    "CF_ADMIN_CAPTCHA_SETTINGS": "Captcha",
+    "CF_ADMIN_EMAILER_SETTINGS": "Emailer",
+    "CF_ADMIN_CUSTOM_OBJECTS_SETTINGS": "Custom Objects",
+    "CF_ADMIN_FIELDS_SETTINGS": "Fields",
+
+    "CF_ADMIN_CAPTCHA_APPID_LABEL": "App ID",
+    "CF_ADMIN_CAPTCHA_APPKEY_LABEL": "App Key",
+    "CF_ADMIN_CAPTCHA_APPSECRET_LABEL": "App Secret",
+
+    "CF_ADMIN_EMAIL_TO_LABEL": "To Address",
+    "CF_ADMIN_EMAIL_TEMPLATE_LABEL": "Template",
+    "CF_ADMIN_EMAIL_ALERT_TEXT": "Emailer uses the core email service.",
+    "CF_ADMIN_EMAIL_ALERT_LINK": "Click here to setup",
+
+    "CF_ADMIN_CUSTOM_OBJECT_TYPE_LABEL": "Type"
+}

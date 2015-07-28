@@ -1,0 +1,23 @@
+^tmp_admin=head^
+
+<script type="text/javascript">
+    $('<link rel="stylesheet" type="text/css" href="/public/contactform-pencilblue/css/contact_form_settings.css">').appendTo(document.head);
+</script>
+
+<div class="col-md-9 cfsettings">
+    ^tmp_admin=elements=error_success^
+    ^tmp_admin=elements=sub_nav^
+    ^tmp_admin=elements=tab_nav^
+    <form name="FieldsForm" ng-submit="save()" novalidate>
+        <fieldset>
+            <a class="btn btn-default" href="/admin/plugins/contactform-pencilblue/settings" ng-disabled="!settings.enabled">
+                <i class="fa fa-ban"></i>&nbsp;Cancel
+            </a>
+            <button type="submit" class="btn btn-primary" ng-disabled="saving">
+                <i class="fa fa-save" ng-class="{'fa-save': !saving, 'fa-circle-o-notch fa-spin': saving}"></i>&nbsp;Save
+            </button>
+        </fieldset>
+    </form>
+</div>
+^tmp_angular=admin=settings=field_settings^
+^tmp_admin=footer^

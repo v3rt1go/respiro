@@ -1,0 +1,59 @@
+{
+    "uid": "contactform-pencilblue",
+    "name": "Contact Form",
+    "description": "Display a contact form on your PencilBlue site.",
+    "version": "0.0.7",
+    "author": {
+        "name": "Alex Curtis",
+        "email": "alx.curtis@gmail.com"
+    },
+    "settings": [
+        {
+            "name": "stylesheet",
+            "value": "/public/contactform-pencilblue/css/contact_form.css"
+        },
+        {
+            "name": "show_phone",
+            "value": true
+        }
+    ],
+    "permissions": {
+        "ACCESS_USER": [],
+        "ACCESS_WRITER": [],
+        "ACCESS_EDITOR": [],
+        "ACCESS_MANAGING_EDITOR": []
+    },
+    "main_module": {
+        "path": "contact_form.js"
+    },
+    "dependencies": {
+        "sweetcaptcha": "~0.0.2",
+        "sanitize-html": "~1.1.7",
+        "async": "~0.2.9"
+    },
+    "cf_settings": {
+        "emailer": {
+            "enabled": false,
+            "to": "<CHANGE>@<THIS>.com",
+            "template": "email/default"
+        },
+        "captcha": {
+            "enabled": false
+        },
+        "objects": {
+            "enabled": true,
+            "type": "contactform",
+            "spec": {
+                "fields": {
+                    "name":     { "field_type": "text" },
+                    "email":    { "field_type": "text" },
+                    "date":     { "field_type": "date" },
+                    "subject":  { "field_type": "text" },
+                    "message":  { "field_type": "wysiwyg" }
+                }
+            }
+        }
+    }
+}
+
+

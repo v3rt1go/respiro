@@ -1,0 +1,52 @@
+^tmp_admin=head^
+
+<script type="text/javascript">
+    $('<link rel="stylesheet" type="text/css" href="/public/contactform-pencilblue/css/contact_form_settings.css">').appendTo(document.head);
+</script>
+
+<div class="col-md-9 cfsettings">
+    ^tmp_admin=elements=error_success^
+    ^tmp_admin=elements=sub_nav^
+    ^tmp_admin=elements=tab_nav^
+    <div class="alert alert-info" role="alert">
+        ^loc_CF_ADMIN_EMAIL_ALERT_TEXT^
+        <a href="/admin/site_settings/email" class="alert-link">
+            ^loc_CF_ADMIN_EMAIL_ALERT_LINK^
+        </a>
+    </div>
+    <form name="EmailerForm" ng-submit="save()" novalidate>
+        <fieldset>
+             <div class="form-group">
+                <label>^loc_CF_ADMIN_ENABLE_LABEL^</label>
+                <br/>
+                <div class="btn-group ng-scope">
+                    <button type="button" class="btn btn-default" ng-class="{'active': settings.enabled}" ng-click="setEnabled(true)">Yes</button>
+                    <button type="button" class="btn btn-default" ng-class="{'active': !settings.enabled}" ng-click="setEnabled(false)">No</button>
+                </div>
+            </div>
+
+            <div id="EmailerSettings">
+
+                <div class="form-group">
+                    <label>^loc_CF_ADMIN_EMAIL_TO_LABEL^</label>
+                    <input type="text" class="form-control" ng-model="settings.to" ng-disabled="!settings.enabled"></input>
+                </div>
+
+                <div class="form-group">
+                    <label>^loc_CF_ADMIN_EMAIL_TEMPLATE_LABEL^</label>
+                    <input type="text" class="form-control" ng-model="settings.template" ng-disabled="!settings.enabled"></input>
+                </div>
+
+            </div>
+
+            <a class="btn btn-default" href="/admin/plugins/contactform-pencilblue/settings" ng-disabled="!settings.enabled">
+                <i class="fa fa-ban"></i>&nbsp;Cancel
+            </a>
+            <button type="submit" class="btn btn-primary" ng-disabled="saving">
+                <i class="fa fa-save" ng-class="{'fa-save': !saving, 'fa-circle-o-notch fa-spin': saving}"></i>&nbsp;Save
+            </button>
+        </fieldset>
+    </form>
+</div>
+^tmp_angular=admin=settings=email_settings^
+^tmp_admin=footer^
