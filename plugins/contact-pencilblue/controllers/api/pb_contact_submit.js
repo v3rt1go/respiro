@@ -16,10 +16,10 @@
 */
 
 module.exports = function(pb) {
-    
+
     //pb depdencies
     var util = pb.util;
-    
+
     function ContactSubmit() {};
     util.inherits(ContactSubmit, pb.BaseController);
 
@@ -50,6 +50,7 @@ module.exports = function(pb) {
             name: post.name + ' (' + util.uniqueId() + ')',
             email: post.email,
             description: post.email,
+            subject: post.subject,
             comment: post.comment,
             date: new Date()
           };

@@ -1,11 +1,42 @@
-<form id="pb_contact_form">
+<h2 class="module-title font-alt">PROGRAMARI Clinica</h2>
+<form id="pb_contact_form" novalidate="" role="form">
+  <div class="form-group">
+    <label class="sr-only" for="pb_contact_name">Nume</label>
+    <input aria-invalid="false" class="form-control" data-validation-required-message="Va rugam sa completati numele dumneavoastra." id="pb_contact_name" name="pb_contact_name" placeholder="Nume" required="" type="text">
+    <p class="help-block text-danger"></p>
+  </div>
+  <div class="form-group">
+    <label class="sr-only" for="pb_contact_email">E-mail sau Telefon</label>
+    <input class="form-control" data-validation-required-message="Va rugam sa completati o modalitate de contact." id="pb_contact_email" name="pb_contact_email" placeholder="E-mail sau Telefon" required="" type="text">
+    <p class="help-block text-danger"></p>
+  </div>
+  <div class="form-group">
+    <label class="sr-only" for="pb_contact_subject">Subiect</label>
+    <input class="form-control" data-validation-required-message="Va rugam sa completati motivul pentru care ne contactati." id="pb_contact_subject" name="pb_contact_subject" placeholder="Subiect" required="" type="text">
+    <p class="help-block text-danger"></p>
+  </div>
+  <div class="form-group">
+    <label class="sr-only" for="pb_contact_comment">Mesaj</label>
+    <textarea class="form-control" data-validation-required-message="Va rugam sa completati mesajul dumneavoastra." id="pb_contact_comment" name="pb_contact_comment" placeholder="Mesaj" required="" rows="7"></textarea>
+    <p class="help-block text-danger"></p>
+  </div>
+  <button class="btn btn-round btn-g" id="pb_contact_submit" type="submit" onclick="submitPBContact()">Trimite</button>
+  <div id="pb_contact_success" style="display: none"><p class="help-block text-success">^loc_CONTACT_SUCCESS^</p></div>
+  <div id="pb_contact_error" style="display: none"><p class="help-block text-danger">^loc_CONTACT_ERROR^</p></div>
+</form>
+
+<!-- <form id="pb_contact_form">
   <div class="form-group">
     <label for="pb_contact_name">^loc_NAME^</label>
     <input type="text" id="pb_contact_name" name="pb_contact_name" class="form-control" required></input>
   </div>
   <div class="form-group">
     <label for="pb_contact_email">^loc_EMAIL^</label>
-    <input type="email" id="pb_contact_email" name="pb_contact_email" class="form-control" required></input>
+    <input type="text" id="pb_contact_email" name="pb_contact_email" class="form-control" required></input>
+  </div>
+  <div class="form-group">
+    <label for="pb_contact_subject">^loc_COMMENT^</label>
+    <input type="text" id="pb_contact_subject" name="pb_contact_subject" class="form-control" required></input>
   </div>
   <div class="form-group">
     <label for="pb_contact_comment">^loc_COMMENT^</label>
@@ -19,6 +50,6 @@
   </button>
   <div id="pb_contact_success" class="form-group" style="display: none">^loc_CONTACT_SUCCESS^</div>
   <div id="pb_contact_error" class="form-group" style="display: none">^loc_CONTACT_ERROR^</div>
-</form>
+</form> -->
 <script type="text/javascript" src="^jquery_validate_src^"></script>
 <script type="text/javascript" src="/public/contact-pencilblue/js/pb_contact_form.js"></script>

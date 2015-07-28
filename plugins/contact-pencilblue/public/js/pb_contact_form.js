@@ -12,6 +12,7 @@
     var postData = {
       name: $('#pb_contact_name').val(),
       email: $('#pb_contact_email').val(),
+      subject: $('#pb_contact_subject').val(),
       comment: $('#pb_contact_comment').val()
     }
 

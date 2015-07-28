@@ -42,7 +42,7 @@ var loc =
         CANCEL: 'Cancel',
         EDIT: 'Edit',
         DELETE: 'Delete',
-        SUBMIT: 'Submit',
+        SUBMIT: 'Trimite',
         SELECT: 'Select',
         MANAGE: 'Manage',
         SORT: 'Sort',
