@@ -22,7 +22,7 @@ html {
 
 body {
 	background: #fff;
-	font: 400 12px/1.8 "Open Sans", Verdana, sans-serif;
+	font: 400 14px/1.8 "Open Sans", Verdana, sans-serif;
 	color: #666;
 	-webkit-font-smoothing: antialiased;
 }
@@ -744,7 +744,7 @@ Sections
 
 .module-subtitle {
 	margin-bottom: 70px;
-	font-size: 12px;
+	font-size: 14px;
 }
 
 .module-title + .module-subtitle {
