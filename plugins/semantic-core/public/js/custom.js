@@ -364,7 +364,7 @@
 		$('.progress-bar').each(function(i) {
 			$(this).appear(function() {
 				var percent = $(this).attr('aria-valuenow');
-				$(this).animate({'width' : percent + '%'});
+				$(this).animate({'width' : (percent * 0.1) + '%'});
 				$(this).find('span').animate({'opacity' : 1}, 900);
 				$(this).find('span').countTo({from: 0, to: percent, speed: 900, refreshInterval: 30});
 			});
