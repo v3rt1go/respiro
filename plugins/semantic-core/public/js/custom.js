@@ -351,7 +351,7 @@
 				icon: image,
 				title: 'Respiro Dental Clinic',
 				infoWindow: {
-					content: '<p><strong>Respiro Dental Clinic</strong><br/>Bd. Hristo Botev, 7, Bucuresti-Sector 3, 030231<br/>T: +40 727 DENTAL (336 825)<br/>Bucuresti</p>'
+					content: '<p><strong>Respiro Dental Clinic</strong><br/>Bd. Hristo Botev, 7, Bucuresti-Sector 3, 030231<br/>T: +40 727 336 825 (DENTAL)<br/>Bucuresti</p>'
 				}
 			});
 
