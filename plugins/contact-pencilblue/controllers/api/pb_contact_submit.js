@@ -72,7 +72,26 @@ module.exports = function(pb) {
               });
             }
 
-            cb({content: pb.BaseController.apiResponse(pb.BaseController.API_SUCCESS, 'contact submitted')});
+            // NOTE: alexg added e-mail sending service
+            var emailService = new pb.EmailService();
+            var email = {
+              from: 'website.respirodental@gmail.com',
+              to: 'programari@respirodental.ro',
+              subject: 'Mesaj de pe www.respirodental.ro',
+              body: "Nume: " + post.name + "<br /> Contact: " + post.email + "<br /> Contact 2: " + post.description +
+                    "<br /> Subiect: " + post.subject + "<br /> Text: " + post.comment + "<br /> Data: " + contact.date
+            };
+            emailService.send(email.from, email.to, email.subject, email.body, function(err) {
+              if(util.isError(err)) {
+                return cb({
+                  code: 500,
+                  content: pb.BaseController.apiResponse(pb.BaseController.API_ERROR, self.ls.get('ERROR_SENDING_EMAIL'))
+                });
+              }
+
+              cb({content: pb.BaseController.apiResponse(pb.BaseController.API_SUCCESS, 'contact submitted')});
+            });
+
           });
         });
       });
