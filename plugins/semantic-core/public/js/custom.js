@@ -321,7 +321,8 @@
 		 * Google Map
 		/* ---------------------------------------------- */
 
-		var mapLocation = new google.maps.LatLng(44.4347786,26.1069936,40);
+		var mapLocation = new google.maps.LatLng(44.4347786,26.1069936);
+		var centerLocation = new google.maps.LatLng(44.4361542,26.1071125);
 
 		var $mapis = $('#map');
 
@@ -334,7 +335,7 @@
 				zoomControl : true,
 				panControl : false,
 				scrollwheel: false,
-				center: mapLocation,
+				center: centerLocation,
 				el: '#map',
 				zoom: 16,
 				styles: [{"featureType":"all","elementType":"labels.text.fill","stylers":[{"saturation":36},{"color":"#000000"},{"lightness":40}]},{"featureType":"all","elementType":"labels.text.stroke","stylers":[{"visibility":"on"},{"color":"#000000"},{"lightness":16}]},{"featureType":"all","elementType":"labels.icon","stylers":[{"visibility":"off"}]},{"featureType":"administrative","elementType":"geometry.fill","stylers":[{"color":"#000000"},{"lightness":20}]},{"featureType":"administrative","elementType":"geometry.stroke","stylers":[{"color":"#000000"},{"lightness":17},{"weight":1.2}]},{"featureType":"landscape","elementType":"geometry","stylers":[{"color":"#000000"},{"lightness":20}]},{"featureType":"poi","elementType":"geometry","stylers":[{"color":"#000000"},{"lightness":21}]},{"featureType":"road.highway","elementType":"geometry.fill","stylers":[{"color":"#000000"},{"lightness":17}]},{"featureType":"road.highway","elementType":"geometry.stroke","stylers":[{"color":"#000000"},{"lightness":29},{"weight":0.2}]},{"featureType":"road.arterial","elementType":"geometry","stylers":[{"color":"#000000"},{"lightness":18}]},{"featureType":"road.local","elementType":"geometry","stylers":[{"color":"#000000"},{"lightness":16}]},{"featureType":"transit","elementType":"geometry","stylers":[{"color":"#000000"},{"lightness":19}]},{"featureType":"water","elementType":"geometry","stylers":[{"color":"#000000"},{"lightness":17}]}]
@@ -346,15 +347,20 @@
 				new google.maps.Point(24, 42)
 			);
 
-			map.addMarker({
+			var infoWindow = new google.maps.InfoWindow({
+				content: '<p><strong>Respiro Dental Clinic</strong><br/>Bd. Hristo Botev, 7, Bucuresti-Sector 3, 030231<br/>T: +40 727 336 825 (DENTAL)<br />E: programari@respirodental.ro<br/>Bucuresti</p>'
+			});
+
+			var marker = map.addMarker({
 				position: mapLocation,
 				icon: image,
 				title: 'Respiro Dental Clinic',
 				infoWindow: {
-					content: '<p><strong>Respiro Dental Clinic</strong><br/>Bd. Hristo Botev, 7, Bucuresti-Sector 3, 030231<br/>T: +40 727 336 825 (DENTAL)<br/>Bucuresti</p>'
+					content: '<p><strong>Respiro Dental Clinic</strong><br/>Bd. Hristo Botev, 7, Bucuresti-Sector 3, 030231<br/>T: +40 727 336 825 (DENTAL)<br />E: programari@respirodental.ro<br/>Bucuresti</p>'
 				}
 			});
 
+			infoWindow.open(map, marker);
 		}
 
 		/* ---------------------------------------------- /*
