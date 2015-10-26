@@ -29,16 +29,16 @@ module.exports = {
         "port": 6379
     },
     "settings": {
-        "use_memory": false,
+        "use_memory": true,
         "use_cache": false
     },
     "templates": {
-        "use_memory": false,
+        "use_memory": true,
         "use_cache": false
     },
     "plugins": {
         "caching": {
-            "use_memory": false,
+            "use_memory": true,
             "use_cache": false
         }
     },
