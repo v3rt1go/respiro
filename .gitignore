@@ -5,6 +5,7 @@
 public/bower_components/
 log/
 out
+.autoenv.zsh
 **/node_modules
 **/node_modules/**
 
