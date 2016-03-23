@@ -100,7 +100,7 @@
 				animation: 'fade',
 				animationSpeed: 1000,
 				animationLoop: true,
-				directionNav: directionNav,
+				directionNav: false,
 				prevText: '',
 				nextText: '',
 				start: function(slider) {
