@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2015  PencilBlue, LLC
+    Copyright (C) 2016  PencilBlue, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -14,12 +14,13 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+'use strict';
 
 //dependencies
 var path = require('path');
 
 module.exports = function NotFoundControllerModule(pb) {
-    
+
     //pb dependencies
     var util    = pb.util;
     var TopMenu = pb.TopMenuService;
@@ -31,45 +32,42 @@ module.exports = function NotFoundControllerModule(pb) {
      * @extends BaseController
      */
     function NotFoundController(){}
-    util.inherits(NotFoundController, pb.BaseController);
+    util.inherits(NotFoundController, pb.ErrorViewController);
 
     /**
-     * @see BaseController.render
-     * @method render
+     * Initializes the controller
+     * @method init
+     * @param {Object} context
      * @param {Function} cb
      */
-    NotFoundController.prototype.render = function(cb) {
+    NotFoundController.prototype.init = function(context, cb) {
         var self = this;
+        var init = function(err, result) {
 
-        this.setPageName('404');
-        var contentService = new pb.ContentService();
-        contentService.getSettings(function(err, contentSettings) {
+            //force the page name & status
+            self.status = 404;
+            self.setPageName(self.ls.g('error.PAGE_NOT_FOUND'));
 
-            var options = {
-                currUrl: self.req.url
-            };
-            TopMenu.getTopMenu(self.session, self.ls, options, function(themeSettings, navigation, accountButtons) {
-                TopMenu.getBootstrapNav(navigation, accountButtons, function(navigation, accountButtons) {
+            //carry on
+            cb(err, result);
+        };
+        NotFoundController.super_.prototype.init.apply(this, [context, init]);
+    };
 
-                    //load template
-                    self.ts.registerLocal('navigation', new pb.TemplateValue(navigation, false));
-                    self.ts.registerLocal('account_buttons', new pb.TemplateValue(accountButtons, false));
-                    self.ts.load('error/404', function(err, data) {
-                        var result = '' + data;
+    /**
+     * @method getErrorMessage
+     * @return {String}
+     */
+    NotFoundController.prototype.getErrorMessage = function() {
+        return this.ls.g('error.PAGE_NOT_FOUND');
+    };
 
-                        result = result.concat(pb.ClientJs.getAngularController(
-                        {
-                            navigation: navigation,
-                            contentSettings: contentSettings,
-                            loggedIn: pb.security.isAuthenticated(self.session),
-                            accountButtons: accountButtons
-                        }));
-
-                        cb({content: result, code: 404, content_type: 'text/html'});
-                    });
-                });
-            });
-        });
+    /*
+     * @method getTemplatePath
+     * @return {String}
+     */
+    NotFoundController.prototype.getTemplatePath = function() {
+        return 'error/404';
     };
 
     //exports

@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2015  PencilBlue, LLC
+    Copyright (C) 2016  PencilBlue, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -14,96 +14,169 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+'use strict';
 
-module.exports = function ManageAccountModule(pb) {
-    
+//dependencies
+var async = require('async');
+
+module.exports = function(pb) {
+
     //pb dependencies
-    var util = pb.util;
-    
+    var util        = pb.util;
+    var UserService = pb.UserService;
+    var UrlService  = pb.UrlService;
+
     /**
      * Interface for logged in user to manage account information
+     * @class ManageAccount
+     * @constructor
+     * @extends FormController
      */
     function ManageAccount(){}
     util.inherits(ManageAccount, pb.FormController);
 
+    /**
+     * Initializes the controller
+     * @method initSync
+     * @param {Object} context
+     */
+    ManageAccount.prototype.initSync = function(/*context*/) {
+
+        /**
+         * @property service
+         * @type {TopicService}
+         */
+        this.service = new UserService(this.getServiceContext());
+    };
+
+    /**
+     * @method render
+     * @param {Function} cb
+     */
     ManageAccount.prototype.render = function(cb) {
         var self = this;
 
-        var dao = new pb.DAO();
-        dao.loadById(self.session.authentication.user_id, 'user', function(err, user) {
-            if(util.isError(err) || user === null) {
-                self.redirect('/', cb);
-                return;
+        this.gatherData(function(err, data) {
+            if(util.isError(err)) {
+                return cb(err);
+            }
+            else if (data.user === null) {
+                return self.redirect(UrlService.createSystemUrl('/', { hostname: self.hostname }), cb);
             }
 
-            delete user.password;
-            var objects  = self.gatherData();
-            objects.user = user;
+            delete data.user.password;
 
-            self.setPageName(self.ls.get('MANAGE_ACCOUNT'));
-            self.ts.registerLocal('image_title', self.ls.get('USER_PHOTO'));
-            self.ts.registerLocal('uploaded_image', (user.photo ? user.photo : ''));
-            self.ts.registerLocal('angular_script', pb.ClientJs.getAngularController(objects));
+            self.setPageName(self.ls.g('users.MANAGE_ACCOUNT'));
+            self.ts.registerLocal('image_title', self.ls.g('users.USER_PHOTO'));
+            self.ts.registerLocal('angular_objects', new pb.TemplateValue(pb.ClientJs.getAngularObjects(data), false));
             self.ts.load('user/manage_account', function(err, result) {
-
                 cb({content: result});
             });
         });
     };
 
-    ManageAccount.prototype.gatherData = function() {
-        return {
+    /**
+     *
+     * @method gatherData
+     * @param {Function} cb
+     * @return {Array}
+     */
+    ManageAccount.prototype.gatherData = function(cb) {
+        var self = this;
+        var tasks = {
 
-            navigation: [
-                {
-                    id: 'account',
-                    active: 'active',
-                    title: this.ls.get('ACCOUNT'),
-                    icon: 'user',
-                    href: '#',
-                    dropdown: true,
-                    children:
-                    [
-                        {
-                            id: 'manage',
-                            active: 'active',
-                            title: this.ls.get('MANAGE_ACCOUNT'),
-                            icon: 'cog',
-                            href: '/user/manage_account',
-                        },
-                        {
-                            id: 'change_password',
-                            title: this.ls.get('CHANGE_PASSWORD'),
-                            icon: 'key',
-                            href: '/user/change_password',
-                        }
-                    ]
-                }
-            ],
+            navigation: function(callback) {
+                callback(null, self.getNavigation());
+            },
 
-            pills: [
-                {
-                    name: 'manage_account',
-                    title: this.ls.get('MANAGE_ACCOUNT'),
-                    icon: 'refresh',
-                    href: '/user/manage_account'
-                }
-            ],
+            pills: function(callback) {
+                callback(null, self.getPills());
+            },
 
-            tabs: [
-                {
-                    active: 'active',
-                    href: '#account_info',
-                    icon: 'cog',
-                    title: this.ls.get('ACCOUNT_INFO')
-                },
-                {
-                    href: '#personal_info',
-                    icon: 'user',
-                    title: this.ls.get('PERSONAL_INFO')
-                }
-            ]
+            tabs: function(callback) {
+                callback(null, self.getTabs());
+            },
+
+            locales: function(callback) {
+                callback(null, pb.Localization.getSupportedWithDisplay());
+            },
+
+            user: function(callback) {
+                self.service.get(self.session.authentication.user_id, callback);
+            }
         };
+        async.parallel(tasks, cb);
+    };
+
+    /**
+     *
+     * @method getNavigation
+     * @return {Array}
+     */
+    ManageAccount.prototype.getNavigation = function() {
+        return [
+            {
+                id: 'account',
+                active: 'active',
+                title: this.ls.g('generic.ACCOUNT'),
+                icon: 'user',
+                href: '#',
+                dropdown: true,
+                children:
+                [
+                    {
+                        id: 'manage',
+                        active: 'active',
+                        title: this.ls.g('users.MANAGE_ACCOUNT'),
+                        icon: 'cog',
+                        href: '/user/manage_account',
+                    },
+                    {
+                        id: 'change_password',
+                        title: this.ls.g('users.CHANGE_PASSWORD'),
+                        icon: 'key',
+                        href: '/user/change_password',
+                    }
+                ]
+            }
+        ];
+    };
+
+    /**
+     *
+     * @method getTabs
+     * @return {Array}
+     */
+    ManageAccount.prototype.getTabs = function() {
+        return [
+            {
+                active: 'active',
+                href: '#account_info',
+                icon: 'cog',
+                title: this.ls.g('users.ACCOUNT_INFO')
+            },
+            {
+                href: '#personal_info',
+                icon: 'user',
+                title: this.ls.g('users.PERSONAL_INFO')
+            }
+        ];
+    };
+
+    /**
+     *
+     * @method getPills
+     * @return {Array}
+     */
+    ManageAccount.prototype.getPills = function() {
+        return [
+            {
+                name: 'manage_account',
+                title: this.ls.g('users.MANAGE_ACCOUNT'),
+                icon: 'refresh',
+                href: '/user/manage_account'
+            }
+        ];
     };
 
     //exports

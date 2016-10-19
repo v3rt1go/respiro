@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2015  PencilBlue, LLC
+    Copyright (C) 2016  PencilBlue, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -14,24 +14,27 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+'use strict';
 
 module.exports = function(pb) {
-    
+
     //pb dependencies
     var util = pb.util;
-    
+
     /**
      * Interface for managing media
+     * @class ManageMedia
+     * @constructor
+     * @extends BaseAdminController
      */
     function ManageMedia(){}
-    util.inherits(ManageMedia, pb.BaseController);
+    util.inherits(ManageMedia, pb.BaseAdminController);
 
     //statics
     var SUB_NAV_KEY = 'manage_media';
 
     ManageMedia.prototype.render = function(cb) {
         var self = this;
-
         var options = {
             select: {
                 name: 1,
@@ -43,33 +46,48 @@ module.exports = function(pb) {
             order: {created: pb.DAO.DESC},
             format_media: true
         };
-        var mservice = new pb.MediaService();
-        mservice.get(options, function(err, mediaData) {
+        var mediaService = new pb.MediaService(null, self.site, true);
+        mediaService.get(options, function(err, mediaData) {
             if(util.isError(mediaData) || mediaData.length === 0) {
                 self.redirect('/admin/content/media/new', cb);
                 return;
             }
 
-            var angularObjects = pb.ClientJs.getAngularObjects(
-            {
-                navigation: pb.AdminNavigation.get(self.session, ['content', 'media'], self.ls),
-                pills: pb.AdminSubnavService.get(SUB_NAV_KEY, self.ls, 'manage_media'),
-                media: pb.MediaService.formatMedia(mediaData)
+            self.getAngularObjects(mediaData, function(angularObjects) {
+                var title = self.ls.g('media.MANAGE_MEDIA');
+                self.setPageName(title);
+                self.ts.registerLocal('angular_objects', new pb.TemplateValue(angularObjects, false));
+                self.ts.load('admin/content/media/manage_media', function(err, result) {
+                    cb({content: result});
+                });
             });
+        });
+    };
 
-            var title = self.ls.get('MANAGE_MEDIA');
-            self.setPageName(title);
-            self.ts.registerLocal('angular_objects', new pb.TemplateValue(angularObjects, false));
-            self.ts.load('admin/content/media/manage_media', function(err, result) {
-               cb({content: result});
-            });
+    ManageMedia.prototype.getAngularObjects = function(mediaData, cb) {
+        var self = this;
+        pb.AdminSubnavService.getWithSite(SUB_NAV_KEY, self.ls, SUB_NAV_KEY, {site: self.site}, function(err, pills) {
+            //Log error. Don't return
+            if (util.isError(err)){
+                pills = [];
+                pb.log.error("ManageMedia: AdminSubnavService.getWithSite callback error. ERROR[%s]", err.stack);
+            }
+
+            var angularObjects = pb.ClientJs.getAngularObjects(
+                {
+                    navigation: pb.AdminNavigation.get(self.session, ['content', 'media'], self.ls, self.site),
+                    pills: pills,
+                    media: pb.MediaServiceV2.formatMedia(mediaData)
+                });
+            //TODO: err first arg for style. User experience error when no pills?
+            cb(angularObjects);
         });
     };
 
     ManageMedia.getSubNavItems = function(key, ls, data) {
         return [{
             name: 'manage_media',
-            title: ls.get('MANAGE_MEDIA'),
+            title: ls.g('media.MANAGE_MEDIA'),
             icon: 'refresh',
             href: '/admin/content/media'
         }, {

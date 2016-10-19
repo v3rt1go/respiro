@@ -1,5 +1,5 @@
 /*
-	Copyright (C) 2015  PencilBlue, LLC
+	Copyright (C) 2016  PencilBlue, LLC
 
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -19,14 +19,14 @@
 var util = require('../../util.js');
 
 module.exports = function AuthenticationModule(pb) {
-    
+
     /**
      *
      * @class UsernamePasswordAuthentication
      * @constructor
      */
     function UsernamePasswordAuthentication() {}
-    
+
     /**
      *
      * @method authenticate
@@ -61,8 +61,13 @@ module.exports = function AuthenticationModule(pb) {
             };
         }
 
+        var dao;
+        if (credentials.site) {
+            dao = new pb.SiteQueryService({site: credentials.site, onlyThisSite: false});
+        } else {
+            dao = new pb.DAO();
+        }
         //search for user
-        var dao = new pb.DAO();
         dao.loadByValues(query, 'user', cb);
     };
 
@@ -74,9 +79,13 @@ module.exports = function AuthenticationModule(pb) {
      */
     function FormAuthentication() {}
     util.inherits(FormAuthentication, UsernamePasswordAuthentication);
-    
+
     /**
      * @method authenticate
+     * @param {Object} postObj
+     * @param {String} postObj.username
+     * @param {String} postObj.password
+     * @param {Function} cb
      */
     FormAuthentication.prototype.authenticate = function(postObj, cb) {
         if (!util.isObject(postObj)) {
@@ -87,9 +96,44 @@ module.exports = function AuthenticationModule(pb) {
         var userDocument = pb.DocumentCreator.create('user', postObj);
         FormAuthentication.super_.prototype.authenticate.apply(this, [userDocument, cb]);
     };
-    
+
+    /**
+     *
+     * @class TokenAuthentication
+     * @constructor
+     * @param {Object} options
+     * @param {String} options.site - site uid
+     * @param {String} options.user - user id
+     */
+    function TokenAuthentication(options) {
+        this.options = options;
+        this.tokenService = new pb.TokenService(options);
+        this.userService = new pb.UserService(options);
+    }
+
+    /**
+     * @method authenticate
+     * @param {String} token
+     * @param {Function} cb
+     */
+    TokenAuthentication.prototype.authenticate = function(token, cb) {
+        var self = this;
+        this.tokenService.validateUserToken(token, function(err, result) {
+            if(util.isError(err)) {
+                return cb(err, null);
+            }
+
+            if(!result.tokenInfo || !result.valid || !result.tokenInfo.user) {
+                return cb();
+            }
+            self.userService.get(result.tokenInfo.user, cb);
+        });
+    };
+
+    //exports
     return {
         UsernamePasswordAuthentication: UsernamePasswordAuthentication,
-        FormAuthentication: FormAuthentication
+        FormAuthentication: FormAuthentication,
+        TokenAuthentication: TokenAuthentication
     };
 };

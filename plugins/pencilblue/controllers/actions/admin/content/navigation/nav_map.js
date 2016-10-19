@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2015  PencilBlue, LLC
+    Copyright (C) 2016  PencilBlue, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -14,12 +14,13 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+'use strict';
 
 module.exports = function(pb) {
-    
+
     //pb dependencies
     var util = pb.util;
-    
+
     /**
      * Updates the navigation
      */
@@ -28,7 +29,7 @@ module.exports = function(pb) {
 
     NavigationMap.prototype.render = function(cb) {
         var self = this;
-
+        var mySettings = pb.SettingServiceFactory.getService(pb.config.settings.use_memory, pb.config.settings.use_cache, self.site, true);
         this.getJSONPostParams(function(err, post) {
             if(util.isError(err)) {
                 cb({
@@ -49,25 +50,23 @@ module.exports = function(pb) {
 
             var sectionMap = post.map;
             if(sectionMap.length <= 0 || !sectionMap[0].uid) {
-                cb({
+                return cb({
                     code: 400,
-                    content: pb.BaseController.apiResponse(pb.BaseController.API_FAILURE, self.ls.get('ERROR_SAVING'))
+                    content: pb.BaseController.apiResponse(pb.BaseController.API_FAILURE, self.ls.g('generic.ERROR_SAVING'))
                 });
-                return;
             }
 
-            pb.settings.set('section_map', sectionMap, function(err, data) {
+            mySettings.set('section_map', sectionMap, function(err, data) {
                 if(util.isError(err)) {
-                    cb({
+                    return cb({
                         code: 400,
-                        content: pb.BaseController.apiResponse(pb.BaseController.API_FAILURE, self.ls.get('ERROR_SAVING'))
+                        content: pb.BaseController.apiResponse(pb.BaseController.API_FAILURE, self.ls.g('generic.ERROR_SAVING'))
                     });
-                    return;
                 }
 
                 cb({
                     code: 200,
-                    content: pb.BaseController.apiResponse(pb.BaseController.API_SUCCESS, self.ls.get('NAV_MAP_SAVED'), post)
+                    content: pb.BaseController.apiResponse(pb.BaseController.API_SUCCESS, self.ls.g('generic.NAV_MAP_SAVED'), post)
                 });
             });
         });

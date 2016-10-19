@@ -1,5 +1,5 @@
 /*
-	Copyright (C) 2015  PencilBlue, LLC
+	Copyright (C) 2016  PencilBlue, LLC
 
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -14,6 +14,7 @@
 	You should have received a copy of the GNU General Public License
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+'use strict';
 
 //dependencies
 var async = require('async');
@@ -22,12 +23,13 @@ module.exports = function(pb) {
 
     //pb dependencies
     var util = pb.util;
+    var UserService = pb.UserService;
 
     /**
      * Interface for creating and editing pages
      */
     function PageFormController(){}
-    util.inherits(PageFormController, pb.BaseController);
+    util.inherits(PageFormController, pb.BaseAdminController);
 
     PageFormController.prototype.render = function(cb) {
         var self  = this;
@@ -49,7 +51,8 @@ module.exports = function(pb) {
             }
 
             if(self.session.authentication.user.admin >= pb.SecurityService.ACCESS_EDITOR) {
-              pb.users.getWriterOrEditorSelectList(self.page.author, true, function(err, availableAuthors) {
+                var userService = new UserService(self.getServiceContext());
+                userService.getWriterOrEditorSelectList(self.page.author, true, function(err, availableAuthors) {
                 if(availableAuthors && availableAuthors.length > 1) {
                   results.availableAuthors = availableAuthors;
                 }
@@ -67,11 +70,16 @@ module.exports = function(pb) {
 
       var tabs = self.getTabs();
 
-      self.setPageName(self.page[pb.DAO.getIdField()] ? self.page.headline : self.ls.get('NEW_PAGE'));
+      self.setPageName(self.page[pb.DAO.getIdField()] ? self.page.headline : self.ls.g('pages.NEW_PAGE'));
       self.ts.registerLocal('angular_objects', new pb.TemplateValue(self.getAngularObjects(tabs, results), false));
       self.ts.load('admin/content/pages/page_form', function(err, data) {
           var result = data;
-          self.checkForFormRefill(result, function(newResult) {
+          self.checkForFormRefill(result, function(err, newResult) {
+              //Handle errors
+              if (util.isError(err)) {
+                  pb.log.error("PageFormController.checkForFormRefill encountered an error. ERROR[%s]", err.stack);
+                  return cb(err);
+              }
               result = newResult;
               cb({content: result});
           });
@@ -84,6 +92,7 @@ module.exports = function(pb) {
      *
      */
     PageFormController.prototype.getAngularObjects = function(tabs, data) {
+        var self = this;
         if(data.page[pb.DAO.getIdField()]) {
             var media = [];
             var i, j;
@@ -113,14 +122,16 @@ module.exports = function(pb) {
         }
 
         var objects = {
-            navigation: pb.AdminNavigation.get(this.session, ['content', 'pages'], this.ls),
-            pills: pb.AdminSubnavService.get(this.getActivePill(), this.ls, this.getActivePill(), data),
+            navigation: pb.AdminNavigation.get(this.session, ['content', 'pages'], this.ls, this.site),
+            pills: self.getAdminPills(this.getActivePill(), this.ls, this.getActivePill(), data),
             tabs: tabs,
             templates: data.templates,
             sections: data.sections,
             topics: data.topics,
             media: data.media,
-            page: data.page
+            page: data.page,
+            siteKey: pb.SiteService.SITE_FIELD,
+            site: self.site
         };
         if(data.availableAuthors) {
           objects.availableAuthors = data.availableAuthors;
@@ -136,7 +147,7 @@ module.exports = function(pb) {
     PageFormController.getSubNavItems = function(key, ls, data) {
         return [{
             name: 'manage_pages',
-            title: data.page[pb.DAO.getIdField()] ? ls.get('EDIT') + ' ' + data.page.headline : ls.get('NEW_PAGE'),
+            title: data.page[pb.DAO.getIdField()] ? ls.g('generic.EDIT') + ' ' + data.page.headline : ls.g('pages.NEW_PAGE'),
             icon: 'chevron-left',
             href: '/admin/content/pages'
         }, {
@@ -163,10 +174,9 @@ module.exports = function(pb) {
      */
     PageFormController.prototype.gatherData = function(vars, cb) {
         var self  = this;
-        var dao   = new pb.DAO();
         var tasks = {
             templates: function(callback) {
-                callback(null, pb.TemplateService.getAvailableContentTemplates());
+                callback(null, pb.TemplateService.getAvailableContentTemplates(self.site));
             },
 
             sections: function(callback) {
@@ -177,7 +187,7 @@ module.exports = function(pb) {
                     },
                     order: {name: pb.DAO.ASC}
                 };
-                dao.q('section', opts, callback);
+                self.siteQueryService.q('section', opts, callback);
             },
 
             topics: function(callback) {
@@ -186,21 +196,20 @@ module.exports = function(pb) {
                     where: pb.DAO.ANYWHERE,
                     order: {name: pb.DAO.ASC}
                 };
-                dao.q('topic', opts, callback);
+                self.siteQueryService.q('topic', opts, callback);
             },
 
             media: function(callback) {
-                var mservice = new pb.MediaService();
+                var mservice = new pb.MediaService(null, self.site, true);
                 mservice.get(callback);
             },
 
             page: function(callback) {
                 if(!vars.id) {
-                    callback(null, {});
-                    return;
+                    return callback(null, {});
                 }
 
-                dao.loadById(vars.id, 'page', callback);
+                self.siteQueryService.loadById(vars.id, 'page', callback);
             }
         };
         async.parallelLimit(tasks, 2, cb);
@@ -217,22 +226,22 @@ module.exports = function(pb) {
                 active: 'active',
                 href: '#content',
                 icon: 'quote-left',
-                title: this.ls.get('CONTENT')
+                title: this.ls.g('generic.CONTENT')
             },
             {
                 href: '#media',
                 icon: 'camera',
-                title: this.ls.get('MEDIA')
+                title: this.ls.g('admin.MEDIA')
             },
             {
                 href: '#topics_dnd',
                 icon: 'tags',
-                title: this.ls.get('TOPICS')
+                title: this.ls.g('admin.TOPICS')
             },
             {
                 href: '#seo',
                 icon: 'tasks',
-                title: this.ls.get('SEO')
+                title: this.ls.g('generic.SEO')
             }
         ];
     };

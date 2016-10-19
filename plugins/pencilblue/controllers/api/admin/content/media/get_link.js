@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2015  PencilBlue, LLC
+    Copyright (C) 2016  PencilBlue, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -14,12 +14,13 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+'use strict';
 
 module.exports = function(pb) {
-    
+
     //pb dependencies
     var util = pb.util;
-    
+
     /**
      * Returns information on a media link
      * @class GetMediaLinkApiController
@@ -30,8 +31,23 @@ module.exports = function(pb) {
     util.inherits(GetMediaLinkApiController, pb.BaseController);
 
     /**
-     * Inspects the provided URL and returns a media descriptor for the URL.  If 
-     * the media type is not supported a 400 will be returned to the client.  
+     * Initializes the controller
+     * @method initSync
+     * @param {Object} context
+     */
+    GetMediaLinkApiController.prototype.initSync = function(context) {
+
+        /**
+         * An instance of MediaService that leverages the default media provider
+         * @property service
+         * @type {TopicService}
+         */
+        this.service = new pb.MediaService(null, context.site, true);
+    };
+
+    /**
+     * Inspects the provided URL and returns a media descriptor for the URL.  If
+     * the media type is not supported a 400 will be returned to the client.
      * @method render
      * @param {Function} cb
      */
@@ -42,20 +58,19 @@ module.exports = function(pb) {
         if (!pb.validation.isUrl(get.url, true)) {
             return cb({
                 code: 400,
-                content: pb.BaseController.apiResponse(pb.BaseController.API_ERROR, self.ls.get('INVALID_URL'))
+                content: pb.BaseController.apiResponse(pb.BaseController.API_FAILURE, self.ls.g('generic.INVALID_URL'))
             });
         }
 
-        var service = new pb.MediaService();
-        service.getMediaDescriptor(get.url, function(err, descriptor) {
+        this.service.getMediaDescriptor(get.url, function(err, descriptor) {
             if (util.isError(err)) {
                 return self.reqHandler.serveError(err);
             }
             else if (!descriptor) {
                 return cb({
                     code: 400,
-                    content: pb.BaseController.apiResponse(pb.BaseController.API_ERROR, self.ls.get('INVALID_URL'))
-                }); 
+                    content: pb.BaseController.apiResponse(pb.BaseController.API_FAILURE, self.ls.g('generic.INVALID_URL'))
+                });
             }
             cb({content: pb.BaseController.apiResponse(pb.BaseController.API_SUCCESS, '', descriptor)});
         });

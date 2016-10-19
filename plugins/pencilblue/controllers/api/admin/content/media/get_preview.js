@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2015  PencilBlue, LLC
+    Copyright (C) 2016  PencilBlue, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -14,20 +14,27 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+'use strict';
 
 module.exports = function(pb) {
-    
+
     //pb dependencies
     var util = pb.util;
-    
+    var MediaServiceV2 = pb.MediaServiceV2;
+
     /**
      * Returns the HTML for a media preview
+     * @deprecated
      * @class GetMediaPreviewApiController
      * @constructor
      * @extends BaseController
      */
     function GetMediaPreviewApiController(){}
-    util.inherits(GetMediaPreviewApiController, pb.BaseController);
+    util.inherits(GetMediaPreviewApiController, pb.BaseAdminController);
+
+    GetMediaPreviewApiController.prototype.initSync = function(/*context*/) {
+        this.service = new MediaServiceV2(this.getServiceContext());
+    };
 
     /**
      * Renders the preview
@@ -42,7 +49,7 @@ module.exports = function(pb) {
         if (!pb.validation.isIdStr(get.id, true) && !pb.validation.isStr(get.location, true)) {
             return cb({
                 code: 400,
-                content: pb.BaseController.apiResponse(pb.BaseController.API_ERROR, message)
+                content: pb.BaseController.apiResponse(pb.BaseController.API_FAILURE, '')
             });
         }
 
@@ -50,20 +57,19 @@ module.exports = function(pb) {
         var options = {
             view: 'view'
         };
-        var ms = new pb.MediaService();
         if (get.id) {
-            ms.renderById(get.id, options, function(err, html) {
+            this.service.renderById(get.id, options, function(err, html) {
                 self.renderComplete(err, html, cb);
             });
         }
         else if (get.location && get.type){
 
-            var options = {
+            var renderOptions = {
                 view: 'view',
                 location: get.location,
                 type: get.type
             };
-            ms.renderByLocation(options, function(err, html) {
+            this.service.renderByLocation(renderOptions, function(err, html) {
                 self.renderComplete(err, html, cb);
             });
         }
@@ -73,7 +79,7 @@ module.exports = function(pb) {
     };
 
     /**
-     * When the rendering is complete this function can be called to serialize the 
+     * When the rendering is complete this function can be called to serialize the
      * result back to the client in the standard API wrapper format.
      * @method renderComplete
      * @param {Error} err
@@ -87,7 +93,7 @@ module.exports = function(pb) {
         else if (!html) {
             return cb({
                 code: 400,
-                content: pb.BaseController.apiResponse(pb.BaseController.API_ERROR, this.ls.get('UNSUPPORTED_MEDIA'))
+                content: pb.BaseController.apiResponse(pb.BaseController.API_FAILURE, this.ls.g('generic.UNSUPPORTED_MEDIA'))
             });
         }
 

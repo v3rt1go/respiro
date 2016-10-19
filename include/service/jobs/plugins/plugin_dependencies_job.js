@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2015  PencilBlue, LLC
+    Copyright (C) 2016  PencilBlue, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -14,6 +14,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+'use strict';
 
 //dependencies
 var util = require('../../../util.js');
@@ -32,7 +33,7 @@ module.exports = function PluginDependenciesJobModule(pb) {
 
         //initialize
         this.setParallelLimit(1);
-    };
+    }
     util.inherits(PluginDependenciesJob, pb.PluginJobRunner);
 
     /**
@@ -45,7 +46,7 @@ module.exports = function PluginDependenciesJobModule(pb) {
         var self = this;
 
         //progress function
-        progress  = function(indexOfExecutingTask, totalTasks) {
+        var progress  = function(indexOfExecutingTask, totalTasks) {
 
             var increment = indexOfExecutingTask > 0 ? 100 / totalTasks * self.getChunkOfWorkPercentage(): 0;
             self.onUpdate(increment);
@@ -102,7 +103,7 @@ module.exports = function PluginDependenciesJobModule(pb) {
                     return callback(null, true);
                 }
 
-                pb.plugins.installPluginDependencies(pluginUid, pluginDetails.dependencies, pluginDetails, function(err, results) {
+                self.pluginService.installPluginDependencies(pluginUid, pluginDetails.dependencies, pluginDetails, function(err, results) {
                     callback(err, !util.isError(err));
                 });
             }

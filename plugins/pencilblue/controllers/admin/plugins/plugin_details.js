@@ -1,5 +1,5 @@
 /*
-	Copyright (C) 2015  PencilBlue, LLC
+	Copyright (C) 2016  PencilBlue, LLC
 
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -14,23 +14,22 @@
 	You should have received a copy of the GNU General Public License
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+'use strict';
 
 module.exports = function(pb) {
-    
+
     //pb dependencies
     var util = pb.util;
-    var BaseController = pb.BaseController;
     var PluginService  = pb.PluginService;
-    var LocalizationService = pb.LocalizationService;
 
     /**
     * Interface for viewing plugin details
     * @class PluginDetailsViewController
     * @constructor
-    * @extends BaseController
+    * @extends BaseAdminController
     */
     function PluginDetailsViewController(){}
-    util.inherits(PluginDetailsViewController, BaseController);
+    util.inherits(PluginDetailsViewController, pb.BaseAdminController);
 
     //statics
     var SUB_NAV_KEY = 'plugin_details';
@@ -38,12 +37,13 @@ module.exports = function(pb) {
     /**
      *
      * @method render
+     * @param cb
      *
      */
-    PluginDetailsViewController.prototype.render = function(cb) {
+    PluginDetailsViewController.prototype.render = function (cb) {
         var self = this;
 
-        this.getDetails(this.pathVars.id, function(err, obj) {
+        this.getDetails(this.pathVars.id, function (err, obj) {
             if (util.isError(err)) {
                 throw err;
             }
@@ -53,13 +53,12 @@ module.exports = function(pb) {
                 return;
             }
 
-            //angular data
             var angularObjects = pb.ClientJs.getAngularObjects({
-                pills: pb.AdminSubnavService.get(SUB_NAV_KEY, self.ls, null, obj),
-                navigation: pb.AdminNavigation.get(self.session, ['plugins', 'manage'], self.ls),
+                pills: self.getAdminPills(SUB_NAV_KEY, self.ls, null, obj),
+                navigation: pb.AdminNavigation.get(self.session, ['plugins', 'manage'], self.ls, self.site),
                 d: obj.details,
                 status: obj.status,
-                is_active: PluginService.isActivePlugin(obj.details.uid)
+                is_active: PluginService.isActivePlugin(obj.details.uid, self.site)
             });
 
             //render page
@@ -76,11 +75,11 @@ module.exports = function(pb) {
      * @method getDetails
      *
      */
-    PluginDetailsViewController.prototype.getDetails = function(puid, cb) {
+    PluginDetailsViewController.prototype.getDetails = function (puid, cb) {
         var self = this;
 
-        var pluginService = new pb.PluginService();
-        pluginService.getPlugin(puid, function(err, plugin) {
+        var pluginService = new pb.PluginService({site: self.site});
+        pluginService.getPluginBySite(puid, function(err, plugin) {
             if (util.isError(err)) {
                 cb(err, plugin);
                 return;
@@ -89,7 +88,7 @@ module.exports = function(pb) {
             if (plugin) {
                 var obj = {
                     details: plugin,
-                    status:  self.ls.get(PluginService.isActivePlugin(plugin.uid) ? 'ACTIVE' : 'INACTIVE')
+                    status: self.ls.g(PluginService.isActivePlugin(plugin.uid, self.site) ? 'generic.ACTIVE' : 'generic.INACTIVE')
                 };
                 cb(err, obj);
                 return;
@@ -100,7 +99,7 @@ module.exports = function(pb) {
             var detailsFile = PluginService.getDetailsPath(puid);
             PluginService.loadDetailsFile(detailsFile, function(err, details) {
                 var obj = {
-                    status: self.ls.get('ERRORED')
+                    status: self.ls.g('generic.ERRORED')
                 };
                 if (util.isError(err)) {
                     obj.details = {
@@ -120,7 +119,7 @@ module.exports = function(pb) {
                         cb(null, obj);
                         return;
                     }
-                    obj.status = self.ls.get('AVAILABLE');
+                    obj.status = self.ls.g('generic.AVAILABLE');
                     cb(null, obj);
                 });
             });

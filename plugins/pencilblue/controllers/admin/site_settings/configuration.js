@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2015  PencilBlue, LLC
+    Copyright (C) 2016  PencilBlue, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -14,6 +14,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+'use strict';
 
 //dependencies
 var fs = require('fs');
@@ -27,7 +28,7 @@ module.exports = function(pb) {
      * Interface for displaying the site's configuration settings
      */
     function Configuration(){}
-    util.inherits(Configuration, pb.BaseController);
+    util.inherits(Configuration, pb.BaseAdminController);
 
     //statics
     var SUB_NAV_KEY = 'site_configuration';
@@ -46,6 +47,9 @@ module.exports = function(pb) {
             }
 
             var config = {
+                siteName: self.siteObj.displayName,
+                siteRoot: self.siteObj.hostname,
+                mediaRoot: pb.config.media.urlRoot ? pb.config.media.urlRoot : self.siteObj.hostname,
                 documentRoot: pb.config.docRoot,
                 siteIP: pb.config.siteIP,
                 sitePort: pb.config.sitePort,
@@ -57,12 +61,13 @@ module.exports = function(pb) {
             };
 
             var angularObjects = pb.ClientJs.getAngularObjects({
-                navigation: pb.AdminNavigation.get(self.session, ['settings', 'site_settings'], self.ls),
-                pills: pb.AdminSubnavService.get(SUB_NAV_KEY, self.ls, 'configuration'),
-                config: config
+                navigation: pb.AdminNavigation.get(self.session, ['settings', 'site_settings'], self.ls, self.site),
+                pills: self.getAdminPills(SUB_NAV_KEY, self.ls, 'configuration', {site: self.site}),
+                config: config,
+                isGlobalSite: pb.SiteService.isGlobal(self.site)
             });
 
-            self.setPageName(self.ls.get('CONFIGURATION'));
+            self.setPageName(self.ls.g('site_settings.CONFIGURATION'));
             self.ts.registerLocal('angular_objects', new pb.TemplateValue(angularObjects, false));
             self.ts.load('admin/site_settings/configuration', function(err, result) {
                 cb({content: result});
@@ -71,27 +76,33 @@ module.exports = function(pb) {
     };
 
     Configuration.getSubNavItems = function(key, ls, data) {
-        return [{
+        var pills = [{
             name: 'configuration',
-            title: ls.get('CONFIGURATION'),
+            title: ls.g('site_settings.CONFIGURATION'),
             icon: 'refresh',
             href: '/admin/site_settings'
         }, {
             name: 'content',
-            title: ls.get('CONTENT'),
+            title: ls.g('generic.CONTENT'),
             icon: 'quote-right',
             href: '/admin/site_settings/content'
         }, {
             name: 'email',
-            title: ls.get('EMAIL'),
+            title: ls.g('generic.EMAIL'),
             icon: 'envelope',
             href: '/admin/site_settings/email'
-        }, {
-            name: 'libraries',
-            title: ls.get('LIBRARIES'),
-            icon: 'book',
-            href: '/admin/site_settings/libraries'
         }];
+
+        if(data && data.site === pb.SiteService.GLOBAL_SITE) {
+            pills.push({
+                name: 'libraries',
+                title: ls.g('site_settings.LIBRARIES'),
+                icon: 'book',
+                href: '/admin/site_settings/libraries'
+            });
+        }
+
+        return pills;
     };
 
     //register admin sub-nav

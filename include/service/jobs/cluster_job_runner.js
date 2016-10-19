@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2015  PencilBlue, LLC
+    Copyright (C) 2016  PencilBlue, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -14,6 +14,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+'use strict';
 
 //dependencies
 var util = require('../../util.js');
@@ -148,6 +149,7 @@ module.exports = function ClusterJobRunnerModule(pb) {
     /**
      * Called when the tasks have completed execution and isInitiator = FALSE. The
      * function blindly passes the results of the tasks back to the callback.
+     * @method processWorkerResults
      * @param {Error} err The error that occurred (if any) during task execution
      * @param {Array} results An array containing the result of each executed task
      * @param {Function} cb A callback that provides two parameters: The first is

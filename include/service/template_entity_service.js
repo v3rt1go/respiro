@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2015  PencilBlue, LLC
+    Copyright (C) 2016  PencilBlue, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -14,6 +14,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+'use strict';
 
 //dependencies
 var util = require('../util.js');
@@ -38,8 +39,6 @@ module.exports = function TemplateEntityService(pb) {
         this.startMarker = startMarker;
         this.endMarker   = endMarker;
     }
-
-    //inheritance
     util.inherits(TemplateEntityService, pb.FSEntityService);
 
     /**
@@ -52,7 +51,6 @@ module.exports = function TemplateEntityService(pb) {
      */
     TemplateEntityService.prototype.get = function(key, cb){
         var self = this;
-
         var callback = function(err, content) {
 
             //log result

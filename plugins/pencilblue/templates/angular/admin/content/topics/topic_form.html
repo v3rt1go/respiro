@@ -1,9 +1,10 @@
 <script type="text/javascript" src="/js/angular/services/form_validation.js"></script>
 <script type="text/javascript">
     angular.module('pencilblueApp', ['validation'])
-    .controller('PencilBlueController', function($scope, $http, validationService) {
+    .controller('PencilBlueController', function($scope, $http, $timeout, validationService) {
         ^angular_objects^
         ^tmp_angular=admin=elements=is_field_valid^
+        ^tmp_angular=admin=elements=error_success^
 
         $scope.saveTopic = function() {
             $scope.formSubmitted = true;
@@ -21,7 +22,7 @@
                 action = 'put';
             }
 
-            $http[action](url, {name: $scope.topic.name})
+            $http[action](url, $scope.topic)
             .success(function(result) {
                 $scope.successMessage = result.message;
                 if(!$scope.topic._id) {

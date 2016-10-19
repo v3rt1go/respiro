@@ -1,5 +1,5 @@
 /*
-	Copyright (C) 2015  PencilBlue, LLC
+	Copyright (C) 2016  PencilBlue, LLC
 
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -14,25 +14,32 @@
 	You should have received a copy of the GNU General Public License
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+'use strict';
 
 //dependencies
 var async = require('async');
 
 module.exports = function(pb) {
-    
+
     //pb dependencies
     var util = pb.util;
-    
+    var MediaServiceV2 = pb.MediaServiceV2;
+
     /**
      * Interface for adding and editing media
      * @class MediaForm
      * @constructor
      */
     function MediaForm(){}
-    util.inherits(MediaForm, pb.BaseController);
+    util.inherits(MediaForm, pb.BaseAdminController);
 
     //statics
     var SUB_NAV_KEY = 'media_form';
+
+    MediaForm.prototype.initSync = function(/*context*/) {
+
+        this.service = new MediaServiceV2(this.getServiceContext());
+    };
 
     /**
     * @method render
@@ -53,22 +60,49 @@ module.exports = function(pb) {
 
             self.media = data.media;
             data.media.media_topics = self.getMediaTopics(data);
-            data.pills = pb.AdminSubnavService.get(SUB_NAV_KEY, self.ls, SUB_NAV_KEY, self.media);
-            var angularObjects = pb.ClientJs.getAngularObjects(data);
+            self.getAngularObjects(data, function(angularObjects) {
+                self.setPageName(self.media[pb.DAO.getIdField()] ? self.media.name : self.ls.g('media.NEW_MEDIA'));
+                self.ts.registerLocal('acceptable_extensions', function(flag, cb) {
+                    //get acceptable file extensions
+                    var extensions = pb.MediaServiceV2.getSupportedExtensions();
+                    for (var i = 0; i < extensions.length; i++) {
+                        if (extensions[i].charAt(0) !== '.') {
+                            extensions[i] = '.' + extensions[i];
+                        }
+                    }
 
-            self.setPageName(self.media[pb.DAO.getIdField()] ? self.media.name : self.ls.get('NEW_MEDIA'));
-            self.ts.registerLocal('angular_objects', new pb.TemplateValue(angularObjects, false));
-            self.ts.load('admin/content/media/media_form', function(err, result) {
-                cb({content: result});
+                    cb(null, new pb.TemplateValue(extensions.join(','), false));
+                });
+                self.ts.registerLocal('angular_objects', new pb.TemplateValue(angularObjects, false));
+                self.ts.load('admin/content/media/media_form', function(err, result) {
+                    cb({content: result});
+                });
             });
         });
-        return;
+    };
+
+    MediaForm.prototype.getAngularObjects = function(data, cb) {
+        var self = this;
+        pb.AdminSubnavService.getWithSite(SUB_NAV_KEY, self.ls, data.media, {site: data.media.site}, function(err, pills) {
+            data.pills = [];
+            //Log error. Don't return
+            if (util.isError(err)){
+                pb.log.error("MediaForm: AdminSubnavService.getWithSite callback error. ERROR[%s]", err.stack);
+            }
+            //Only populate pills if we didn't fail
+            else{
+                data.pills = pills;
+            }
+
+            //TODO: err first arg for style. User experience error when no pills?
+            cb(pb.ClientJs.getAngularObjects(data));
+        });
     };
 
     MediaForm.prototype.gatherData = function(vars, cb) {
         var self = this;
-        var dao = new pb.DAO();
 
+        var media = null;
         var tasks = {
             tabs: function(callback) {
                 var tabs   =
@@ -76,36 +110,43 @@ module.exports = function(pb) {
                     active: 'active',
                     href: '#media_upload',
                     icon: 'film',
-                    title: self.ls.get('LINK_OR_UPLOAD')
+                    title: self.ls.g('media.LINK_OR_UPLOAD')
                 },
                 {
                     href: '#topics_dnd',
                     icon: 'tags',
-                    title: self.ls.get('TOPICS')
+                    title: self.ls.g('admin.TOPICS')
                 }];
                 callback(null, tabs);
             },
 
             navigation: function(callback) {
-                callback(null, pb.AdminNavigation.get(self.session, ['content', 'media'], self.ls));
+                callback(null, pb.AdminNavigation.get(self.session, ['content', 'media'], self.ls, self.site));
+            },
+
+            media: function(callback) {
+                if(!vars.id) {
+                    return callback(null, {
+                        media_topics: [],
+                        site: self.site
+                    });
+                }
+                self.service.get(vars.id, function(err, mediaEntity) {
+                    media = mediaEntity;
+                    callback(err, mediaEntity);
+                });
             },
 
             topics: function(callback) {
+                if (!media) {
+                    return callback(null, []);
+                }
                 var opts = {
                     select: pb.DAO.PROJECT_ALL,
                     where: pb.DAO.ANYWHERE,
                     order: {name: pb.DAO.ASC}
                 };
-                dao.q('topic', opts, callback);
-            },
-
-            media: function(callback) {
-                if(!vars.id) {
-                    return callback(null, {media_topics: []});
-                }
-
-                var mservice = new pb.MediaService();
-                mservice.loadById(vars.id, callback);
+                self.siteQueryService.q('topic', opts, callback);
             }
         };
         async.series(tasks, cb);
@@ -117,8 +158,8 @@ module.exports = function(pb) {
             return topics;
         }
 
-        for(i = 0; i < data.media.media_topics.length; i++) {
-            for(j = 0; j < data.topics.length; j++) {
+        for(var i = 0; i < data.media.media_topics.length; i++) {
+            for(var j = 0; j < data.topics.length; j++) {
                 if(pb.DAO.areIdsEqual(data.topics[j][pb.DAO.getIdField()], data.media.media_topics[i])) {
                     topics.push(data.topics[j]);
                     data.topics.splice(j, 1);
@@ -133,7 +174,7 @@ module.exports = function(pb) {
     MediaForm.getSubNavItems = function(key, ls, data) {
         return [{
             name: 'manage_media',
-            title: data[pb.DAO.getIdField()] ? ls.get('EDIT') + ' ' + data.name : ls.get('NEW_MEDIA'),
+            title: data[pb.DAO.getIdField()] ? ls.g('generic.EDIT') + ' ' + data.name : ls.g('media.NEW_MEDIA'),
             icon: 'chevron-left',
             href: '/admin/content/media'
         }, {

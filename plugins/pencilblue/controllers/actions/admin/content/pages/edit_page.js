@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2015  PencilBlue, LLC
+    Copyright (C) 2016  PencilBlue, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -14,6 +14,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+'use strict';
 
 module.exports = function(pb) {
 
@@ -22,12 +23,13 @@ module.exports = function(pb) {
 
     /**
      * Edits a page
+     * @deprecated Since 0.5.0
      * @cclass EditPagePostController
      * @constructor
-     * @extends FormController
+     * @extends BaseAdminController
      */
     function EditPagePostController(){}
-    util.inherits(EditPagePostController, pb.BaseController);
+    util.inherits(EditPagePostController, pb.BaseAdminController);
 
     EditPagePostController.prototype.render = function(cb) {
         var self = this;
@@ -47,12 +49,11 @@ module.exports = function(pb) {
                 return;
             }
 
-            var dao = new pb.DAO();
-            dao.loadById(post.id, 'page', function(err, page) {
+            self.siteQueryService.loadById(post.id, 'page', function(err, page) {
                 if(util.isError(err) || page === null) {
                     cb({
                         code: 400,
-                        content: pb.BaseController.apiResponse(pb.BaseController.API_FAILURE, self.ls.get('INVALID_UID'))
+                        content: pb.BaseController.apiResponse(pb.BaseController.API_FAILURE, self.ls.g('generic.INVALID_UID'))
                     });
                     return;
                 }
@@ -65,26 +66,26 @@ module.exports = function(pb) {
 
                 self.setFormFieldValues(post);
 
-                pb.RequestHandler.urlExists(page.url, post.id, function(err, exists) {
+                pb.RequestHandler.urlExists(page.url, post.id, self.site, function(err, exists) {
                     if(util.isError(err) || exists) {
                         cb({
                             code: 400,
-                            content: pb.BaseController.apiResponse(pb.BaseController.API_FAILURE, self.ls.get('EXISTING_URL'))
+                            content: pb.BaseController.apiResponse(pb.BaseController.API_FAILURE, self.ls.g('generic.INVALID_URL'))
                         });
                         return;
                     }
 
-                    dao.save(page, function(err, result) {
+                    self.siteQueryService.save(page, function(err, result) {
                         if(util.isError(err)) {
                             pb.log.error(err.stack);
                             return cb({
                                 code: 500,
-                                content: pb.BaseController.apiResponse(pb.BaseController.API_FAILURE, self.ls.get('ERROR_SAVING'), result)
+                                content: pb.BaseController.apiResponse(pb.BaseController.API_FAILURE, self.ls.g('generic.ERROR_SAVING'), result)
                             });
                         }
 
                         post.last_modified = new Date();
-                        cb({content: pb.BaseController.apiResponse(pb.BaseController.API_SUCCESS, page.headline + ' ' + self.ls.get('EDITED'), post)});
+                        cb({content: pb.BaseController.apiResponse(pb.BaseController.API_SUCCESS, page.headline + ' ' + self.ls.g('admin.EDITED'), post)});
                     });
                 });
             });

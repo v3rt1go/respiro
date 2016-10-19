@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2015  PencilBlue, LLC
+    Copyright (C) 2016  PencilBlue, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -14,20 +14,21 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+'use strict';
 
 module.exports = function(pb) {
-    
+
     //pb dependencies
     var util = pb.util;
-    
+
     /**
      * Interface for sorting objects
      * @class SortObjects
      * @constructor
-     * @extends BaseController
+     * @extends BaseAdminController
      */
     function SortObjects() {}
-    util.inherits(SortObjects, pb.BaseController);
+    util.inherits(SortObjects, pb.BaseAdminController);
 
     //statics
     var SUB_NAV_KEY = 'sort_custom_objects';
@@ -39,9 +40,9 @@ module.exports = function(pb) {
             return this.reqHandler.serve404();
         }
 
-        var service = new pb.CustomObjectService();
+        var service = new pb.CustomObjectService(self.site, false);
         service.loadTypeById(vars.type_id, function(err, objectType) {
-            if(util.isError(err) || objectType === null) {
+            if(util.isError(err)) {
                 return self.reqHandler.serveError(err);
             }
             else if (!util.isObject(objectType)) {
@@ -61,13 +62,13 @@ module.exports = function(pb) {
 
                 var angularObjects = pb.ClientJs.getAngularObjects(
                 {
-                    navigation: pb.AdminNavigation.get(self.session, ['content', 'custom_objects'], self.ls),
-                    pills: pb.AdminSubnavService.get(SUB_NAV_KEY, self.ls, null, objectType),
+                    navigation: pb.AdminNavigation.get(self.session, ['content', 'custom_objects'], self.ls, self.site),
+                    pills: self.getAdminPills(SUB_NAV_KEY, self.ls, SUB_NAV_KEY, {objectType: objectType}),
                     customObjects: customObjects,
                     objectType: objectType
                 });
 
-                self.setPageName(self.ls.get('SORT') + ' ' + objectType.name);
+                self.setPageName(self.ls.g('generic.SORT') + ' ' + objectType.name);
                 self.ts.registerLocal('angular_objects', new pb.TemplateValue(angularObjects, false));
                 self.ts.load('admin/content/objects/sort_objects', function(err, result) {
                     cb({content: result});
@@ -79,14 +80,14 @@ module.exports = function(pb) {
     SortObjects.getSubNavItems = function(key, ls, data) {
         return [{
             name: 'manage_objects',
-            title: ls.get('SORT') + ' ' + data.name + ' ' + ls.get('OBJECTS'),
+            title: ls.g('generic.SORT') + ' ' + data.objectType.name + ' ' + ls.g('custom_objects.OBJECTS'),
             icon: 'chevron-left',
-            href: '/admin/content/objects/' + data[pb.DAO.getIdField()]
+            href: '/admin/content/objects/' + data.objectType[pb.DAO.getIdField()]
         }, {
             name: 'new_object',
             title: '',
             icon: 'plus',
-            href: '/admin/content/objects/' + data[pb.DAO.getIdField()] + '/new'
+            href: '/admin/content/objects/' + data.objectType[pb.DAO.getIdField()] + '/new'
         }];
     };
 

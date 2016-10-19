@@ -1,5 +1,5 @@
 /*
-	Copyright (C) 2015  PencilBlue, LLC
+	Copyright (C) 2016  PencilBlue, LLC
 
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -19,15 +19,15 @@
 var async = require('async');
 
 module.exports = function(pb) {
-    
+
     //pb dependencies
     var util = pb.util;
-    
+
     /**
      * Interface for editing a user
      */
     function UserForm(){}
-    util.inherits(UserForm, pb.BaseController);
+    util.inherits(UserForm, pb.BaseAdminController);
 
     //statics
     var SUB_NAV_KEY = 'user_form';
@@ -46,17 +46,18 @@ module.exports = function(pb) {
             }
 
             self.user = data.user;
-            data.pills = pb.AdminSubnavService.get(SUB_NAV_KEY, self.ls, SUB_NAV_KEY, {session: self.session, user: self.user});
+            data.pills = self.getAdminPills(SUB_NAV_KEY, self.ls, SUB_NAV_KEY, {session: self.session, user: self.user});
 
-            data.adminOptions = [{name: self.ls.get('ADMINISTRATOR'), value: pb.SecurityService.ACCESS_ADMINISTRATOR}];
+            data.adminOptions = [{name: self.ls.g('generic.ADMINISTRATOR'), value: pb.SecurityService.ACCESS_ADMINISTRATOR}];
             if(!data.user[pb.DAO.getIdField()] || self.session.authentication.user_id !== data.user[pb.DAO.getIdField()].toString()) {
-                data.adminOptions = pb.users.getAdminOptions(self.session, self.localizationService);
+                var userService = new pb.UserService(self.getServiceContext());
+                data.adminOptions = userService.getAdminOptions(self.session, self.localizationService);
             }
 
             var angularObjects = pb.ClientJs.getAngularObjects(data);
 
-            self.setPageName(data.user[pb.DAO.getIdField()] ? data.user.username : self.ls.get('NEW_USER'));
-            self.ts.registerLocal('image_title', self.ls.get('USER_PHOTO'));
+            self.setPageName(data.user[pb.DAO.getIdField()] ? data.user.username : self.ls.g('users.NEW_USER'));
+            self.ts.registerLocal('image_title', self.ls.g('users.USER_PHOTO'));
             self.ts.registerLocal('angular_objects', new pb.TemplateValue(angularObjects, false));
             self.ts.load('admin/users/user_form', function(err, result) {
                 cb({content: result});
@@ -72,17 +73,17 @@ module.exports = function(pb) {
                     active: 'active',
                     href: '#account_info',
                     icon: 'cog',
-                    title: self.ls.get('ACCOUNT_INFO')
+                    title: self.ls.g('users.ACCOUNT_INFO')
                 }, {
                     href: '#personal_info',
                     icon: 'user',
-                    title: self.ls.get('PERSONAL_INFO')
+                    title: self.ls.g('users.PERSONAL_INFO')
                 }];
                 callback(null, tabs);
             },
 
             navigation: function(callback) {
-                callback(null, pb.AdminNavigation.get(self.session, ['users'], self.ls));
+                callback(null, pb.AdminNavigation.get(self.session, ['users'], self.ls, self.site));
             },
 
             user: function(callback) {
@@ -91,11 +92,14 @@ module.exports = function(pb) {
                     return;
                 }
 
-                var dao = new pb.DAO();
-                dao.loadById(vars.id, 'user', function(err, user) {
+                self.siteQueryService.loadById(vars.id, 'user', function(err, user) {
                     delete user.password;
                     callback(err, user);
                 });
+            },
+
+            locales: function(callback) {
+                callback(null, pb.Localization.getSupportedWithDisplay());
             }
         };
         async.series(tasks, cb);
@@ -104,7 +108,7 @@ module.exports = function(pb) {
     UserForm.getSubNavItems = function(key, ls, data) {
         var pills = [{
             name: 'manage_users',
-            title: data.user[pb.DAO.getIdField()] ? ls.get('EDIT') + ' ' + data.user.username : ls.get('NEW_USER'),
+            title: data.user[pb.DAO.getIdField()] ? ls.g('generic.EDIT') + ' ' + data.user.username : ls.g('users.NEW_USER'),
             icon: 'chevron-left',
             href: '/admin/users'
         }];
@@ -113,7 +117,7 @@ module.exports = function(pb) {
             if(data.session.authentication.user_id === data.user[pb.DAO.getIdField()].toString()) {
                 pills.push({
                     name: 'change_password',
-                    title: ls.get('CHANGE_PASSWORD'),
+                    title: ls.g('users.CHANGE_PASSWORD'),
                     icon: 'key',
                     href: '/admin/users/password/' + data.user[pb.DAO.getIdField()].toString()
                 });
@@ -121,7 +125,7 @@ module.exports = function(pb) {
             else if(data.session.authentication.admin_level >= pb.SecurityService.ACCESS_MANAGING_EDITOR) {
                 pills.push({
                     name: 'reset_password',
-                    title: ls.get('RESET_PASSWORD'),
+                    title: ls.g('users.RESET_PASSWORD'),
                     icon: 'key',
                     href: '/actions/admin/users/send_password_reset/' + data.user[pb.DAO.getIdField()].toString()
                 });

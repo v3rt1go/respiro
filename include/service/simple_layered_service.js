@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2015  PencilBlue, LLC
+    Copyright (C) 2016  PencilBlue, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -14,6 +14,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+'use strict';
 
 //dependencies
 var async = require('async');
@@ -55,17 +56,16 @@ module.exports = function SimpleLayeredServiceModule(pb) {
             },
             function(callback) {//do
                 if (pb.log.isSilly()) {
-                    pb.log.silly(instance.name+": Checking Service ["+instance.services[i].type+"] for Key ["+key+"]");
+                    pb.log.silly('%s: Checking Service [%s] for key [%s]', instance.name, instance.services[i].type, key);
                 }
 
                 instance.services[i].get(key, function(err, result){
                     if (util.isError(err)){
                         resultNotFound = false;
-                        callback(err);
-                        return;
+                        return callback(err);
                     }
 
-                    if (result) {
+                    if (result || (typeof result === 'boolean' && result === false)) {
                         resultNotFound = false;
                         entity         = result;
                     }

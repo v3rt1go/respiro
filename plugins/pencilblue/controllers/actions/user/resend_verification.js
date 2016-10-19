@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2015  PencilBlue, LLC
+    Copyright (C) 2016  PencilBlue, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -14,64 +14,93 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+'use strict';
 
 
 module.exports = function ResendVerificationModule(pb) {
-    
+
     //pb dependencies
     var util = pb.util;
-    
+    var UserService = pb.UserService;
+
     /**
      * Resends an account verification email
+     * @class ResendVerification
+     * @constructor
      */
     function ResendVerification(){}
     util.inherits(ResendVerification, pb.FormController);
 
-    ResendVerification.prototype.onPostParamsRetrieved = function(post, cb) {
+    /**
+     * Initializes the controller
+     * @method init
+     * @param {Object} context
+     * @param {Function} cb
+     */
+    ResendVerification.prototype.init = function(context, cb) {
         var self = this;
+        var init = function(err) {
 
-        var message = this.hasRequiredParams(post, this.getRequiredFields());
-        if(message) {
-            return self.formError(message, '/user/resend_verification', cb);
-        }
+            /**
+             * @property service
+             * @type {UserService}
+             */
+            self.service = new UserService(self.getServiceContext());
 
-        var dao = new pb.DAO();
-        dao.loadByValue('email', post.email, 'user', function(err, user) {
+            /**
+             * @property dao
+             * @type {DAO}
+             */
+            self.dao = new pb.SiteQueryService({site: self.site, onlyThisSite: true});
+
+            cb(err, true);
+        };
+        ResendVerification.super_.prototype.init.apply(this, [context, init]);
+    };
+
+    ResendVerification.prototype.render = function(cb) {
+        var self = this;
+        var post = this.body;
+
+        self.dao.loadByValue('email', post.email, 'user', function(err, user) {
             if(util.isError(err)) {
                 return cb(err);
             }
             else if (!util.isNullOrUndefined(user)) {
-                return self.formError(self.ls.get('USER_VERIFIED'), '/user/login', cb);
+                return self.formError(self.ls.g('users.USER_VERIFIED'), '/user/login', cb);
             }
 
-            dao.loadByValue('email', post.email, 'unverified_user', function(err, user) {
+            self.dao.loadByValue('email', post.email, 'unverified_user', function(err, user) {
                 if(util.isError(err)) {
                     return cb(err);
                 }
                 else if(util.isNullOrUndefined(user)) {
-                    return self.formError(self.ls.get('NOT_REGISTERED'), '/user/sign_up', cb);
+                    return self.formError(self.ls.g('users.NOT_REGISTERED'), '/user/sign_up', cb);
                 }
 
-               user.verification_code = util.uniqueId();
+                user.verification_code = util.uniqueId();
 
-               dao.save(user, function(err, result) {
+                self.dao.save(user, function(err, result) {
                     if(util.isError(result)) {
-                        self.formError(self.ls.get('ERROR_SAVING'), '/user/resend_verification', cb);
-                        return;
+                        return cb({
+                            code: 500,
+                            content: pb.BaseController.apiResponse(pb.BaseController.API_FAILURE, self.ls.g('generic.ERROR_SAVING'))
+                        });
                     }
 
-                    self.session.success = self.ls.get('VERIFICATION_SENT') + user.email;
-                    self.redirect('/user/verification_sent', cb);
-                    pb.users.sendVerificationEmail(user, util.cb);
+                    cb({
+                        content: pb.BaseController.apiResponse(pb.BaseController.API_SUCCESS, self.ls.g('users.VERIFICATION_SENT') + user.email)
+                    });
+                    self.service.sendVerificationEmail(user, util.cb);
                 });
             });
         });
     };
 
-    ResendVerification.prototype.getRequiredFields = function() {
-        return ['email'];
-    };
+  ResendVerification.prototype.getRequiredFields = function() {
+    return ['email'];
+  };
 
-    //exports
-    return ResendVerification;
+  //exports
+  return ResendVerification;
 };

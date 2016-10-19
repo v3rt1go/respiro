@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2015  PencilBlue, LLC
+    Copyright (C) 2016  PencilBlue, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -14,20 +14,21 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+'use strict';
 
 module.exports = function(pb) {
-    
+
     //pb dependencies
     var util = pb.util;
-    
+
     /**
      * Interface for managing objects
      * @class ManageObjects
      * @constructor
-     * @extends BaseController
+     * @extends BaseAdminController
      */
     function ManageObjects() {}
-    util.inherits(ManageObjects, pb.BaseController);
+    util.inherits(ManageObjects, pb.BaseAdminController);
 
     //statics
     var SUB_NAV_KEY = 'manage_custom_objects';
@@ -40,7 +41,7 @@ module.exports = function(pb) {
             return this.reqHandler.serve404();
         }
 
-        var service = new pb.CustomObjectService();
+        var service = new pb.CustomObjectService(self.site, false);
         service.loadTypeById(vars.type_id, function(err, custObjType) {
             if (util.isError(err)) {
                 return self.serveError(err);
@@ -60,23 +61,26 @@ module.exports = function(pb) {
                 }
 
 
-                var pills = pb.AdminSubnavService.get(SUB_NAV_KEY, self.ls, 'manage_objects', custObjType);
+                var data = {};
+                data.custObjType = custObjType;
+                var pills = pb.AdminSubnavService.get(SUB_NAV_KEY, self.ls, 'manage_objects', data);
                 for(var i = 0; i < pills.length; i++) {
-                    if(pills[i].name == 'manage_objects') {
+                    if(pills[i].name === 'manage_objects') {
                         pills[i].title += ' (' + customObjects.length + ')';
                         break;
                     }
                 }
+                pills = pb.AdminSubnavService.addSiteToPills(pills, self.siteName);
 
                 var angularObjects = pb.ClientJs.getAngularObjects(
                 {
-                    navigation: pb.AdminNavigation.get(self.session, ['content', 'custom_objects'], self.ls),
+                    navigation: pb.AdminNavigation.get(self.session, ['content', 'custom_objects'], self.ls, self.site),
                     pills: pills,
                     customObjects: customObjects,
                     objectType: custObjType
                 });
 
-                var title = self.ls.get('MANAGE') + ' ' + custObjType.name;
+                var title = self.ls.g('generic.MANAGE') + ' ' + custObjType.name;
                 self.setPageName(title);
                 self.ts.registerLocal('angular_objects', new pb.TemplateValue(angularObjects, false));
                 self.ts.load('admin/content/objects/manage_objects', function(err, result) {
@@ -89,19 +93,19 @@ module.exports = function(pb) {
     ManageObjects.getSubNavItems = function(key, ls, data) {
         return [{
             name: 'manage_objects',
-            title: ls.get('MANAGE') + ' ' + data.name + ' ' + ls.get('OBJECTS'),
+            title: ls.g('generic.MANAGE') + ' ' + data.custObjType.name + ' ' + ls.g('custom_objects.OBJECTS'),
             icon: 'chevron-left',
             href: '/admin/content/objects/types'
         }, {
             name: 'sort_objects',
             title: '',
             icon: 'sort-amount-desc',
-            href: '/admin/content/objects/' + data[pb.DAO.getIdField()] + '/sort'
+            href: '/admin/content/objects/' + data.custObjType[pb.DAO.getIdField()] + '/sort'
         }, {
             name: 'new_object',
             title: '',
             icon: 'plus',
-            href: '/admin/content/objects/' + data[pb.DAO.getIdField()] + '/new'
+            href: '/admin/content/objects/' + data.custObjType[pb.DAO.getIdField()] + '/new'
         }];
     };
 

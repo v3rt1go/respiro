@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2015  PencilBlue, LLC
+    Copyright (C) 2016  PencilBlue, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -14,6 +14,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+'use strict';
 
 //dependencies
 var ObjectID = require('mongodb').ObjectID;
@@ -105,7 +106,7 @@ module.exports = function DAOModule(pb) {
      * @param {String}   key        The key to search for
      * @param {*}        val        The value to search for
      * @param {String}   collection The collection to search in
-     * @param {Object}   opts Key value pair object to exclude the retrival of data
+     * @param {Object}   [opts] Key value pair object to exclude the retrieval of data
      * @param {Function} cb         Callback function
      */
     DAO.prototype.loadByValue = function(key, val, collection, opts, cb) {
@@ -120,7 +121,7 @@ module.exports = function DAOModule(pb) {
      * @method loadByValues
      * @param {Object}   where      Key value pair object
      * @param {String}   collection The collection to search in
-     * @param {Object}   opts Key value pair object to exclude the retrival of data
+     * @param {Object}   [opts] Key value pair object to exclude the retrieval of data
      * @param {Function} cb         Callback function
      */
     DAO.prototype.loadByValues = function(where, collection, opts, cb) {
@@ -138,6 +139,7 @@ module.exports = function DAOModule(pb) {
             order: opts.order || DAO.NATURAL_ORDER,
             limit: 1
         };
+
         this.q(collection, options, function(err, result){
            cb(err, util.isArray(result) && result.length > 0 ? result[0] : null);
         });
@@ -201,9 +203,8 @@ module.exports = function DAOModule(pb) {
 
         //set the exclusion
         if (exclusionId) {
-            where[DAO.getIdField()] = DAO.getNotIDField(exclusionId);
+            where[DAO.getIdField()] = DAO.getNotIdField(exclusionId);
         }
-
         //checks to see how many docs were available
         this.count(collection, where, function(err, count) {
             cb(err, count === 0);
@@ -334,10 +335,15 @@ module.exports = function DAOModule(pb) {
                 cursor.limit(options.limit);
             }
 
+            //ensure that an "id" value is provided
+            if (!options.count) {
+                cursor.map(DAO.mapSimpleIdField);
+            }
+
             //log the result
             if(pb.config.db.query_logging){
-                var query = "DAO: %s %j FROM %s.%s WHERE %j";
-                var args = [options.count ? 'COUNT' : 'SELECT', select, self.dbName, entityType, where];
+                var query = "DAO: %s %j FROM %s.%s WHERE %s";
+                var args = [options.count ? 'COUNT' : 'SELECT', select, self.dbName, entityType, util.inspect(where, {breakLength: Infinity})];
                 if (typeof orderBy !== 'undefined') {
                     query += " ORDER BY %j";
                     args.push(orderBy);
@@ -354,7 +360,7 @@ module.exports = function DAOModule(pb) {
     };
 
     /**
-     * Retrieves a refernce to the DB with active connection
+     * Retrieves a reference to the DB with active connection
      * @method getDb
      * @param {Function} cb
      */
@@ -363,8 +369,8 @@ module.exports = function DAOModule(pb) {
     };
 
     /**
-     * Inserts or replaces an existing document with the specified DB Object. 
-     * An insert is distinguished from an update based the presence of the _id 
+     * Inserts or replaces an existing document with the specified DB Object.
+     * An insert is distinguished from an update based the presence of the _id
      * field.
      * @method save
      * @param {Object} dbObj The system object to persist
@@ -387,7 +393,7 @@ module.exports = function DAOModule(pb) {
         //ensure an object_type was specified & update common fields
         dbObj.object_type = dbObj.object_type || options.object_type;
         DAO.updateChangeHistory(dbObj);
-        
+
         //log interaction
         if (pb.config.db.query_logging) {
             var msg;
@@ -408,6 +414,7 @@ module.exports = function DAOModule(pb) {
 
             //execute persistence operation
             db.collection(dbObj.object_type).save(dbObj, options, function(err/*, writeOpResult*/) {
+                DAO.mapSimpleIdField(dbObj);
                 cb(err, dbObj);
             });
         });
@@ -428,12 +435,6 @@ module.exports = function DAOModule(pb) {
     DAO.prototype.saveBatch = function(objArray, collection, options, cb) {
         if (util.isFunction(options)) {
             cb      = options;
-            options = {
-                useLegacyOps: true
-            };
-        }
-        else if (!util.isObject(options)) {
-            return cb(new Error('OPTIONS_PARAM_MUST_BE_OBJECT'));
         }
         if (!util.isArray(objArray)) {
             return cb(new Error('The objArray parameter must be an Array'));
@@ -450,15 +451,16 @@ module.exports = function DAOModule(pb) {
 
             //initialize the batch operation
             var col = db.collection(collection);
-            var batch = col.initializeUnorderedBulkOp(options);
+            var batch = col.initializeUnorderedBulkOp();
 
             //build the batch
             objArray.forEach(function(item) {
 
                 item.object_type = collection;
                 DAO.updateChangeHistory(item);
-                if (item[DAO.getIdField()]) {
-                    batch.update(item);
+                if (item._id) {
+                    batch.find(DAO.getIdWhere(item._id)).updateOne({ $set: item });
+                    delete item._id;;
                 }
                 else {
                     batch.insert(item);
@@ -474,7 +476,7 @@ module.exports = function DAOModule(pb) {
      * @param {String} collection The collection to update object(s) in
      * @param {Object} query The where clause to execute to find the existing object
      * @param {Object} updates The updates to perform
-     * @param {Object} options Any options to go along with the update
+     * @param {Object} [options] Any options to go along with the update
      * @param {Boolean} [options.upsert=false] Inserts the object is not found
      * @param {Boolean} [options.multi=false] Updates multiple records if the query
      * finds more than 1
@@ -616,7 +618,7 @@ module.exports = function DAOModule(pb) {
             db.collection(collection).ensureIndex(spec, options, cb);
         });
     };
-    
+
     /**
      * Retrieves indexes for the specified collection
      * @method indexInfo
@@ -633,11 +635,11 @@ module.exports = function DAOModule(pb) {
             if (util.isError(err)) {
                 return cb(err);
             }
-            
+
             db.indexInformation(collection, options, cb);
         });
     };
-    
+
     /**
      * Drops the specified index from the given collection
      * @method dropIndex
@@ -651,7 +653,7 @@ module.exports = function DAOModule(pb) {
             cb = options;
             options = {};
         }
-        
+
         pb.dbm.getDb(this.dbName, function(err, db) {
             if (util.isError(err)) {
                 return cb(err);
@@ -669,17 +671,8 @@ module.exports = function DAOModule(pb) {
      * exists, FALSE if not.
      */
     DAO.prototype.entityExists = function(entity, cb) {
-        var options = {
-            namesOnly: true
-        };
-
-        pb.dbm.getDb(this.dbName, function(err, db) {
-            if (util.isError(err)) {
-                return cb(err);
-            }
-            db.listCollections({name: entity}, options).toArray(function(err, results) {
-                cb(err, util.isArray(results) && results.length === 1);
-            });
+        this.listCollections({name: entity}, function(err, results) {
+            cb(err, util.isArray(results) && results.length === 1);
         });
     };
 
@@ -706,6 +699,31 @@ module.exports = function DAOModule(pb) {
                 return cb(err);
             }
             db.createCollection(entityName, options, cb);
+        });
+    };
+
+    /**
+     * Gets all collection names
+     * @method listCollections
+     * @param {Object} [filter] The filter to specify what collection(s) to search for
+     * @param {Function} cb A callback that takes two parameters. The first, an
+     * Error, if occurred. The second is the result listCollections command.
+     */
+    DAO.prototype.listCollections = function(filter, cb) {
+        var options = {
+          namesOnly: true
+        };
+
+        pb.dbm.getDb(this.dbName, function(err, db) {
+            if (util.isError(err)) {
+                return cb(err);
+            }
+            db.listCollections(filter, options).toArray(function(err, results) {
+                if (util.isError(err)) {
+                    return cb(err)
+                }
+                cb(err, results);
+            });
         });
     };
 
@@ -738,6 +756,7 @@ module.exports = function DAOModule(pb) {
     /**
      * Creates a where clause that equates to select where [idProp] is in the
      * specified array of values.
+     * @deprecated
      * @static
      * @method getIDInWhere
      * @param {Array} objArray The array of acceptable values
@@ -755,7 +774,7 @@ module.exports = function DAOModule(pb) {
      * @static
      * @method getIdInWhere
      * @param {Array} objArray The array of acceptable values
-     * @param {String} idProp The property that holds a referenced ID value
+     * @param {String} [idProp] The property that holds a referenced ID value
      * @return {Object} Where clause
      */
     DAO.getIdInWhere = function(objArray, idProp) {
@@ -904,6 +923,12 @@ module.exports = function DAOModule(pb) {
 
         //update for current changes
         dbObject.last_modified = now;
+
+        // for the mongo implementation we ensure that the ID is also standardized.  We include the _id but prefer
+        // having a standard "id" to keep consistent across all DB platforms that we might support.
+        if (dbObject._id) {
+            dbObject.id = dbObject._id;
+        }
     };
 
     /**
@@ -947,6 +972,20 @@ module.exports = function DAOModule(pb) {
      */
     DAO.areIdsEqual = function(id1, id2) {
         return id1.toString() === id2.toString();
+    };
+
+    /**
+     * Used to help transition over to eliminating the MongoDB _id field.
+     * @static
+     * @method mapSimpleIdField
+     * @param doc
+     * @return {object}
+     */
+    DAO.mapSimpleIdField = function(doc) {
+        if (typeof doc.id === 'undefined') {
+            doc.id = doc._id;
+        }
+        return doc;
     };
 
     //exports

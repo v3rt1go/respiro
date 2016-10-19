@@ -18,15 +18,16 @@
 //dependencies
 var util = require('../include/util.js');
 
-module.exports = function FormControllerModule(pb) {
-    
+module.exports = function(pb) {
+
     /**
      * Provides the basic functionality for implementing a controller that
      * needs access to a posted form.
      * @class FormController
+     * @extends BaseController
      * @constructor
      */
-    function FormController(){};
+    function FormController(){}
     util.inherits(FormController, pb.BaseController);
 
     /**
@@ -76,7 +77,7 @@ module.exports = function FormControllerModule(pb) {
      * @param {Boolean} val
      */
     FormController.prototype.setAutoSanitize = function(val) {
-        this.autoSanitize = val ? true : false;
+        this.autoSanitize = !!val;
     };
 
     /**
@@ -102,6 +103,6 @@ module.exports = function FormControllerModule(pb) {
     FormController.prototype.onPostParamsRetrieved = function(params, cb) {
         cb({content: JSON.stringify(params), content_type:'application/json'});
     };
-    
+
     return FormController;
 };

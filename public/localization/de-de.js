@@ -13,9 +13,10 @@
  *                         at end of file as well as some translations that I, at second view
  *                         disliked;-).
  */
-var loc = {
-    generic:{
-        PENCILBLUE: 'pencilblue',
+module.exports = {
+    generic: {
+        LOCALE_DISPLAY: 'Deutsch (Deutschland)',
+        PENCILBLUE: 'PencilBlue',
         ALL_RIGHTS: 'All rights reserved',
         NONE: 'keine',
         LEFT: 'linksbündig',
@@ -91,11 +92,11 @@ var loc = {
 		AVAILABLE_PLUGIN_DESCRIPTION: 'Plugins, die zum Download bereitstehen und installiert werden können.',
 		PLEASE_WAIT: 'Bitte warten',
 		VALID_ACTION_REQUIRED: 'Es ist eine gültige Aktion erforderlich.',
-		VALID_IDENTIFIER_REQUIRED: 'Eine gültige ID muss vergeben werden.',
+		VALID_IDENTIFIER_REQUIRED: 'Es muss eine gültige ID vergeben werden.',
 		INSTALL_FAILED: 'Der Versuch, das Plugin [%s] zu installieren, schlug fehl.',
 		INSTALL_SUCCESS: 'Das Plugin [%s] wurde erfolgreich installiert.',
 		UNINSTALL_FAILED: 'Das Plugin [%s] konnte nicht installiert werden.',
-		UNINSTALL_SUCCESS: 'Das Plugin [%s] wurde erfolgreich de-installiert.',
+		UNINSTALL_SUCCESS: 'Das Plugin [%s] wurde erfolgreich deinstalliert.',
 		PLUGIN_NOT_FOUND: 'Das Plugin [%s] konnte nicht gefunden werden.',
 		RESET_SETTINGS_FAILED: 'Der Versuch, die Einstellungen für das Plugin [%s] zurückzusetzen, schlug fehl.',
 		RESET_SETTINGS_SUCCESS: 'Die Einstellungen für das Plugin [%s] wurden erfolgreich zurückgesetzt.',
@@ -177,13 +178,11 @@ var loc = {
         WYSIWYG: 'WYSIWYG',
         THUMBNAIL: 'Thumbnail'
     },
-    error:
-    {
+    error: {
     	ERROR: 'Fehler',
         PAGE_NOT_FOUND: 'Die Seite wurde nicht gefunden.'
     },
-    timestamp:
-    {
+    timestamp: {
         JAN: 'Januar',
         FEB: 'Februar',
         MAR: 'März',
@@ -199,27 +198,25 @@ var loc = {
         TIME_AM: 'AM',
         TIME_PM: 'PM'
     },
-    setup:
-    {
-        REGISTER_ADMIN: 'Bitte das erste admin Konto für die Site anlegen.'
+    setup: {
+        REGISTER_ADMIN: 'Bitte das erste Admin-Konto für die Seite anlegen.'
     },
-    login:
-    {
+    login: {
         ADMIN_LOGIN: 'Autoren, Redakteure und Administratoren Anmeldung.',
         USERNAME_OR_EMAIL: 'Benutzername oder E-Mail Adresse.',
         INVALID_LOGIN: 'Diese Kombination von Benutzername und Passwort ist ungültig.',
-        READY_TO_USE: 'Ihre pencilblue Installation kann nun benutzt werden.',
-        ACCOUNT_CREATED: 'Ihr Konto wurde erfolgreich angelegt; Sie können sich nun anmelden.'
+        READY_TO_USE: 'Ihre PencilBlue Installation kann nun benutzt werden.',
+        ACCOUNT_CREATED: 'Ihr Konto wurde erfolgreich angelegt; Sie können sich nun anmelden.',
+        FORGOT_PASSWORD: 'Ich habe mein Passwort vergessen'
     },
-    admin:
-    {
+    admin: {
         DASHBOARD: 'Dashboard',
         CONTENT: 'Inhalte',
         PAGES: 'Seiten',
         ARTICLES: 'Beiträge',
         TOPICS: 'Kategorien',
         MEDIA: 'Medien',
-        CUSTOM_OBJECTS: 'Benutzer-definierte Objekte',
+        CUSTOM_OBJECTS: 'Benutzerdefinierte Objekte',
         PLUGINS: 'Plugins',
         THEMES: 'Themen',
         LAYOUT: 'Layout',
@@ -233,19 +230,19 @@ var loc = {
         SITE_LOGO: 'Webseiten Logo',
         AUTHOR: 'Autor',
         ACCOUNT: 'Konto',
-        CUSTOM_VARIABLES: 'Benutzer-definierte Variablen',
+        CUSTOM_VARIABLES: 'Benutzerdefinierte Variablen',
         CUSTOM_VARIABLE_KEY: 'Eindeutiger Variablenname',
         CUSTOM_VARIABLE_VALUE: 'Der Wert der Variablen',
         ACTIVE_TOPICS: 'Assoziierte Kategorien hierhin ziehen',
         INACTIVE_TOPICS: 'Assoziation einer Kategorie aufheben',
         FOCUS_KEYWORD: 'Fokus Schlüsselwort',
-        FOCUS_KEYWORD_PLACEHOLDER: 'The&nbsp;top&nbsp;keyword&nbsp;associated&nbsp;with&nbsp;the&nbsp;content',
+        FOCUS_KEYWORD_PLACEHOLDER: 'Das Hauptschlüsselwort für den Inhalt',
         SEO_TITLE: 'SEO Titel',
-        SEO_TITLE_PLACEHOLDER: 'Begrenzt$nbsp;auf&nbsp;70&nbsp;Zeichen.',
+        SEO_TITLE_PLACEHOLDER: 'Begrenzt auf 70 Zeichen.',
         META_DESC: 'Metabeschreibung',
-        META_DESC_PLACEHOLDER: 'Begrenzt$nbsp;auf&nbsp;156&nbsp;Zeichen.',
+        META_DESC_PLACEHOLDER: 'Begrenzt auf 156 Zeichen.',
         META_KEYWORDS: 'Meta Schlüsselwörter',
-        META_KEYWORDS_PLACEHOLDER: 'Komma-separierte&nbsp;Schlüsselworte.',
+        META_KEYWORDS_PLACEHOLDER: 'Kommasepariert Schlüsselworte.',
         CREATED: 'wurde erstellt',
         ADDED: 'wurde hinzugefügt',
         EDITED: 'wurde bearbeitet',
@@ -253,10 +250,11 @@ var loc = {
         SAVED: 'wurde gespeichert',
         NARROW_RESULTS: 'Resultate eingrenzen',
         URL_KEY: 'URL-Schlüssel',
-        FEED_UNAVAILABLE: 'Kann den Nachrichten-Feed nicht laden.'
+        FEED_UNAVAILABLE: 'Kann den Nachrichten-Feed nicht laden.',
+        REQUESTS_TOTAL: 'Total Anfragen',
+        REQUESTS_CURRENT: 'aktuelle Anfragen'
     },
-    topics:
-    {
+    topics: {
         MANAGE_TOPICS: 'Kategorien verwalten',
         NEW_TOPIC: 'Neue Kategorie',
         TOPIC_NAME: 'Name der Kategorie',
@@ -266,15 +264,14 @@ var loc = {
         IMPORT_TOPICS_HELP: 'Hier kann man eine CSV-Datei mit Kategorien nach PencilBlue importieren. Die Datei sollte sonst keine Informationen enthalten.',
         TOPICS_CSV_FILE: 'CSV-Datei mit Kategorien'
     },
-    media:
-    {
+    media: {
         MANAGE_MEDIA: 'Medien verwalten',
         NEW_MEDIA: 'Neues Medium',
         LINK_OR_UPLOAD: 'Linken oder hochladen',
         LINK_TO_MEDIA: 'Link zum Medium',
         UPLOAD_MEDIA: 'Medium hochladen',
         MEDIA_URL: 'Medien URL',
-        MEDIA_URL_PLACEHOLDER: 'image, YouTube, Vimeo, oder Dailymotion Link',
+        MEDIA_URL_PLACEHOLDER: 'Bild, YouTube, Vimeo, oder Dailymotion Link',
         LOAD_LINK: 'Link laden',
         UPLOAD: 'UPLOAD',
         MEDIA_NAME: 'Medienname',
@@ -287,25 +284,23 @@ var loc = {
         UPLOAD_IMAGE: 'Bild hochladen',
         IMAGE_URL: 'URL des Bildes',
         IMAGE_URL_PLACEHOLDER: '.jpg, .png, .gif, or .svg',
-        FILE_TOO_BIG: 'Die Datei größer ist als die zulässige Grenze ist'
+        FILE_TOO_BIG: 'Die Datei überschreitet die maximale Dateigröße'
     },
-    pages:
-    {
+    pages: {
         MANAGE_PAGES: 'Seiten verwalten',
         NEW_PAGE: 'Neue Seite',
         PAGE_URL: 'URL der Seite',
-        CUSTOM_URL: 'Benutzer-definierte URL',
+        CUSTOM_URL: 'Benutzerdefinierte URL',
         TEMPLATE: 'Vorlage',
         HEADLINE: 'Titel',
         SUBHEADING: 'Untertitel',
         PUBLISH_DATE: 'Datum der Veröffentlichung'
     },
-    articles:
-    {
+    articles: {
         MANAGE_ARTICLES: 'Beiträge verwalten',
         NEW_ARTICLE: 'Neuer Beitrag',
         ARTICLE_URL: 'URL des Beitrags',
-        CUSTOM_URL: 'Benutzer-definierte URL',
+        CUSTOM_URL: 'Benutzerdefinierte URL',
         STANDALONE_TEMPLATE: 'Eigenständige Vorlage',
         HEADLINE: 'Titel',
         SUBHEADING: 'Untertitel',
@@ -315,11 +310,12 @@ var loc = {
         PUBLISHED: 'Veröffentlicht',
         UNPUBLISHED: 'Unveröffentlicht',
         DRAFT: 'Entwurf',
-        INSERT_READ_MORE: 'Legen Sie eine Pause mehr lesen'
+        INSERT_READ_MORE: 'Fügen Sie einen "Mehr Lesen"-Umbruch ein'
     },
     wysiwyg: {
         NORMAL_TEXT: 'Normaler Text',
         QUOTE: 'Zitat',
+        PRE: 'Pre',
         HEADING_1: 'Überschrift 1',
         HEADING_2: 'Überschrift 2',
         HEADING_3: 'Überschrift 3',
@@ -353,8 +349,7 @@ var loc = {
         MARKDOWN_VIEW: 'Markdown-Ansicht',
         TOGGLE_FULLSCREEN: 'Gesamten Bildschirm nutzen'
     },
-    comments:
-    {
+    comments: {
         MANAGE_COMMENTS: 'Kommentare verwalten',
 
         /*
@@ -365,14 +360,13 @@ var loc = {
         */
         CONFIRM_DELETE_COMMENT: 'Sind Sie sicher, das Sie den Kommentar von [%USERNAME] löschen möchten?',
         COMMENTS_DISABLED: 'Die Kommentarfunktion ist nicht aktiviert.',
-        ENABLE_HERE: 'Aktivieren Sie sie hier'
+        ENABLE_HERE: 'Aktivieren Sie diese hier'
     },
-    custom_objects:
-    {
-        MANAGE_OBJECT_TYPES: 'Benutzer-definierte Objekttypen verwalten',
-        NEW_OBJECT_TYPE: 'Neuer Benutzer-definierter Objekttyp',
-        MANAGE_OBJECTS: 'Benutzer-definierte Objekte verwalten',
-        NEW_OBJECT: 'Neues Benutzer-definiertes Objekt',
+    custom_objects: {
+        MANAGE_OBJECT_TYPES: 'Benutzerdefinierte Objekttypen verwalten',
+        NEW_OBJECT_TYPE: 'Neuer Benutzerdefinierter Objekttyp',
+        MANAGE_OBJECTS: 'Benutzerdefinierte Objekte verwalten',
+        NEW_OBJECT: 'Neues Benutzerdefiniertes Objekt',
         SORT_SAVED: 'Sortierung wurde gespeichert',
         FIELDS: 'Felder',
         ADD_FIELD: 'Feld hinzufügen',
@@ -385,16 +379,15 @@ var loc = {
         OBJECT_TYPE: 'Objekttyp',
         FIELD_TYPES: 'Feldtypen',
         ACTIVE_OBJECTS: 'Ziehen Sie Objekte, die mit diesem Beitrag verbunden sind, hier hin.',
-        INACTIVE_OBJECTS: 'Entfernen Sie verbundene Objekte, indem Sie sie hierhin ziehen.',
+        INACTIVE_OBJECTS: 'Entfernen Sie verbundene Objekte, indem Sie diese hierhin ziehen.',
         OBJECTS: 'Objekte',
         OBJECT: 'Objekt',
         DESCRIPTION: 'Beschreibung',
         INVALID_FIELD: 'Es wurde versucht, ein ungültiges Feld hinzuzufügen. Stellen Sie sicher, dass der Feldname eindeutig ist und keine unselektierten Feldtypen vorhanden sind.'
     },
-    users:
-    {
+    users: {
         MANAGE_USERS: 'Benutzer verwalten',
-        UNVERIFIED_USERS: 'Nicht-verifizierte Benutzer',
+        UNVERIFIED_USERS: 'Unverifizierte Benutzer',
         NEW_USER: 'Neuer Benutzer',
         ACCOUNT_INFO: 'Kontoinformationen',
         PERSONAL_INFO: 'Persönliche Angaben',
@@ -412,7 +405,7 @@ var loc = {
         GENERATE: 'Generieren',
         USER_TYPE: 'Benutzertyp',
         CREATE_USER: 'Benutzer anlegen',
-        USER_DELETE_SELF: 'Benutzer können ihr eigenes Konto nicht löschen.',
+        USER_DELETE_SELF: 'Benutzer können nicht ihr eigenes Konto löschen.',
         PASSWORD_MISMATCH: 'Passwörter stimmen nicht überein.',
         EXISTING_USERNAME: 'Dieser Benutzername ist schon registriert.',
         EXISTING_EMAIL: 'Diese E-Mail Adresse ist schon registriert.',
@@ -430,26 +423,26 @@ var loc = {
         VERIFICATION_SENT: 'Es wurde eine Bestätigungs-E-Mail an [%USERNAME_OR_EMAIL] versandt.',
         YOUR_VERIFICATION: 'Es wurde eine Bestätigungs-E-Mail an [%EMAIL] versandt.',
         YOUR_PASSWORD_RESET: 'Eine E-Mail zum Zurücksetzen Ihres Passworts wurde versandt.',
-        CHECK_INBOX: 'Bitte sehen Sie in Ihrer "Inbox" nach und klicken Sie den Link in der E-Mail.',
-        RESEND_VERIFICATION: 'Bestätigungs E-Mail erneut senden.',
+        CHECK_INBOX: 'Bitte sehen Sie in Ihrem "Posteingang" nach und öffnen Sie den Link in der E-Mail.',
+        RESEND_VERIFICATION: 'Bestätigungs-E-Mail erneut senden.',
         USER_VERIFIED: 'Diese E-Mail Adresse würde schon bestätigt.',
-        NOT_REGISTERED: 'Dieser Benutzername, bzw. diese E-Mail Adresse sind nicht registriert.',
+        NOT_REGISTERED: 'Dieser Benutzername, bzw. diese E-Mail Adresse ist nicht registriert.',
         INVALID_VERIFICATION: 'Die Bestätigungsangaben sind ungültig. Bitte geben Sie Ihre E-Mail Adresse erneut ein.',
         EMAIL_VERIFIED: 'Danke für die Bestätigung Ihrer E-Mail Adresse. Sie können sich nun anmelden.',
         MANAGE_ACCOUNT: 'Benutzerkonto verwalten',
         PROFILE: 'Profile',
-        PROFILE_EDITED: 'Ihr Profile wurde erfolgreich bearbeitet.',
+        PROFILE_EDITED: 'Ihr Profile wurde erfolgreich aktualisiert.',
         OLD_PASSWORD: 'Bisheriges Passwort',
         NEW_PASSWORD: 'Neues Passwort',
         INVALID_PASSWORD: 'Bisheriges Passwort ist ungültig.',
         PASSWORD_CHANGED: 'Ihr Passwort wurde erfolgreich geändert.',
-        NO_PERMISSIONS: 'Keines Ihrer installierten Plugins haben Berechtigungen konfiguriert.',
-        CONFIRM_VERIFY: 'Sind Sie sicher, dass Siebestätigen wollen?',
+        NO_PERMISSIONS: 'Keine Ihrer installierten Plugins haben Berechtigungen konfiguriert.',
+        CONFIRM_VERIFY: 'Sind Sie sicher, dass Sie bestätigen wollen?',
         VERIFY: 'Bestätigen',
-        VERIFIED: 'wurde bestätigt'
+        VERIFIED: 'wurde bestätigt',
+        LOCALE_PREFERENCE: 'Bevorzugte Sprache'
     },
-    plugins:
-    {
+    plugins: {
         MANAGE_PLUGINS: 'Plugins verwalten',
         NO_ACTIVE_PLUGINS: 'Keine aktivierten Plugins',
         NO_INACTIVE_PLUGINS: 'Keine deaktivierten Plugins',
@@ -461,16 +454,15 @@ var loc = {
         ACTIVATING: 'Aktiviert',
         ACTION_ERROR: 'Beim Abschließen der Aktion ist ein Fehler aufgetreten.'
     },
-    themes:
-    {
+    themes: {
         MANAGE_THEMES: 'Themen verwalten'
     },
-    site_settings:
-    {
+    site_settings: {
         CONFIGURATION: 'Konfiguration',
         EDIT_CONFIGURATION: 'Um die Konfiguration zu bearbeiten, müssen die die Datei "config.json" im Root-Verzeichnis anlegen.',
-        SITE_NAME: 'Name der Site',
-        SITE_ROOT: 'Root-Verzeichnis der Site',
+        MEDIA_ROOT: 'Root-Verzeichnis der Medientyp',
+        SITE_NAME: 'Name der Seite',
+        SITE_ROOT: 'Root-Verzeichnis der Seite',
         DOCUMENT_ROOT: 'Basisverzeichnis für Dokumente',
         IP_ADDRESS: 'IP Adresse',
         PORT: 'Port',
@@ -480,9 +472,9 @@ var loc = {
         CONTENT_SETTINGS: 'Einstellungen für Inhalte',
         LIBRARIES: 'Bibliotheken',
         LIBRARY_SETTINGS: 'Einstellungen für Bibliotheken',
-        LIBRARY_CLUSTER: 'Falls Sie PencilBlue auf einem Server Cluster betreiben, ist ein Re-Start notwendig, um alle Änderungen zu übernehmen.',
+        LIBRARY_CLUSTER: 'Falls Sie PencilBlue auf einem Server Cluster betreiben, ist ein Neustart notwendig, um alle Änderungen zu übernehmen.',
         ARTICLES_PER_PAGE: 'Beiträge pro Seite',
-        AUTO_BREAK_ARTICLES: 'Artikel nach # Paragrafen automatisch umbrechen.',
+        AUTO_BREAK_ARTICLES: 'Artikel nach # Paragraphen automatisch umbrechen.',
         READ_MORE_TEXT: 'Lesen Sie mehr',
         DONT_BREAK: 'Nicht umbrechen',
         TIMESTAMP: 'Zeitstempel',
@@ -507,7 +499,7 @@ var loc = {
         VERIFICATION_SUBJECT: 'Betreff der Besätigung',
         VERIFICATION_CONTENT: 'Inhalt der Bestätigung',
         SERVICE: 'Dienst',
-        CUSTOM: 'Benutzer-definiert',
+        CUSTOM: 'Benutzerdefiniert',
         HOST: 'Host',
         SECURE_CONNECTION: 'Sichere Verbindung (SSL)',
         EMAIL_SETTINGS: 'E-Mail-Einstellungen',
@@ -519,13 +511,3 @@ var loc = {
         TEST_EMAIL_SUCCESS: 'Test-E-Mail wurde erfolgreich versandt.'
     }
 };
-
-//Allows for both server and client use
-if(global !== 'undefined') {
- global.loc = loc;
- global.localizationLanguage = 'en-us';
-}
-
-if(module !== 'undefined') {
- module.exports = loc;
-}

@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2015  PencilBlue, LLC
+    Copyright (C) 2016  PencilBlue, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -14,6 +14,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+'use strict';
 
 module.exports = function(pb) {
 
@@ -22,9 +23,10 @@ module.exports = function(pb) {
 
     /**
      * Creates a new article
+     * @deprecated Since 0.5.0
      */
     function NewArticlePostController(){}
-    util.inherits(NewArticlePostController, pb.BaseController);
+    util.inherits(NewArticlePostController, pb.BaseAdminController);
 
     NewArticlePostController.prototype.render = function(cb) {
         var self = this;
@@ -47,25 +49,24 @@ module.exports = function(pb) {
 
             post = pb.DocumentCreator.formatIntegerItems(post, ['draft']);
             var articleDocument = pb.DocumentCreator.create('article', post, ['meta_keywords']);
-            pb.RequestHandler.isSystemSafeURL(articleDocument.url, null, function(err, isSafe) {
+            pb.RequestHandler.isSystemSafeURL(articleDocument.url, null, self.site, function(err, isSafe) {
                 if(util.isError(err) || !isSafe)  {
                     cb({
                         code: 400,
-                        content: pb.BaseController.apiResponse(pb.BaseController.API_FAILURE, self.ls.get('EXISTING_URL'))
+                        content: pb.BaseController.apiResponse(pb.BaseController.API_FAILURE, self.ls.g('generic.INVALID_URL'))
                     });
                     return;
                 }
 
-                var dao = new pb.DAO();
-                dao.save(articleDocument, function(err, result) {
+                self.siteQueryService.save(articleDocument, function(err, result) {
                     if(util.isError(err))  {
                         return cb({
                             code: 500,
-                            content: pb.BaseController.apiResponse(pb.BaseController.API_FAILURE, self.ls.get('ERROR_SAVING'))
+                            content: pb.BaseController.apiResponse(pb.BaseController.API_FAILURE, self.ls.g('generic.ERROR_SAVING'))
                         });
                     }
 
-                    cb({content: pb.BaseController.apiResponse(pb.BaseController.API_SUCCESS, articleDocument.headline + ' ' + self.ls.get('CREATED'), result)});
+                    cb({content: pb.BaseController.apiResponse(pb.BaseController.API_SUCCESS, articleDocument.headline + ' ' + self.ls.g('admin.CREATED'), result)});
                 });
             });
         });

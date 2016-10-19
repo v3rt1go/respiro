@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2015  PencilBlue, LLC
+    Copyright (C) 2016  PencilBlue, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -14,61 +14,61 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+'use strict';
 
 module.exports = function(pb) {
-    
+
     //pb dependencies
-    var util = pb.util;
-    
+    var util        = pb.util;
+    var UserService = pb.UserService;
+
     /**
      * Creates a new user
      */
     function NewUser(){}
-    util.inherits(NewUser, pb.BaseController);
+    util.inherits(NewUser, pb.BaseApiController);
 
+    /**
+     * Initializes the controller
+     * @method initSync
+     * @param {Object} context
+     */
+    NewUser.prototype.initSync = function(context) {
+
+        /**
+         *
+         * @property service
+         * @type {UserService}
+         */
+        this.service = new UserService(this.getServiceContext());
+    };
+
+    /**
+     *
+     * @method render
+     * @param {Function} cb
+     */
     NewUser.prototype.render = function(cb) {
         var self = this;
+        var post = this.body || {};
 
-        this.getJSONPostParams(function(err, post) {
-            var message = self.hasRequiredParams(post, self.getRequiredFields());
-            if(message) {
-                cb({
-                    code: 400,
-                    content: pb.BaseController.apiResponse(pb.BaseController.API_ERROR, message)
-                });
-                return;
+        if(!pb.security.isAuthorized(self.session, {admin_level: post.admin})) {
+            return cb({
+                code: 400,
+                content: pb.BaseController.apiResponse(pb.BaseController.API_FAILURE, self.ls.g('generic.INSUFFICIENT_CREDENTIALS'))
+            });
+        }
+
+        self.service.save(post, function(err, obj) {
+            if (util.isError(err)) {
+                return cb(err);
             }
 
-            if(!pb.security.isAuthorized(self.session, {admin_level: post.admin})) {
-                cb({
-                    code: 400,
-                    content: pb.BaseController.apiResponse(pb.BaseController.API_ERROR, self.ls.get('INSUFFICIENT_CREDENTIALS'))
-                });
-                return;
-            }
-
-            var user = pb.DocumentCreator.create('user', post);
-            pb.users.isUserNameOrEmailTaken(user.username, user.email, post.id, function(err, isTaken) {
-                if(util.isError(err) || isTaken) {
-                    cb({
-                        code: 400,
-                        content: pb.BaseController.apiResponse(pb.BaseController.API_ERROR, self.ls.get('EXISTING_USERNAME'))
-                    });
-                    return;
-                }
-
-                var dao = new pb.DAO();
-                dao.save(user, function(err, result) {
-                    if(util.isError(err)) {
-                        cb({
-                            code: 500,
-                            content: pb.BaseController.apiResponse(pb.BaseController.API_ERROR, self.ls.get('ERROR_SAVING'))
-                        });
-                        return;
-                    }
-
-                    cb({content: pb.BaseController.apiResponse(pb.BaseController.API_SUCCESS, self.ls.get('USER_CREATED'), result)});
-                });
+            cb({
+                content: {
+                    data: obj
+                },
+                code: 201
             });
         });
     };

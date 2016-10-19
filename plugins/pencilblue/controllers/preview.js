@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2015  PencilBlue, LLC
+    Copyright (C) 2016  PencilBlue, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -14,9 +14,10 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+'use strict';
 
 module.exports = function PreviewModule(pb) {
-    
+
     //pb dependencies
     var util  = pb.util;
     var Index = require('./index.js')(pb);
@@ -43,12 +44,12 @@ module.exports = function PreviewModule(pb) {
             switch(vars.type) {
                 case 'page':
                     self.req.pencilblue_page = item[pb.DAO.getIdField()].toString();
-                    this.page = item;
+                    self.page = item;
                     break;
                 case 'article':
                 default:
                     self.req.pencilblue_article = item[pb.DAO.getIdField()].toString();
-                    this.article = item;
+                    self.article = item;
                     break;
             }
             Preview.super_.prototype.render.apply(self, [cb]);

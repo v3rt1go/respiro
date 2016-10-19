@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2015  PencilBlue, LLC
+    Copyright (C) 2016  PencilBlue, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -14,18 +14,19 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+'use strict';
 
 module.exports = function(pb) {
-    
+
     //pb dependencies
     var util           = pb.util;
     var SectionService = pb.SectionService;
-    
+
     /**
      * Interface for editing the navigation
      */
     function NavigationMap(){}
-    util.inherits(NavigationMap, pb.BaseController);
+    util.inherits(NavigationMap, pb.BaseAdminController);
 
     //statics
     var SUB_NAV_KEY = 'navigation_map';
@@ -36,8 +37,7 @@ module.exports = function(pb) {
         var opts = {
             where: pb.DAO.ANYWHERE
         };
-        var dao  = new pb.DAO();
-        dao.q('section', opts, function(err, sections) {
+        self.siteQueryService.q('section', opts, function (err, sections) {
             if (util.isError(err)) {
                 return self.reqHandler.serveError(err);
             }
@@ -47,7 +47,7 @@ module.exports = function(pb) {
                 return self.redirect('/admin/content/navigation/new', cb);
             }
 
-            pb.settings.get('section_map', function(err, sectionMap) {
+            self.settings.get('section_map', function (err, sectionMap) {
                 if(sectionMap === null) {
                     self.redirect('/admin/content/navigation/new', cb);
                     return;
@@ -55,8 +55,8 @@ module.exports = function(pb) {
 
                 var angularObjects = pb.ClientJs.getAngularObjects(
                     {
-                        navigation: pb.AdminNavigation.get(self.session, ['content', 'sections'], self.ls),
-                        pills: pb.AdminSubnavService.get(SUB_NAV_KEY, self.ls, SUB_NAV_KEY),
+                        navigation: pb.AdminNavigation.get(self.session, ['content', 'sections'], self.ls, self.site),
+                        pills: self.getAdminPills(SUB_NAV_KEY, self.ls, SUB_NAV_KEY),
                         navItems: NavigationMap.getOrderedItems(sections, sectionMap),
                         icons: {
                             container: 'inbox',
@@ -68,7 +68,7 @@ module.exports = function(pb) {
                     }
                 );
 
-                self.setPageName(self.ls.get('NAV_MAP'));
+                self.setPageName(self.ls.g('generic.NAV_MAP'));
                 self.ts.registerLocal('angular_objects', new pb.TemplateValue(angularObjects, false));
                 self.ts.load('admin/content/navigation/nav_map', function(err, data) {
                     var result = '' + data;
@@ -122,7 +122,7 @@ module.exports = function(pb) {
         pills.unshift(
         {
             name: SUB_NAV_KEY,
-            title: ls.get('NAV_MAP'),
+            title: ls.g('generic.NAV_MAP'),
             icon: 'refresh',
             href: '/admin/content/navigation'
         });

@@ -1,5 +1,5 @@
 /*
-	Copyright (C) 2015  PencilBlue, LLC
+	Copyright (C) 2016  PencilBlue, LLC
 
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -14,17 +14,18 @@
 	You should have received a copy of the GNU General Public License
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+'use strict';
 
 module.exports = function(pb) {
-    
+
     //pb dependencies
     var util = pb.util;
-    
+
     /**
      * Interface for the site's libraries settings
      */
     function Libraries(){}
-    util.inherits(Libraries, pb.BaseController);
+    util.inherits(Libraries, pb.BaseAdminController);
 
     //statics
     var SUB_NAV_KEY = 'libraries_settings';
@@ -50,15 +51,15 @@ module.exports = function(pb) {
         var librariesService = new pb.LibrariesService();
         librariesService.getSettings(function(err, librarySettings) {
             var angularObjects = pb.ClientJs.getAngularObjects({
-                navigation: pb.AdminNavigation.get(self.session, ['settings', 'site_settings'], self.ls),
-                pills: pb.AdminSubnavService.get(SUB_NAV_KEY, self.ls, 'libraries'),
+                navigation: pb.AdminNavigation.get(self.session, ['settings', 'site_settings'], self.ls, self.site),
+                pills: self.getAdminPills(SUB_NAV_KEY, self.ls, 'libraries'),
                 tabs: tabs,
                 librarySettings: librarySettings,
                 cdnDefaults: pb.LibrariesService.getCDNDefaults(),
                 bowerDefaults: pb.LibrariesService.getBowerDefaults()
             });
 
-            self.setPageName(self.ls.get('LIBRARIES'));
+            self.setPageName(self.ls.g('site_settings.LIBRARIES'));
             self.ts.registerLocal('angular_objects', new pb.TemplateValue(angularObjects, false));
             self.ts.load('admin/site_settings/libraries', function(err, result) {
                 cb({content: result});
@@ -70,17 +71,17 @@ module.exports = function(pb) {
     Libraries.getSubNavItems = function(key, ls, data) {
         return [{
             name: 'configuration',
-            title: ls.get('LIBRARIES'),
+            title: ls.g('site_settings.LIBRARIES'),
             icon: 'chevron-left',
             href: '/admin/site_settings'
         }, {
             name: 'content',
-            title: ls.get('CONTENT'),
+            title: ls.g('generic.CONTENT'),
             icon: 'quote-right',
             href: '/admin/site_settings/content'
         }, {
             name: 'email',
-            title: ls.get('EMAIL'),
+            title: ls.g('generic.EMAIL'),
             icon: 'envelope',
             href: '/admin/site_settings/email'
         }];

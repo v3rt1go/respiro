@@ -1,5 +1,5 @@
 /*
-	Copyright (C) 2015  PencilBlue, LLC
+	Copyright (C) 2016  PencilBlue, LLC
 
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -16,11 +16,11 @@
 */
 
 module.exports = function(pb) {
-    
+
     //pb dependencies
     var util                         = pb.util;
     var PluginSettingsFormController = require('../plugins/plugin_settings.js')(pb);
-    
+
     /**
      * Interface for changing a theme's settings
      * @class ThemeSettings
@@ -28,13 +28,12 @@ module.exports = function(pb) {
      * @extends PluginSettingsFormController
      */
     function ThemeSettings() {
-        
+
         /**
          *
          * @property pluginService
          * @type {PluginService}
          */
-        this.pluginService = new pb.PluginService();
     }
     util.inherits(ThemeSettings, PluginSettingsFormController);
 
@@ -45,7 +44,7 @@ module.exports = function(pb) {
      * @param {Function} cb
      */
     ThemeSettings.prototype.getSettings = function(uid, cb) {
-        this.pluginService.getThemeSettings(uid, cb);
+        this.pluginService.getThemeSettingsBySite(uid, cb);
     };
 
     /**
@@ -58,7 +57,7 @@ module.exports = function(pb) {
     ThemeSettings.prototype.setSettings = function(settings, uid, cb) {
         this.pluginService.setThemeSettings(settings, uid, cb);
     };
-    
+
     /**
      *
      * @method getType

@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2015  PencilBlue, LLC
+    Copyright (C) 2016  PencilBlue, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -14,9 +14,10 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+'use strict';
 
 module.exports = function LoginActionControllerModule(pb) {
-    
+
     //dependencies
     var util               = pb.util;
     var FormController     = pb.FormController;
@@ -32,7 +33,7 @@ module.exports = function LoginActionControllerModule(pb) {
     util.inherits(LoginActionController, FormController);
 
     /**
-     * 
+     *
      * @method onPostParamsRetrieved
      * @param {Object} post
      * @param {Function} cb
@@ -43,6 +44,7 @@ module.exports = function LoginActionControllerModule(pb) {
 
         var options = post;
         options.access_level = adminAttempt ? pb.SecurityService.ACCESS_WRITER : pb.SecurityService.ACCESS_USER;
+        options.site = self.site;
         pb.security.authenticateSession(this.session, options, new FormAuthentication(), function(err, user) {
             if(util.isError(err) || user === null)  {
                 self.loginError(adminAttempt, cb);
@@ -63,7 +65,7 @@ module.exports = function LoginActionControllerModule(pb) {
     };
 
     LoginActionController.prototype.loginError = function(adminAttempt, cb) {
-        this.session.error = this.ls.get('INVALID_LOGIN');
+        this.session.error = this.ls.g('login.INVALID_LOGIN');
         if(adminAttempt){
             this.redirect('/admin/login', cb);
             return;

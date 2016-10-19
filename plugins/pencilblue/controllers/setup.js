@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2015  PencilBlue, LLC
+    Copyright (C) 2016  PencilBlue, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -14,9 +14,10 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+'use strict';
 
 module.exports = function SetupViewControllerModule(pb) {
-    
+
     //pb dependencies
     var util = pb.util;
 
@@ -60,6 +61,9 @@ module.exports = function SetupViewControllerModule(pb) {
      */
     SetupViewController.prototype.doSetup = function(cb) {
         this.setPageName('Setup');
+        this.ts.registerLocal('global_root', function(flag, cb) {
+            cb(null, pb.SiteService.getHostWithProtocol(pb.config.multisite.enabled ? pb.config.multisite.globalRoot : pb.config.siteRoot));
+        });
         this.ts.load('setup', function(err, data) {
             cb({content: data});
         });

@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2015  PencilBlue, LLC
+    Copyright (C) 2016  PencilBlue, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -14,27 +14,33 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+'use strict';
 
 //dependencies
 var async = require('async');
 
-module.exports = function AdminIndexControllerModule(pb) {
-    
+module.exports = function (pb) {
+
     //pb dependencies
-    var util = pb.util;
-    
+    var util            = pb.util;
+    var SecurityService = pb.SecurityService;
+
     /**
      * Interface for the admin dashboard
      * @class AdminIndexController
      * @constructor
      */
     function AdminIndexController(){}
-    util.inherits(AdminIndexController, pb.BaseController);
+    util.inherits(AdminIndexController, pb.BaseAdminController);
 
     /**
-     * @see BaseController#render
+     *
+     * @method onSiteValidated
+     * @param site
+     * @param cb
+     *
      */
-    AdminIndexController.prototype.render = function(cb) {
+    AdminIndexController.prototype.render = function (cb) {
         var self = this;
 
         //gather all the data
@@ -43,25 +49,26 @@ module.exports = function AdminIndexControllerModule(pb) {
                 //throw err;
             }
 
-            var name        = self.localizationService.get('ARTICLES');
+            var name = self.localizationService.g('admin.ARTICLES');
             var contentInfo = [
                {
                    name: name,
                    count: data.articleCount,
-                   href: '/admin/content/articles',
+                   href: '/admin/content/articles'
                },
             ];
 
-            name = self.localizationService.get('PAGES');
+            name = self.ls.g('admin.PAGES');
             contentInfo.push({name: name, count: data.pageCount, href: '/admin/content/pages'});
 
             var angularObjects = pb.ClientJs.getAngularObjects({
-                navigation: pb.AdminNavigation.get(self.session, ['dashboard'], self.localizationService),
+                navigation: pb.AdminNavigation.get(self.session, ['dashboard'], self.localizationService, self.site),
                 contentInfo: contentInfo,
                 cluster: data.clusterStatus,
-                access: self.session.authentication.admin_level
+                access: self.session.authentication.admin_level,
+                isAdmin: self.session.authentication.admin_level === SecurityService.ACCESS_ADMINISTRATOR
             });
-            self.setPageName(self.localizationService.get('DASHBOARD'));
+            self.setPageName(self.ls.g('admin.DASHBOARD'));
             self.ts.registerLocal('angular_objects', new pb.TemplateValue(angularObjects, false));
             self.ts.load('admin/index', function(error, result) {
                 cb({content: result});
@@ -80,18 +87,17 @@ module.exports = function AdminIndexControllerModule(pb) {
      * @param {Function} cb A callback that provides two parameters: cb(Error, Object)
      */
     AdminIndexController.prototype.gatherData = function(cb) {
+        var self = this;
         var tasks = {
 
             //article count
             articleCount: function(callback) {
-                var dao    = new pb.DAO();
-                dao.count('article', pb.DAO.ANYWHERE, callback);
+                self.siteQueryService.count('article', pb.DAO.ANYWHERE, callback);
             },
 
             //page count
             pageCount: function(callback) {
-                var dao    = new pb.DAO();
-                dao.count('page', pb.DAO.ANYWHERE, callback);
+                self.siteQueryService.count('page', pb.DAO.ANYWHERE, callback);
             },
 
             //cluster status

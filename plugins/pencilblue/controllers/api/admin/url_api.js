@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2015  PencilBlue, LLC
+    Copyright (C) 2016  PencilBlue, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -14,22 +14,24 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+'use strict';
 
 module.exports = function(pb) {
-    
+
     //pb dependencies
     var util                = pb.util;
     var BaseController      = pb.BaseController;
     var ApiActionController = pb.ApiActionController;
     var UrlService          = pb.UrlService;
-    
+
     /**
      * Controller to properly route and handle remote calls to interact with
      * the UrlService
      * @class UrlApiController
      * @constructor
      */
-    function UrlApiController() {};
+    function UrlApiController() {
+    }
     util.inherits(UrlApiController, ApiActionController);
 
     //constants
@@ -107,7 +109,13 @@ module.exports = function(pb) {
             id: this.query.id,
             url: this.query.url
         };
-        var service = new UrlService();
+        var service;
+        var SITE_FIELD = pb.SiteService.SITE_FIELD;
+        if (SITE_FIELD in this.query) {
+            service = new UrlService(this.query[SITE_FIELD], true);
+        } else {
+            service = new UrlService();
+        }
         service.existsForType(params, function(err, exists) {
             if (util.isError(err)) {
                 var content = BaseController.apiResponse(BaseController.API_FAILURE, err.message);

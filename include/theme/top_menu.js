@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2015  PencilBlue, LLC
+    Copyright (C) 2016  PencilBlue, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -14,6 +14,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+'use strict';
 
 //dependencies
 var async = require('async');
@@ -43,7 +44,7 @@ module.exports = function TopMenuServiceModule(pb) {
      * @param {Localization} localizationService An instance of Localization to
      * translate default items
      * @param {Object} [options] An optional argument to provide more flexibility
-     * to the menu construction.
+     * to the menu construction. (pass in site: siteUId to select the proper tenant)
      * @param {String} [options.currUrl] The current request URL.
      * @param {Function} cb Callback function that takes three parameters. The
      * first are the theme's settings, the second is the navigation structure, and
@@ -60,23 +61,26 @@ module.exports = function TopMenuServiceModule(pb) {
             throw new Error('The options parameter must be an object');
         }
 
+        var siteUId = pb.SiteService.getCurrentSite(options.site);
+
         var getTopMenu = function(session, localizationService, options, cb) {
             var tasks = {
                 themeSettings: function(callback) {
-                    pb.settings.get('site_logo', function(err, logo) {
+                    var settingService = pb.SettingServiceFactory.getService(siteUId);
+                    settingService.get('site_logo', function(err, logo) {
                         callback(null, {site_logo: logo});
                     });
                 },
 
                 formattedSections: function(callback) {
-                    var sectionService = new SectionService();
+                    var sectionService = new SectionService({site: siteUId});
                     sectionService.getFormattedSections(localizationService, options.currUrl, function(err, formattedSections) {
                         callback(null, formattedSections);
                     });
                 },
 
                 accountButtons: function(callback) {
-                    TopMenuService.getAccountButtons(session, localizationService, callback);
+                    TopMenuService.getAccountButtons(session, localizationService, options.site, callback);
                 }
             };
             async.parallel(tasks, function(err, result) {
@@ -92,10 +96,17 @@ module.exports = function TopMenuServiceModule(pb) {
      * @method getAccountButtons
      * @param {Object}   session
      * @param {Object}   ls      The localization service
+     * @param {String}   [site]    The current site
      * @param {Function} cb      Callback function
      */
-    TopMenuService.getAccountButtons = function(session, ls, cb) {
-        var contentService = new pb.ContentService();
+    TopMenuService.getAccountButtons = function(session, ls, site, cb) {
+
+        if (util.isFunction(site)) {
+            cb = site;
+            site = pb.siteService.GLOBAL_SITE;
+        }
+
+        var contentService = new pb.ContentService({site: site});
         contentService.getSettings(function(err, contentSettings) {
             if (util.isError(err)) {
                 return cb(err);
@@ -106,19 +117,19 @@ module.exports = function TopMenuServiceModule(pb) {
             if(contentSettings.allow_comments) {
                 if(pb.security.isAuthenticated(session)) {
                     accountButtons = [
-                        // {
-                        //     icon: 'user',
-                        //     title: ls.get('ACCOUNT'),
-                        //     href: '/user/manage_account'
-                        // },
-                        // {
-                        //     icon: 'rss',
-                        //     title: ls.get('SUBSCRIBE'),
-                        //     href: '/feed'
-                        // },
+                        {
+                            icon: 'user',
+                            title: ls.g('admin.ACCOUNT'),
+                            href: '/user/manage_account'
+                        },
+                        {
+                            icon: 'rss',
+                            title: ls.g('generic.SUBSCRIBE'),
+                            href: '/feed'
+                        },
                         {
                             icon: 'power-off',
-                            title: ls.get('LOGOUT'),
+                            title: ls.g('generic.LOGOUT'),
                             href: '/actions/logout'
                         }
                     ];
@@ -127,27 +138,27 @@ module.exports = function TopMenuServiceModule(pb) {
                 else {
                     accountButtons =
                     [
-                        // {
-                        //     icon: 'user',
-                        //     title: ls.get('ACCOUNT'),
-                        //     href: '/user/sign_up'
-                        // },
-                        // {
-                        //     icon: 'rss',
-                        //     title: ls.get('SUBSCRIBE'),
-                        //     href: '/feed'
-                        // }
+                        {
+                            icon: 'user',
+                            title: ls.g('admin.ACCOUNT'),
+                            href: '/user/sign_up'
+                        },
+                        {
+                            icon: 'rss',
+                            title: ls.g('generic.SUBSCRIBE'),
+                            href: '/feed'
+                        }
                     ];
                 }
             }
             else {
                 accountButtons =
                 [
-                    // {
-                    //     icon: 'rss',
-                    //     title: ls.get('SUBSCRIBE'),
-                    //     href: '/feed'
-                    // }
+                    {
+                        icon: 'rss',
+                        title: ls.g('generic.SUBSCRIBE'),
+                        href: '/feed'
+                    }
                 ];
             }
             cb(null, accountButtons);
@@ -235,9 +246,9 @@ module.exports = function TopMenuServiceModule(pb) {
      * @method getNavItems
      * @param {Object} options
      * @param {Localization} options.ls
-     * @param {String} options.activeTheme
      * @param {Object} options.session
      * @param {String} options.currUrl
+     * @param {string} options.site
      * @param {Function} cb
      */
     TopMenuService.prototype.getNavItems = function(options, cb) {

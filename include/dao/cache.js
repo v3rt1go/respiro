@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2015  PencilBlue, LLC
+    Copyright (C) 2016  PencilBlue, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -14,6 +14,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+'use strict';
 
 //dependencies
 var util = require('../util.js');
@@ -28,7 +29,7 @@ module.exports = function CacheModule(pb){
      * @constructor
      */
     var CacheFactory = function(){};
-    
+
     /**
      *
      * @private
@@ -51,16 +52,16 @@ module.exports = function CacheModule(pb){
 
         //create instance
         CLIENT = CacheFactory.createInstance();
-        
+
         //register for shutdown so we can clean up after ourselves
         pb.system.registerShutdownHook('CacheFactory', CacheFactory.shutdown);
         return CLIENT;
     };
 
     /**
-     * 
+     *
      * @method createInstance
-     * @param {Object} [config] The Redis configuration.  When not provided the 
+     * @param {Object} [config] The Redis configuration.  When not provided the
      * configuration for this instance of PencilBlue is used.
      * return {RedisClient}
      */
@@ -84,11 +85,16 @@ module.exports = function CacheModule(pb){
         cb = cb || utils.cb;
 
         if (CLIENT !== null) {
-            CLIENT.quit();
+            try {
+                CLIENT.quit();
+            }
+            catch(err) {
+                return cb(err);
+            }
         }
-        cb(null, null);
+        cb();
     };
-    
+
     //return inner export
     return {
         CacheFactory: CacheFactory

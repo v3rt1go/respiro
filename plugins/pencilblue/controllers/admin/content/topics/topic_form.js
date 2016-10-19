@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2015  PencilBlue, LLC
+    Copyright (C) 2016  PencilBlue, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -14,20 +14,21 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+'use strict';
 
 //dependencies
 var async = require('async');
 
 module.exports = function(pb) {
-    
+
     //pb dependencies
     var util = pb.util;
-    
+
     /**
      * Interface for creating and editing topics
      */
     function TopicForm(){}
-    util.inherits(TopicForm, pb.BaseController);
+    util.inherits(TopicForm, pb.BaseAdminController);
 
     //statics
     var SUB_NAV_KEY = 'topic_form';
@@ -47,10 +48,10 @@ module.exports = function(pb) {
             }
 
             self.topic = data.topic;
-            data.pills = pb.AdminSubnavService.get(SUB_NAV_KEY, self.ls, SUB_NAV_KEY, self.topic);
+            data.pills = self.getAdminPills(SUB_NAV_KEY, self.ls, SUB_NAV_KEY, self.topic);
             var angularObjects = pb.ClientJs.getAngularObjects(data);
 
-            self.setPageName(self.topic[pb.DAO.getIdField()] ? self.topic.name : self.ls.get('NEW_TOPIC'));
+            self.setPageName(self.topic[pb.DAO.getIdField()] ? self.topic.name : self.ls.g('topics.NEW_TOPIC'));
             self.ts.registerLocal('angular_objects', new pb.TemplateValue(angularObjects, false));
             self.ts.load('admin/content/topics/topic_form', function(err, result) {
                 cb({content: result});
@@ -68,14 +69,14 @@ module.exports = function(pb) {
                         active: 'active',
                         href: '#topic_settings',
                         icon: 'cog',
-                        title: self.ls.get('SETTINGS')
+                        title: self.ls.g('admin.SETTINGS')
                     }
                 ];
                 callback(null, tabs);
             },
 
             navigation: function(callback) {
-                callback(null, pb.AdminNavigation.get(self.session, ['content', 'topics'], self.ls));
+                callback(null, pb.AdminNavigation.get(self.session, ['content', 'topics'], self.ls, self.site));
             },
 
             topic: function(callback) {
@@ -84,8 +85,7 @@ module.exports = function(pb) {
                     return;
                 }
 
-                var dao = new pb.DAO();
-                dao.loadById(vars.id, 'topic', function(err, topic) {
+                self.siteQueryService.loadById(vars.id, 'topic', function(err, topic) {
                     callback(err, topic);
                 });
             }
@@ -96,7 +96,7 @@ module.exports = function(pb) {
     TopicForm.getSubNavItems = function(key, ls, data) {
         return [{
             name: SUB_NAV_KEY,
-            title: data[pb.DAO.getIdField()] ? ls.get('EDIT') + ' ' + data.name : ls.get('NEW_TOPIC'),
+            title: data[pb.DAO.getIdField()] ? ls.g('generic.EDIT') + ' ' + data.name : ls.g('topics.NEW_TOPIC'),
             icon: 'chevron-left',
             href: '/admin/content/topics'
         }, {

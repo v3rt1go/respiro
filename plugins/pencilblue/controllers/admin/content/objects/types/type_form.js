@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2015  PencilBlue, LLC
+    Copyright (C) 2016  PencilBlue, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -14,20 +14,21 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+'use strict';
 
 //dependencies
 var async = require('async');
 
 module.exports = function(pb) {
-    
+
     //pb dependencies
     var util = pb.util;
-    
+
     /**
      * Interface for creating and editing custom object types
      */
     function TypeForm(){}
-    util.inherits(TypeForm, pb.BaseController);
+    util.inherits(TypeForm, pb.BaseAdminController);
 
     //statics
     var SUB_NAV_KEY = 'type_form';
@@ -46,10 +47,9 @@ module.exports = function(pb) {
             }
 
             self.objectType = data.objectType;
-            data.pills = pb.AdminSubnavService.get(SUB_NAV_KEY, self.ls, SUB_NAV_KEY, self.objectType);
+            data.pills = self.getAdminPills(SUB_NAV_KEY, self.ls, SUB_NAV_KEY, data);
             var angularObjects = pb.ClientJs.getAngularObjects(data);
-
-            self.setPageName(self.objectType[pb.DAO.getIdField()] ? self.objectType.name : self.ls.get('NEW_OBJECT'));
+            self.setPageName(self.objectType[pb.DAO.getIdField()] ? self.objectType.name : self.ls.g('custom_objects.NEW_OBJECT'));
             self.ts.registerLocal('angular_objects', new pb.TemplateValue(angularObjects, false));
             self.ts.load('admin/content/objects/types/type_form', function(err, result) {
                 cb({content: result});
@@ -59,7 +59,7 @@ module.exports = function(pb) {
 
     TypeForm.prototype.gatherData = function(vars, cb) {
         var self = this;
-        var cos = new pb.CustomObjectService();
+        var cos = new pb.CustomObjectService(self.site, false);
 
         var tasks = {
             tabs: function(callback) {
@@ -68,12 +68,12 @@ module.exports = function(pb) {
                         active: 'active',
                         href: '#object_settings',
                         icon: 'cog',
-                        title: self.ls.get('SETTINGS')
+                        title: self.ls.g('admin.SETTINGS')
                     },
                     {
                         href: '#object_fields',
                         icon: 'list-ul',
-                        title: self.ls.get('FIELDS')
+                        title: self.ls.g('custom_objects.FIELDS')
                     }
                 ];
 
@@ -81,7 +81,7 @@ module.exports = function(pb) {
             },
 
             navigation: function(callback) {
-                callback(null, pb.AdminNavigation.get(self.session, ['content', 'custom_objects'], self.ls));
+                callback(null, pb.AdminNavigation.get(self.session, ['content', 'custom_objects'], self.ls, self.site));
             },
 
             objectTypes: function(callback) {
@@ -111,7 +111,7 @@ module.exports = function(pb) {
     TypeForm.getSubNavItems = function(key, ls, data) {
         return [{
             name: SUB_NAV_KEY,
-            title: data[pb.DAO.getIdField()] ? ls.get('EDIT') + ' ' + data.name : ls.get('NEW_OBJECT_TYPE'),
+            title: data.objectType[pb.DAO.getIdField()] ? ls.g('generic.EDIT') + ' ' + data.objectType.name : ls.g('custom_objects.NEW_OBJECT_TYPE'),
             icon: 'chevron-left',
             href: '/admin/content/objects/types'
         }, {

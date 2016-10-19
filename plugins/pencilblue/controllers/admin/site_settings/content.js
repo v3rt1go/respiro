@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2015  PencilBlue, LLC
+    Copyright (C) 2016  PencilBlue, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -14,17 +14,18 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+'use strict';
 
 module.exports = function(pb) {
-    
+
     //pb dependencies
     var util = pb.util;
-    
+
     /**
      * Interface for the site's content settings
      */
     function Content(){}
-    util.inherits(Content, pb.BaseController);
+    util.inherits(Content, pb.BaseAdminController);
 
     //statics
     var SUB_NAV_KEY = 'content_settings';
@@ -38,35 +39,35 @@ module.exports = function(pb) {
                 active: 'active',
                 href: '#articles',
                 icon: 'files-o',
-                title: self.ls.get('ARTICLES')
+                title: self.ls.g('admin.ARTICLES')
             },
             {
                 href: '#timestamp',
                 icon: 'clock-o',
-                title: self.ls.get('TIMESTAMP')
+                title: self.ls.g('site_settings.TIMESTAMP')
             },
             {
                 href: '#authors',
                 icon: 'user',
-                title: self.ls.get('AUTHOR')
+                title: self.ls.g('admin.AUTHOR')
             },
             {
                 href: '#comments',
                 icon: 'comment',
-                title: self.ls.get('COMMENTS')
+                title: self.ls.g('generic.COMMENTS')
             }
         ];
 
-        var contentService = new pb.ContentService();
+        var contentService = new pb.ContentService({site: this.site, onlyThisSite: true});
         contentService.getSettings(function(err, contentSettings) {
             var angularObjects = pb.ClientJs.getAngularObjects({
-                navigation: pb.AdminNavigation.get(self.session, ['settings', 'site_settings'], self.ls),
-                pills: pb.AdminSubnavService.get(SUB_NAV_KEY, self.ls, 'content'),
+                navigation: pb.AdminNavigation.get(self.session, ['settings', 'site_settings'], self.ls, self.site),
+                pills: self.getAdminPills(SUB_NAV_KEY, self.ls, 'content', {site:self.site}),
                 tabs: tabs,
                 contentSettings: contentSettings
             });
 
-            self.setPageName(self.ls.get('CONTENT'));
+            self.setPageName(self.ls.g('generic.CONTENT'));
             self.ts.registerLocal('angular_objects', new pb.TemplateValue(angularObjects, false));
             self.ts.load('admin/site_settings/content', function(err,result) {
                 cb({content: result});
@@ -75,22 +76,29 @@ module.exports = function(pb) {
     };
 
     Content.getSubNavItems = function(key, ls, data) {
-        return [{
+
+        var subNavItems = [{
             name: 'configuration',
-            title: ls.get('CONTENT'),
+            title: ls.g('generic.CONTENT'),
             icon: 'chevron-left',
             href: '/admin/site_settings'
         }, {
             name: 'email',
-            title: ls.get('EMAIL'),
+            title: ls.g('generic.EMAIL'),
             icon: 'envelope',
             href: '/admin/site_settings/email'
-        }, {
-            name: 'libraries',
-            title: ls.get('LIBRARIES'),
-            icon: 'book',
-            href: '/admin/site_settings/libraries'
         }];
+
+        if (data.site === pb.SiteService.GLOBAL_SITE) {
+            subNavItems.push({
+                name: 'libraries',
+                title: ls.g('site_settings.LIBRARIES'),
+                icon: 'book',
+                href: '/admin/site_settings/libraries'
+            });
+        }
+
+        return subNavItems;
     };
 
     //register admin sub-nav

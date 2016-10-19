@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2015  PencilBlue, LLC
+    Copyright (C) 2016  PencilBlue, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -14,15 +14,17 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+'use strict';
 
 var util = require('../util.js');
 
 module.exports = function DocumentCreatorModule(pb) {
-    
+
     /**
      * Creates structures for persistence and cleans various fields.
      *
      * @module Model
+     * @deprecated
      * @class DocumentCreator
      * @constructor
      * @main Model
@@ -81,13 +83,13 @@ module.exports = function DocumentCreatorModule(pb) {
         if (!util.isObject(post)) {
             return false;
         }
-        
-        if (post.hasOwnProperty('password')) {
-            post['password'] = pb.security.encrypt(post['password']);
+
+        if (post.password) {
+            post.password = pb.security.encrypt(post.password);
         }
 
-        if(post['confirm_password']) {
-            delete post['confirm_password'];
+        if(post.confirm_password) {
+            delete post.confirm_password;
         }
     };
 
@@ -138,7 +140,7 @@ module.exports = function DocumentCreatorModule(pb) {
         if (!util.isArray(integerItems) || !util.isObject(post)) {
             return false;
         }
-        
+
         integerItems.forEach(function(item) {
             if (!util.isNullOrUndefined(post[item])) {
                 post[item] = parseInt(post[item]);

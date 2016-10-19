@@ -14,12 +14,13 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+'use strict';
 
 module.exports = function SaveHomePageSettingsModule(pb) {
-    
+
     //pb dependencies
     var util = pb.util;
-    
+
     /**
      *  Saves settings for the display of home page content in the Portfolio theme
      * @class SaveHomePageSettings
@@ -27,7 +28,7 @@ module.exports = function SaveHomePageSettingsModule(pb) {
      * @copyright 2014 PencilBlue, LLC.  All Rights Reserved
      */
     function SaveHomePageSettings() {}
-    util.inherits(SaveHomePageSettings, pb.BaseController);
+    util.inherits(SaveHomePageSettings, pb.BaseAdminController);
 
     SaveHomePageSettings.prototype.render = function(cb) {
         var self = this;
@@ -38,8 +39,7 @@ module.exports = function SaveHomePageSettingsModule(pb) {
             var opts = {
                 where: {settings_type: 'home_page'}
             };
-            var dao = new pb.DAO();
-            dao.q('portfolio_theme_settings', opts, function(err, homePageSettings) {
+            self.siteQueryService.q('portfolio_theme_settings', opts, function(err, homePageSettings) {
                 if (util.isError(err)) {
                     return self.reqHandler.serveError(err);
                 }
@@ -52,16 +52,16 @@ module.exports = function SaveHomePageSettingsModule(pb) {
                     homePageSettings.settings_type = 'home_page';
                 }
 
-                dao.save(homePageSettings, function(err, result) {
+                self.siteQueryService.save(homePageSettings, function(err, result) {
                     if(util.isError(err))  {
                         cb({
                             code: 500,
-                            content: pb.BaseController.apiResponse(pb.BaseController.API_FAILURE, self.ls.get('ERROR_SAVING'), result)
+                            content: pb.BaseController.apiResponse(pb.BaseController.API_FAILURE, self.ls.g('generic.ERROR_SAVING'), result)
                         });
                         return;
                     }
 
-                    cb({content: pb.BaseController.apiResponse(pb.BaseController.API_SUCCESS, self.ls.get('HOME_PAGE_SETTINGS') + ' ' + self.ls.get('SAVED'))});
+                    cb({content: pb.BaseController.apiResponse(pb.BaseController.API_SUCCESS, self.ls.g('HOME_PAGE_SETTINGS') + ' ' + self.ls.g('admin.SAVED'))});
                 });
             });
         });
@@ -79,6 +79,7 @@ module.exports = function SaveHomePageSettingsModule(pb) {
                 method: 'post',
                 path: '/actions/admin/plugins/settings/portfolio/home_page',
                 auth_required: true,
+                inactive_site_access: true,
                 access_level: pb.SecurityService.ACCESS_EDITOR,
                 content_type: 'text/html'
             }

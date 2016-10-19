@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2015  PencilBlue, LLC
+    Copyright (C) 2016  PencilBlue, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -14,17 +14,18 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+'use strict';
 
 module.exports = function(pb) {
-    
+
     //pb dependencies
     var util = pb.util;
-    
+
     /**
      * Interface for importing topics from CSV
      */
     function ImportTopics(){}
-    util.inherits(ImportTopics, pb.BaseController);
+    util.inherits(ImportTopics, pb.BaseAdminController);
 
     //statics
     var SUB_NAV_KEY = 'import_topics';
@@ -38,18 +39,18 @@ module.exports = function(pb) {
                 active: 'active',
                 href: '#topic_settings',
                 icon: 'file-text-o',
-                title: self.ls.get('LOAD_FILE')
+                title: self.ls.g('generic.LOAD_FILE')
             }
         ];
 
         var angularObjects = pb.ClientJs.getAngularObjects(
         {
-            navigation: pb.AdminNavigation.get(self.session, ['content', 'topics'], self.ls),
-            pills: pb.AdminSubnavService.get(SUB_NAV_KEY, self.ls, 'manage_topics'),
+            navigation: pb.AdminNavigation.get(self.session, ['content', 'topics'], self.ls, self.site),
+            pills: self.getAdminPills(SUB_NAV_KEY, self.ls, 'manage_topics'),
             tabs: tabs
         });
 
-        this.setPageName(this.ls.get('IMPORT_TOPICS'));
+        this.setPageName(this.ls.g('topics.IMPORT_TOPICS'));
         self.ts.registerLocal('angular_objects', new pb.TemplateValue(angularObjects, false));
         this.ts.load('admin/content/topics/import_topics', function(err, result) {
             cb({content: result});
@@ -59,7 +60,7 @@ module.exports = function(pb) {
     ImportTopics.getSubNavItems = function(key, ls, data) {
         return [{
             name: 'manage_topics',
-            title: ls.get('IMPORT_TOPICS'),
+            title: ls.g('topics.IMPORT_TOPICS'),
             icon: 'chevron-left',
             href: '/admin/content/topics'
         }, {

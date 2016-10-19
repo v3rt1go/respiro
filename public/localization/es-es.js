@@ -1,8 +1,7 @@
-var loc =
-{
-    generic:
-    {
-        PENCILBLUE: 'pencilblue',
+module.exports = {
+    generic: {
+        LOCALE_DISPLAY: 'Español (España)',
+        PENCILBLUE: 'PencilBlue',
         ALL_RIGHTS: 'Todos los derechos reservados',
         NONE: 'Ninguno',
         LEFT: 'Izquierda',
@@ -14,7 +13,7 @@ var loc =
         LOGIN: 'Ingresar',
         LOGOUT: 'Salir',
         SIGN_UP: 'Registrarse',
-        NAME: 'Name',
+        NAME: 'Nombre',
         USERNAME: 'Nombre de usuario',
         PASSWORD: 'Contraseña',
         DATE: 'Fecha',
@@ -25,9 +24,9 @@ var loc =
         EDITOR: 'Editor',
         MANAGING_EDITOR: 'Editor administrativo',
         ADMINISTRATOR: 'Administrador',
-        COLUMN_INCHES: 'column inches',
+        COLUMN_INCHES: 'Pulgadas de columna',
         CONTENT: 'Contenido',
-        META_DATA: 'Meta data',
+        META_DATA: 'Meta dato',
         SEO: 'SEO',
         FORM_INCOMPLETE: 'El formulario está incompleto',
         INVALID_UID: 'Se ha ingresado un identificador único inválido',
@@ -37,17 +36,17 @@ var loc =
         SAVE: 'Guardar',
         SAVE_DRAFT: 'Guardar borrador',
         DRAFT_SAVED: 'Borrador guardado',
-        LAST_SAVED: 'Ultimo guardado',
+        LAST_SAVED: 'Último guardado',
         PREVIEW: 'Vista previa',
         CANCEL: 'Cancelar',
         EDIT: 'Editar',
         DELETE: 'Borrar',
         SUBMIT: 'Enviar',
-        SELECT: 'Select',
+        SELECT: 'Seleccionar',
         MANAGE: 'Gestionar',
         SORT: 'Ordenar',
         NOW: 'Ahora',
-        CONFIRM_DELETE: 'Estas seguro que deseas borrar',
+        CONFIRM_DELETE: 'Estás seguro que deseas borrar?',
         LOAD_FILE: 'Cargar archivo',
         SELECT_FILE: 'Seleccionar archivo',
         NO_ARTICLES: 'No se encontraron artículos con los criterios de búsqueda especificados',
@@ -57,16 +56,16 @@ var loc =
         COMMENT: 'Comentario',
         COMMENTS: 'Comentarios',
         SUBMIT_COMMENT: 'Enviar un comentario',
-        LOGIN_TO_COMMENT: 'Login to comment',
+        LOGIN_TO_COMMENT: 'Inicia sesión para comentar',
         COMMENT_SUBMITTED: 'El comentario ha sido enviado',
         COMMENT_ERROR: 'Ocurrió un error enviando el comentario',
         DATE_ADDED: 'Fecha en que se agregó',
-        LAST_MODIFIED: 'Ultima modificación',
+        LAST_MODIFIED: 'Última modificación',
         CHECK: 'Check',
         AVAILABLE: 'Disponible',
         UNAVAILABLE: 'No disponible',
     	INSTALLED_ON: 'Instalado en',
-		VERSION: 'Version',
+		VERSION: 'Versión',
 		ACTIVE_PLUGINS: 'Plugins activos',
 		INACTIVE_PLUGINS: 'Plugins inactivos',
 		AVAILABLE_PLUGINS: 'Plugins disponibles',
@@ -76,7 +75,7 @@ var loc =
 		ACTIVE_PLUGIN_DESCRIPTION: 'Plugins instalados e inicializados exitosamente en el arranque del sistema.',
 		INACTIVE_PLUGIN_DESCRIPTION: 'Plugins instalados o parcialmente instalados pero que han fallado en inicializar correctamente.',
 		AVAILABLE_PLUGIN_DESCRIPTION: 'Plugins que están disponibles son descargados y están listos para ser instalados.',
-		PLEASE_WAIT: 'Por favos, espera',
+		PLEASE_WAIT: 'Por favor, espere',
 		VALID_ACTION_REQUIRED: 'Se requiere una acción válida',
 		VALID_IDENTIFIER_REQUIRED: 'Se requiere un identificador válido',
 		INSTALL_FAILED: 'Ha fallado la instalación del plugin [%s]',
@@ -101,7 +100,7 @@ var loc =
 		WEBSITE: 'Website',
 		CONTRIBUTORS: 'Contribuyentes',
 		ERRORS: 'Errores',
-		ERRORED: 'Errored',
+		ERRORED: 'Con errores',
 		ACTIVE: 'Activo',
 		INACTIVE: 'Inactivo',
 		STATUS: 'Estatus',
@@ -142,11 +141,11 @@ var loc =
         USER: 'Usuario',
         SUBSCRIBE: 'Suscribirse',
         PRIVACY_POLICY: 'Política de privacidad',
-        MAKE_PB_BETTER: 'Ayúdanos a mejorar PencilBlue enviando información sobre tu instalació',
+        MAKE_PB_BETTER: 'Ayúdanos a mejorar PencilBlue enviando información sobre tu instalación',
         CLOSE: 'Cerrar',
         APPLY_SETTINGS: 'Aplicar configuración',
         CONFIGURATION_SETTINGS: 'Parámetros de configuración',
-        EXISTING_CUSTOM_OBJECT: 'Un objeto The custom object with the given name already exists',
+        EXISTING_CUSTOM_OBJECT: 'El objeto personalizado con el nombre dado ya existe',
         OPTIONS_PARAM_MUST_BE_OBJECT: 'El parámetro "options" debe ser un objeto',
         WHERE_CLAUSE_MUST_BE_OBJECT: 'El parámetro "where" debe ser un objeto',
         COLLECTION_MUST_BE_STR: 'El parámetro "collection" debe ser una cadena de caractéres',
@@ -169,13 +168,11 @@ var loc =
         ERROR_SETTING_SYS_INITIALIZED: 'Ocurrió un error al intentar establecer la configuración de inicialización del sistema',
         ERROR_SETTING_CALLHOME: 'Ocurrió un error al intentar establecer la configuración de reportes del sistema'
     },
-    error:
-    {
+    error: {
     	ERROR: 'Error',
         PAGE_NOT_FOUND: 'La página no puede ser encontrada'
     },
-    timestamp:
-    {
+    timestamp: {
         JAN: 'Enero',
         FEB: 'Febrero',
         MAR: 'Marzo',
@@ -183,42 +180,39 @@ var loc =
         MAY: 'Mayo',
         JUN: 'Junio',
         JUL: 'Julio',
-        AUG: 'Augosto',
+        AUG: 'Agosto',
         SEP: 'Septiembre',
         OCT: 'Octubre',
         NOV: 'Noviembre',
-        DEC: 'Deciembre',
+        DEC: 'Diciembre',
         TIME_AM: 'AM',
         TIME_PM: 'PM'
     },
-    setup:
-    {
-        REGISTER_ADMIN: 'Registra la primera cuenta de administrado del site'
+    setup: {
+        REGISTER_ADMIN: 'Registra la primera cuenta de administrador en el sitio'
     },
-    login:
-    {
+    login: {
         ADMIN_LOGIN: 'Login de escritor, editor, administrador',
         USERNAME_OR_EMAIL: 'Nombre de usuario o dirección de correo',
         INVALID_LOGIN: 'Combinación nombre de usuario y contraseña incorrecta',
-        READY_TO_USE: 'La instalación de pencilblue está lista para ser usada',
+        READY_TO_USE: 'La instalación de PencilBlue está lista para ser usada',
         ACCOUNT_CREATED: 'Se ha creado tu cuenta exitosamente, ya puedes ingresar'
     },
-    admin:
-    {
+    admin: {
         DASHBOARD: 'Menú',
         CONTENT: 'Contenido',
-        PAGES: 'Paginas',
-        ARTICLES: 'Articulos',
-        TOPICS: 'Topicos',
+        PAGES: 'Páginas',
+        ARTICLES: 'Artículos',
+        TOPICS: 'Tópicos',
         MEDIA: 'Multimedia',
-        CUSTOM_OBJECTS: 'Custom objects',
+        CUSTOM_OBJECTS: 'Objectos personalizados',
         PLUGINS: 'Plugins',
         THEMES: 'Temas',
         LAYOUT: 'Disposición',
         FRONTEND: 'Plugins del frontend',
         BACKEND: 'Plugins del backend',
-        INSTALL_PLUGIN: 'Install a plugin',
-        USERS: 'Usuaris',
+        INSTALL_PLUGIN: 'Instalar un plugin',
+        USERS: 'Usuarios',
         SETTINGS: 'Configuración',
         VIEW_SITE: 'Ver el sitio',
         SITE_SETTINGS: 'Configuración del sitio',
@@ -245,21 +239,21 @@ var loc =
         SAVED: 'fue guardado',
         NARROW_RESULTS: 'Limitar resultados',
         URL_KEY: 'Clave de URL',
-        FEED_UNAVAILABLE: 'No se pudo cargar las noticias.'
+        FEED_UNAVAILABLE: 'No se pudo cargar las noticias.',
+        REQUESTS_TOTAL: 'Las solicitudes totales',
+        REQUESTS_CURRENT: 'solicitudes actuales'
     },
-    topics:
-    {
+    topics: {
         MANAGE_TOPICS: 'Gestionar tópicos',
         NEW_TOPIC: 'Nuevo tópico',
         TOPIC_NAME: 'Nombre del tópico',
         EXISTING_TOPIC: 'Un tópico con el mismo nombre ya existe',
         TOPICS_CREATED: 'Los tópicos fueron creados exitosamente',
-        IMPORT_TOPICS: 'Import topics',
+        IMPORT_TOPICS: 'Importar tópicos',
         IMPORT_TOPICS_HELP: 'Here you can import a CSV file of topic names into PencilBlue. The file should contain no other information.',
-        TOPICS_CSV_FILE: 'CSV file containing topic names',
+        TOPICS_CSV_FILE: 'Archivo CSV que contiene los nombres de temas',
     },
-    media:
-    {
+    media: {
         MANAGE_MEDIA: 'Gestionar multimedia',
         NEW_MEDIA: 'Nuevo multimedia',
         LINK_OR_UPLOAD: 'Enlazar o subir',
@@ -281,8 +275,7 @@ var loc =
         IMAGE_URL_PLACEHOLDER: '.jpg, .png, .gif, o .svg',
         FILE_TOO_BIG: 'El archivo supera el límite permitido'
     },
-    pages:
-    {
+    pages: {
         MANAGE_PAGES: 'Gestionar páginas',
         NEW_PAGE: 'Nueva página',
         PAGE_URL: 'URL de página',
@@ -292,8 +285,7 @@ var loc =
         SUBHEADING: 'Subtítulo',
         PUBLISH_DATE: 'Fecha de publicación'
     },
-    articles:
-    {
+    articles: {
         MANAGE_ARTICLES: 'Gestionar artículos',
         NEW_ARTICLE: 'Nuevo artículo',
         ARTICLE_URL: 'URL de artículo',
@@ -313,6 +305,7 @@ var loc =
     wysiwyg: {
         NORMAL_TEXT: 'Texto normal',
         QUOTE: 'Cita',
+        PRE: 'Pre',
         HEADING_1: 'Encabezado 1',
         HEADING_2: 'Encabezado 2',
         HEADING_3: 'Encabezado 3',
@@ -346,15 +339,13 @@ var loc =
         MARKDOWN_VIEW: 'Vista Markdown',
         TOGGLE_FULLSCREEN: 'Cambiar pantalla completa'
     },
-    comments:
-    {
+    comments: {
         MANAGE_COMMENTS: 'Gestionar comentarios',
         CONFIRM_DELETE_COMMENT: 'Estás seguro que quieres eliminar este comentario por',
-        COMMENTS_DISABLED: 'Comentarios desactivador',
+        COMMENTS_DISABLED: 'Comentarios desactivado',
         ENABLE_HERE: 'Habilítalos aquí'
     },
-    custom_objects:
-    {
+    custom_objects: {
         MANAGE_OBJECT_TYPES: 'Gestionar tipos de objeto',
         NEW_OBJECT_TYPE: 'Nuevo tipo de objeto',
         MANAGE_OBJECTS: 'Gestionar objetos',
@@ -365,7 +356,7 @@ var loc =
         VALUE: 'Valor',
         TEXT: 'texto',
         BOOLEAN: 'Booleano',
-        NUMBER: 'numero',
+        NUMBER: 'número',
         PEER_OBJECT: 'Objeto asociado',
         CHILD_OBJECTS: 'Objetos hijos',
         OBJECT_TYPE: 'Tipo de objeto',
@@ -377,8 +368,7 @@ var loc =
         DESCRIPTION: 'Descripciónn',
         INVALID_FIELD: 'Se ingresó un campo inválido. Asegúrate que no haya campos con nombre duplicados o sin tipo'
     },
-    users:
-    {
+    users: {
         MANAGE_USERS: 'Gestionar usuarios',
         UNVERIFIED_USERS: 'Usuarios sin verificar',
         NEW_USER: 'Nuevo usuario',
@@ -399,7 +389,7 @@ var loc =
         USER_TYPE: 'Tipo de usuario',
         CREATE_USER: 'Crear usuario',
         USER_DELETE_SELF: 'Los usuarios no pueden borrar sus propias cuentas',
-        PASSWORD_MISMATCH: 'Passwords do not match',
+        PASSWORD_MISMATCH: 'Las contraseñas no coinciden',
         EXISTING_USERNAME: 'Nombre de usuario ya está registrado',
         EXISTING_EMAIL: 'Email ya está registrado',
         USER_CREATED: 'Usuario creado exitosamente',
@@ -425,10 +415,10 @@ var loc =
         NO_PERMISSIONS: 'Ninguno de tus plugins instalados tienen establecidos permisos',
         CONFIRM_VERIFY: 'Estás seguro que deseas verificar',
         VERIFY: 'Verificar',
-        VERIFIED: 'Verificado'
+        VERIFIED: 'Verificado',
+        LOCALE_PREFERENCE: 'Preferencia Local'
     },
-    plugins:
-    {
+    plugins: {
         MANAGE_PLUGINS: 'Gestionar plugins',
         NO_ACTIVE_PLUGINS: 'No hay plugins activos',
         NO_INACTIVE_PLUGINS: 'No hay plugins inactivos',
@@ -440,17 +430,16 @@ var loc =
         ACTIVATING: 'Activando',
         ACTION_ERROR: 'Occurrió un error intentando completar la acción'
     },
-    themes:
-    {
+    themes: {
         MANAGE_THEMES: 'Gestionar temas'
     },
-    site_settings:
-    {
+    site_settings: {
         CONFIGURATION: 'Configuración',
         EDIT_CONFIGURATION: 'Para cambiar la configuración, crea un archivo config.json en el directorio raíz.',
         SITE_NAME: 'Nombre del sitio',
         SITE_ROOT: 'Raíz del sitio',
-        DOCUMENT_ROOT: 'Document root',
+        MEDIA_ROOT: 'Raíz del multimedia',
+        DOCUMENT_ROOT: 'Raíz del documento',
         IP_ADDRESS: 'Dirección IP',
         PORT: 'Puerto',
         DB_TYPE: 'Tipo de base de datos',
@@ -498,13 +487,3 @@ var loc =
         TEST_EMAIL_SUCCESS: 'Probar correo enviado exitosamente'
     }
 };
-
-//Allows for both server and client use
-if(typeof global !== 'undefined') {
- global.loc = loc;
- global.localizationLanguage = 'es-es';
-}
-
-if(typeof module !== 'undefined') {
- module.exports = loc;
-}

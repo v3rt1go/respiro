@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2015  PencilBlue, LLC
+    Copyright (C) 2016  PencilBlue, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -14,6 +14,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+'use strict';
 
 //dependencies
 var url  = require('url');
@@ -31,7 +32,11 @@ module.exports = function UrlServiceModule(pb) {
      * @module Services
      * @submodule Entities
      */
-    function UrlService() {}
+    function UrlService(site, onlyThisSite) {
+        this.site = pb.SiteService.getCurrentSite(site);
+        this.onlyThisSite = onlyThisSite;
+        this.siteQueryService = new pb.SiteQueryService({site: this.site, onlyThisSite: this.onlyThisSite});
+    }
 
     //dependencies
     var RequestHandler = pb.RequestHandler;
@@ -71,11 +76,11 @@ module.exports = function UrlServiceModule(pb) {
         var url  = params.url;
         var type = params.type;
         var id   = params.id;
+        var site = params.site;
 
         //validate required params
         if (!url || !type) {
-            cb(new Error("The url and type parameters are required. URL=["+url+"] TYPE=["+type+"]"), false);
-            return;
+            return cb(new Error("The url and type parameters are required. URL=["+url+"] TYPE=["+type+"]"), false);
         }
 
         //build pattern
@@ -86,13 +91,13 @@ module.exports = function UrlServiceModule(pb) {
             url = url.substring(0, url.length - 1);
         }
         var pattern = "^\\/{0,1}" + util.escapeRegExp(url) + "\\/{0,1}$";
-
-        //execute search
         var where = {
-            url: new RegExp(pattern, 'g')
+            url: new RegExp(pattern, "i")
         };
-        var dao = new pb.DAO();
-        dao.unique(type, where, id, function(err, isUnique) {
+        if (site !== undefined) {
+            where[pb.SiteService.SITE_FIELD] = site;
+        }
+        this.siteQueryService.unique(type, where, id, function(err, isUnique) {
             cb(err, !isUnique);
         });
     };
@@ -168,10 +173,43 @@ module.exports = function UrlServiceModule(pb) {
     UrlService.isFullyQualifiedUrl = function(urlStr) {
         return util.isString(urlStr) && urlStr.indexOf('http') === 0;
     };
-    
-    UrlService.createSystemUrl = function(path) {
-        return UrlService.urlJoin(pb.config.siteRoot, path);
-    };
+
+    /**
+     * Creates a fully qualified URL to the system.
+     * @static
+     * @method createSystemUrl
+     * @param {String} path
+     * @param {Object} [options]
+     * @param {String} [options.locale]
+     * @param {String} [options.hostname]
+     * @return {String}
+     */
+     UrlService.createSystemUrl = function(path, options) {
+         if (!util.isObject(options)) {
+             options = {};
+         }
+
+         var hostname = options.hostname;
+         if (!hostname) {
+
+             //we are in multi-site mode so just ensure we have a root so we
+             //can at least stay on the same domain.  We can also safely assume
+             //a standard site root.
+             if (pb.config.multisite.enabled) {
+                 hostname = '';
+             }
+             else {
+                 var siteRootPath = url.parse(pb.config.siteRoot).path;
+                 if (!path || path === '/') {
+                     return siteRootPath;
+                 }
+                 hostname = pb.config.siteRoot;
+             }
+         }
+         return options.locale ? UrlService.urlJoin(hostname, options.locale, path) :
+            UrlService.urlJoin(hostname, path);
+     };
+
 
     //exports
     return UrlService;

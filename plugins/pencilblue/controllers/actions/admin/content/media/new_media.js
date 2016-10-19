@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2015  PencilBlue, LLC
+    Copyright (C) 2016  PencilBlue, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -14,20 +14,21 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+'use strict';
 
 module.exports = function(pb) {
-    
+
     //pb dependencies
     var util = pb.util;
-    
+
     /**
      * Adds new media
      * @class NewMediaApiController
      * @constructor
-     * @extends BaseController
+     * @extends BaseAdminController
      */
     function NewMediaApiController(){}
-    util.inherits(NewMediaApiController, pb.BaseController);
+    util.inherits(NewMediaApiController, pb.BaseAdminController);
 
     NewMediaApiController.prototype.render = function(cb) {
         var self = this;
@@ -37,29 +38,29 @@ module.exports = function(pb) {
             if(message) {
                 cb({
                     code: 400,
-                    content: pb.BaseController.apiResponse(pb.BaseController.API_ERROR, message)
+                    content: pb.BaseController.apiResponse(pb.BaseController.API_FAILURE, message)
                 });
                 return;
             }
 
             var mediaDocument = pb.DocumentCreator.create('media', post);
-            var mediaService = new pb.MediaService();
+            var mediaService = new pb.MediaService(null, self.site);
             mediaService.save(mediaDocument, function(err, result) {
                 if(util.isError(err)) {
                     return cb({
                         code: 500,
-                        content: pb.BaseController.apiResponse(pb.BaseController.API_ERROR, self.ls.get('ERROR_SAVING'))
+                        content: pb.BaseController.apiResponse(pb.BaseController.API_FAILURE, self.ls.g('generic.ERROR_SAVING'))
                     });
                 }
                 else if (util.isArray(result)) {
                     return cb({
                         code: 400,
-                        content: pb.BaseController.apiResponse(pb.BaseController.API_ERROR, self.ls.get('ERROR_SAVING'), result)
+                        content: pb.BaseController.apiResponse(pb.BaseController.API_FAILURE, self.ls.g('generic.ERROR_SAVING'), result)
                     });
                 }
-                
-                mediaDocument.icon = pb.MediaService.getMediaIcon(mediaDocument.media_type);
-                cb({content: pb.BaseController.apiResponse(pb.BaseController.API_SUCCESS, mediaDocument.name + ' ' + self.ls.get('ADDED'), mediaDocument)});
+
+                mediaDocument.icon = pb.MediaServiceV2.getMediaIcon(mediaDocument.media_type);
+                cb({content: pb.BaseController.apiResponse(pb.BaseController.API_SUCCESS, mediaDocument.name + ' ' + self.ls.g('admin.ADDED'), mediaDocument)});
             });
         });
     };

@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2015  PencilBlue, LLC
+    Copyright (C) 2016  PencilBlue, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -14,18 +14,19 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+'use strict';
 
 module.exports = function ChangePasswordModule(pb) {
 
     //pb dependencies
     var util = pb.util;
-    var BaseController = pb.BaseController;
+    var BaseAdminController = pb.BaseAdminController;
 
     /**
      * Changes a user's password
      */
     function ChangePassword(){}
-    util.inherits(ChangePassword, BaseController);
+    util.inherits(ChangePassword, BaseAdminController);
 
     ChangePassword.prototype.render = function(cb) {
         var self = this;
@@ -36,41 +37,41 @@ module.exports = function ChangePasswordModule(pb) {
             if(message) {
                 cb({
                     code: 400,
-                    content: pb.BaseController.apiResponse(pb.BaseController.API_ERROR, message)
+                    content: pb.BaseController.apiResponse(pb.BaseController.API_FAILURE, message)
                 });
                 return;
             }
 
-            if(self.session.authentication.user_id != vars.id) {
+            if(self.session.authentication.user_id !== vars.id) {
                 cb({
                     code: 400,
-                    content: pb.BaseController.apiResponse(pb.BaseController.API_ERROR, self.ls.get('INSUFFICIENT_CREDENTIALS'))
+                    content: pb.BaseController.apiResponse(pb.BaseController.API_FAILURE, self.ls.g('generic.INSUFFICIENT_CREDENTIALS'))
                 });
                 return;
             }
 
-            if(post.new_password != post.confirm_password) {
+            if(post.new_password !== post.confirm_password) {
                 cb({
                     code: 400,
-                    content: pb.BaseController.apiResponse(pb.BaseController.API_ERROR, self.ls.get('PASSWORD_MISMATCH'))
+                    content: pb.BaseController.apiResponse(pb.BaseController.API_FAILURE, self.ls.g('users.PASSWORD_MISMATCH'))
                 });
                 return;
             }
 
-            var dao = new pb.DAO();
-            dao.loadById(vars.id, 'user', function(err, user) {
+            self.siteQueryService.loadById(vars.id, 'user', function(err, user) {
                 if(util.isError(err) || user === null) {
+                    if (err) { pb.log.error(JSON.stringify(err)); }
                     cb({
                         code: 400,
-                        content: pb.BaseController.apiResponse(pb.BaseController.API_ERROR, self.ls.get('INVALID_UID'))
+                        content: pb.BaseController.apiResponse(pb.BaseController.API_FAILURE, self.ls.g('generic.INVALID_UID'))
                     });
                     return;
                 }
 
-                if(user.password != pb.security.encrypt(post.current_password)) {
+                if(user.password !== pb.security.encrypt(post.current_password)) {
                     cb({
                         code: 400,
-                        content: pb.BaseController.apiResponse(pb.BaseController.API_ERROR, self.ls.get('INVALID_PASSWORD'))
+                        content: pb.BaseController.apiResponse(pb.BaseController.API_FAILURE, self.ls.g('users.INVALID_PASSWORD'))
                     });
                     return;
                 }
@@ -80,15 +81,16 @@ module.exports = function ChangePasswordModule(pb) {
                 delete user.new_password;
                 delete user.current_password;
 
-                dao.save(user, function(err, result) {
+                self.siteQueryService.save(user, function(err/*, result*/) {
                     if(util.isError(err)) {
+                        if (err) { pb.log.error(JSON.stringify(err)); }
                         return cb({
                             code: 500,
-                            content: pb.BaseController.apiResponse(pb.BaseController.API_ERROR, self.ls.get('ERROR_SAVING'))
+                            content: pb.BaseController.apiResponse(pb.BaseController.API_FAILURE, self.ls.g('generic.ERROR_SAVING'))
                         });
                     }
 
-                    cb({content: pb.BaseController.apiResponse(pb.BaseController.API_SUCCESS, self.ls.get('PASSWORD_CHANGED'))});
+                    cb({content: pb.BaseController.apiResponse(pb.BaseController.API_SUCCESS, self.ls.g('users.PASSWORD_CHANGED'))});
                 });
             });
         });

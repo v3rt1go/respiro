@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2015  PencilBlue, LLC
+    Copyright (C) 2016  PencilBlue, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -14,6 +14,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+'use strict';
 
 //dependencies
 var path  = require('path');
@@ -26,6 +27,7 @@ module.exports = function IndexModule(pb) {
     var TopMenu        = pb.TopMenuService;
     var Comments       = pb.CommentService;
     var ArticleService = pb.ArticleService;
+    var CommentService = pb.CommentService;
 
     /**
      * Index page of the pencilblue theme
@@ -37,6 +39,11 @@ module.exports = function IndexModule(pb) {
     function Index(){}
     util.inherits(Index, pb.BaseController);
 
+    Index.prototype.initSync = function (/*context*/) {
+        this.siteQueryService = new pb.SiteQueryService({site: this.site, onlyThisSite: true});
+        this.commentService = new CommentService(this.getServiceContext());
+    };
+
     Index.prototype.render = function(cb) {
         var self = this;
 
@@ -46,17 +53,17 @@ module.exports = function IndexModule(pb) {
         var article = self.req.pencilblue_article || null;
         var page    = self.req.pencilblue_page    || null;
 
-        var contentService = new pb.ContentService();
+        var contentService = new pb.ContentService({site: self.site, onlyThisSite: true});
         contentService.getSettings(function(err, contentSettings) {
             self.gatherData(function(err, data) {
-                
-                var articleService = new pb.ArticleService();
+
+                var articleService = new pb.ArticleService(self.site, true);
                 articleService.getMetaInfo(data.content[0], function(err, meta) {
                     self.ts.registerLocal('meta_keywords', meta.keywords);
                     self.ts.registerLocal('meta_desc', data.section.description || meta.description);
                     self.ts.registerLocal('meta_title', data.section.name || meta.title);
                     self.ts.registerLocal('meta_thumbnail', meta.thumbnail);
-                    self.ts.registerLocal('meta_lang', localizationLanguage);
+                    self.ts.registerLocal('meta_lang', self.ls.language);
                     self.ts.registerLocal('current_url', self.req.url);
                     self.ts.registerLocal('navigation', new pb.TemplateValue(data.nav.navigation, false));
                     self.ts.registerLocal('account_buttons', new pb.TemplateValue(data.nav.accountButtons, false));
@@ -172,7 +179,7 @@ module.exports = function IndexModule(pb) {
         //the theme is specified, we ensure that the theme is installed and
         //initialized otherwise we let the template service figure out how to
         //delegate.
-        if (!pb.PluginService.isActivePlugin(pieces[0])) {
+        if (!pb.PluginService.isActivePlugin(pieces[0], this.site)) {
             pb.log.silly("ContentController: Theme [%s] is not active, Template Service will delegate [%s]", pieces[0], pieces[1]);
             cb(null, pieces[1]);
             return;
@@ -225,13 +232,13 @@ module.exports = function IndexModule(pb) {
         var topic   = this.req.pencilblue_topic   || null;
         var article = this.req.pencilblue_article || null;
         var page    = this.req.pencilblue_page    || null;
-        
+
         //get service context
         var opts = this.getServiceContext();
 
-        var service = new ArticleService();
+        var service = new ArticleService(this.site, true);
         if(this.req.pencilblue_preview) {
-            if(this.req.pencilblue_preview == page || article) {
+            if(this.req.pencilblue_preview === page || article) {
                 if(page) {
                     service.setContentType('page');
                 }
@@ -268,8 +275,8 @@ module.exports = function IndexModule(pb) {
         var isPage           = content.object_type === 'page';
         var showByLine       = contentSettings.display_bylines && !isPage;
         var showTimestamp    = contentSettings.display_timestamp && !isPage;
-        
-        
+
+
         var ats              = this.ts.getChildInstance();
         var contentUrlPrefix = isPage ? '/page/' : '/article/';
         self.ts.reprocess = false;
@@ -306,7 +313,7 @@ module.exports = function IndexModule(pb) {
         var self           = this;
         var commentingUser = null;
         if(pb.security.isAuthenticated(this.session)) {
-            commentingUser = Comments.getCommentingUser(this.session.authentication.user);
+            commentingUser = self.commentService.getCommentingUser(this.session.authentication.user);
         }
 
         ts.registerLocal('user_photo', function(flag, cb) {
@@ -330,7 +337,7 @@ module.exports = function IndexModule(pb) {
         ts.registerLocal('display_login', commentingUser ? 'none' : 'block');
         ts.registerLocal('comments_length', util.isArray(content.comments) ? content.comments.length : 0);
         ts.registerLocal('individual_comments', function(flag, cb) {
-            if (!util.isArray(content.comments) || content.comments.length == 0) {
+            if (!util.isArray(content.comments) || content.comments.length === 0) {
                 cb(null, '');
                 return;
             }
@@ -390,11 +397,12 @@ module.exports = function IndexModule(pb) {
     Index.prototype.getNavigation = function(cb) {
         var options = {
             currUrl: this.req.url,
+            site: this.site,
             session: this.session,
             ls: this.ls,
             activeTheme: this.activeTheme
         };
-        
+
         var menuService = new pb.TopMenuService();
         menuService.getNavItems(options, function(err, navItems) {
             if (util.isError(err)) {

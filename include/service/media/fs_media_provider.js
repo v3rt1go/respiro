@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2015  PencilBlue, LLC
+    Copyright (C) 2016  PencilBlue, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -14,6 +14,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+'use strict';
 
 //dependencies
 var os    = require('os');
@@ -25,23 +26,26 @@ var util  = require('../../util.js');
 module.exports = function FsMediaProviderModule(pb) {
 
     /**
-     * A media provider that uses the underlying file system as the method of 
+     * A media provider that uses the underlying file system as the method of
      * storage.
      * @class FsMediaProvider
      * @constructor
+     * @param {Object} context
+     * @param {String} [context.parentDir]
+     * @param {String} context.site
      */
-    function FsMediaProvider(parentDir) {
-        this.parentDir = parentDir || pb.config.media.parent_dir;
+    function FsMediaProvider(context) {
+        this.parentDir = context.parentDir || pb.config.media.parent_dir;
     };
 
     /**
-     * Retrieves the item on the file system as a stream. 
+     * Retrieves the item on the file system as a stream.
      * @method getStream
-     * @param {String} mediaPath The path/key to the media.  Typically this is a 
+     * @param {String} mediaPath The path/key to the media.  Typically this is a
      * path such as: /media/2014/9/540a3ff0e30ddfb9e60000be-1409957872680.jpg
      * @param {Object} [options] Options for interacting with S3
      * @param {String} [options.bucket] The S3 bucket to interact with
-     * @param {Function} cb A callback that provides two parameters: An Error, if 
+     * @param {Function} cb A callback that provides two parameters: An Error, if
      * occurred and a ReadableStream that contains the media content.
      */
     FsMediaProvider.prototype.getStream = function(mediaPath, cb) {
@@ -52,9 +56,9 @@ module.exports = function FsMediaProviderModule(pb) {
     /**
      * Retrieves the content from the file system as a String or Buffer.
      * @method get
-     * @param {String} mediaPath The path/key to the media.  Typically this is a 
+     * @param {String} mediaPath The path/key to the media.  Typically this is a
      * path such as: /media/2014/9/540a3ff0e30ddfb9e60000be-1409957872680.jpg
-     * @param {Function} cb A callback that provides two parameters: An Error, if 
+     * @param {Function} cb A callback that provides two parameters: An Error, if
      * occurred and an entity that contains the media content.
      */
     FsMediaProvider.prototype.get = function(mediaPath, cb) {
@@ -63,13 +67,13 @@ module.exports = function FsMediaProviderModule(pb) {
     };
 
     /**
-     * Sets media content into the file system based on the specified media path and 
+     * Sets media content into the file system based on the specified media path and
      * options.  The stream provided must be a ReadableStream.
      * @method setStream
      * @param {ReadableStream} stream The content stream
-     * @param {String} mediaPath The path/key to the media.  Typically this is a 
+     * @param {String} mediaPath The path/key to the media.  Typically this is a
      * path such as: /media/2014/9/540a3ff0e30ddfb9e60000be-1409957872680.jpg
-     * @param {Function} cb A callback that provides two parameters: An Error, if 
+     * @param {Function} cb A callback that provides two parameters: An Error, if
      * occurred and the success of the operation.
      */
     FsMediaProvider.prototype.setStream = function(stream, mediaPath, cb) {
@@ -87,13 +91,13 @@ module.exports = function FsMediaProviderModule(pb) {
     };
 
     /**
-     * Sets media content into an file system based on the specified media path and 
+     * Sets media content into an file system based on the specified media path and
      * options.  The data must be in the form of a String or Buffer.
      * @method setStream
      * @param {String|Buffer} fileDataStrOrBuffOrStream The content to persist
-     * @param {String} mediaPath The path/key to the media.  Typically this is a 
+     * @param {String} mediaPath The path/key to the media.  Typically this is a
      * path such as: /media/2014/9/540a3ff0e30ddfb9e60000be-1409957872680.jpg
-     * @param {Function} cb A callback that provides two parameters: An Error, if 
+     * @param {Function} cb A callback that provides two parameters: An Error, if
      * occurred and the success of the operation.
      */
     FsMediaProvider.prototype.set = function(fileDataStrOrBuff, mediaPath, cb) {
@@ -107,12 +111,12 @@ module.exports = function FsMediaProviderModule(pb) {
     };
 
     /**
-     * Creates a writable stream to a file with the specified path.  The resource 
+     * Creates a writable stream to a file with the specified path.  The resource
      * is overwritten if already exists.
      * @method createWriteStream
-     * @param {String} mediaPath The path/key to the media.  Typically this is a 
+     * @param {String} mediaPath The path/key to the media.  Typically this is a
      * path such as: /media/2014/9/540a3ff0e30ddfb9e60000be-1409957872680.jpg
-     * @param {Function} cb A callback that provides two parameters: An Error, if 
+     * @param {Function} cb A callback that provides two parameters: An Error, if
      * occurred and a WriteableStream.
      */
     FsMediaProvider.prototype.createWriteStream = function(mediaPath, cb) {
@@ -134,9 +138,9 @@ module.exports = function FsMediaProviderModule(pb) {
     /**
      * Checks to see if the file actually exists on disk
      * @method exists
-     * @param {String} mediaPath The path/key to the media.  Typically this is a 
+     * @param {String} mediaPath The path/key to the media.  Typically this is a
      * path such as: /media/2014/9/540a3ff0e30ddfb9e60000be-1409957872680.jpg
-     * @param {Function} cb A callback that provides two parameters: An Error, if 
+     * @param {Function} cb A callback that provides two parameters: An Error, if
      * occurred and a Boolean.
      */
     FsMediaProvider.prototype.exists = function(mediaPath, cb) {
@@ -149,9 +153,9 @@ module.exports = function FsMediaProviderModule(pb) {
     /**
      * Deletes a file from the file system
      * @method delete
-     * @param {String} mediaPath The path/key to the media.  Typically this is a 
+     * @param {String} mediaPath The path/key to the media.  Typically this is a
      * path such as: /media/2014/9/540a3ff0e30ddfb9e60000be-1409957872680.jpg
-     * @param {Function} cb A callback that provides two parameters: An Error, if 
+     * @param {Function} cb A callback that provides two parameters: An Error, if
      * occurred and the success of the operation.
      */
     FsMediaProvider.prototype.delete = function(mediaPath, cb) {
@@ -164,9 +168,9 @@ module.exports = function FsMediaProviderModule(pb) {
     /**
      * Retrieve the stats on the file
      * @method stat
-     * @param {String} mediaPath The path/key to the media.  Typically this is a 
+     * @param {String} mediaPath The path/key to the media.  Typically this is a
      * path such as: /media/2014/9/540a3ff0e30ddfb9e60000be-1409957872680.jpg
-     * @param {Function} cb A callback that provides two parameters: An Error, if 
+     * @param {Function} cb A callback that provides two parameters: An Error, if
      * occurred and an object that contains the file stats
      */
     FsMediaProvider.prototype.stat = function(mediaPath, cb) {
@@ -175,12 +179,12 @@ module.exports = function FsMediaProviderModule(pb) {
     };
 
     /**
-     * Recursively creates the directory structure based on the absolute file path 
+     * Recursively creates the directory structure based on the absolute file path
      * provided.
      * @method mkdirs
      * @param {String} absoluteFilePath
-     * @param {Function} A callback that provides two parameters: Error, if 
-     * occurred and result of the attempt at the creation of each directory in the 
+     * @param {Function} A callback that provides two parameters: Error, if
+     * occurred and result of the attempt at the creation of each directory in the
      * path.
      */
     FsMediaProvider.prototype.mkdirs = function(absoluteFilePath, cb) {
@@ -193,12 +197,12 @@ module.exports = function FsMediaProviderModule(pb) {
         var tasks     = util.getTasks(pieces, function(pieces, i) {
             return function(callback) {
 
-                //we need to skip the first one bc it will probably be empty and we 
-                //want to skip the last one because it will probably be the file 
+                //we need to skip the first one bc it will probably be empty and we
+                //want to skip the last one because it will probably be the file
                 //name not a directory.
                 var p = pieces[i];
                 if (p.length === 0 || i >= pieces.length - 1) {
-                    return callback();   
+                    return callback();
                 }
 
                 curr += (isWindows && i === 0 ? '' : path.sep) + p;
@@ -217,8 +221,8 @@ module.exports = function FsMediaProviderModule(pb) {
     };
 
     /**
-     * Generates an absolute path based on the parent directory and media path.  
-     * The parent directory is expected to a single directory or set of directories 
+     * Generates an absolute path based on the parent directory and media path.
+     * The parent directory is expected to a single directory or set of directories
      * nested under the pb.config.docRoot.
      * @static
      * @method getMediaPath

@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2015  PencilBlue, LLC
+    Copyright (C) 2016  PencilBlue, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -14,13 +14,14 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+'use strict';
 
 //dependencies
 var async          = require('async');
 
 
 module.exports = function(pb) {
-    
+
     //pb dependencies
     var util = pb.util;
     var BaseController = pb.BaseController;
@@ -35,15 +36,14 @@ module.exports = function(pb) {
      * @extends BaseController
      */
     function PluginApiController(){
-        
+
         /**
          *
          * @property pluginService
          * @type {PluginService}
          */
-        this.pluginService = new PluginService();
     }
-    util.inherits(PluginApiController, BaseController);
+    util.inherits(PluginApiController, pb.BaseAdminController);
 
     //constants
     /**
@@ -60,7 +60,7 @@ module.exports = function(pb) {
         uninstall: true,
         reset_settings: true,
         initialize: true,
-        set_theme: true,
+        set_theme: true
     };
 
     /**
@@ -72,16 +72,17 @@ module.exports = function(pb) {
     PluginApiController.prototype.render = function(cb) {
         var action     = this.pathVars.action;
         var identifier = this.pathVars.id;
+        this.pluginService = new pb.PluginService({site: this.site});
 
         //validate action
         var errors = [];
-        if (!pb.validation.validateNonEmptyStr(action, true) || VALID_ACTIONS[action] === undefined) {
-            errors.push(this.ls.get('VALID_ACTION_REQUIRED'));
+        if (!pb.validation.isNonEmptyStr(action, true) || VALID_ACTIONS[action] === undefined) {
+            errors.push(this.ls.g('generic.VALID_ACTION_REQUIRED'));
         }
 
         //validate identifier
-        if (VALID_ACTIONS[action] && !pb.validation.validateNonEmptyStr(identifier, true)) {
-            errors.push(this.ls.get('VALID_IDENTIFIER_REQUIRED'));
+        if (VALID_ACTIONS[action] && !pb.validation.isNonEmptyStr(identifier, true)) {
+            errors.push(this.ls.g('generic.VALID_IDENTIFIER_REQUIRED'));
         }
 
         //check for errors
@@ -113,7 +114,6 @@ module.exports = function(pb) {
      * @param {Function} cb
      */
     PluginApiController.prototype.uninstall = function(uid, cb) {
-        var self = this;
 
         var jobId   = this.pluginService.uninstallPlugin(uid);
         var content = BaseController.apiResponse(BaseController.API_SUCCESS, '', jobId);
@@ -134,9 +134,9 @@ module.exports = function(pb) {
 
             //load plugin
             function(callback) {
-                self.pluginService.getPlugin(uid, function(err, plugin) {
+                self.pluginService.getPluginBySite(uid, function(err, plugin) {
                     if (!plugin) {
-                        callback(new Error(util.format(self.ls.get('PLUGIN_NOT_FOUND'), uid)), false);
+                        callback(new Error(util.format(self.ls.g('generic.PLUGIN_NOT_FOUND'), uid)), false);
                         return;
                     }
 
@@ -175,13 +175,12 @@ module.exports = function(pb) {
                         data.push(err.validationErrors[i].message);
                     }
                 }
-                var content = BaseController.apiResponse(BaseController.API_FAILURE, util.format(self.ls.get('RESET_SETTINGS_FAILED'), uid), data);
-                cb({content: content, code: 400});
-                return;
+                var content = BaseController.apiResponse(BaseController.API_FAILURE, util.format(self.ls.g('generic.RESET_SETTINGS_FAILED'), uid), data);
+                return cb({content: content, code: 400});
             }
 
-            var content = BaseController.apiResponse(BaseController.API_SUCCESS, util.format(self.ls.get('RESET_SETTINGS_SUCCESS'), uid));
-            cb({content: content});
+            var json = BaseController.apiResponse(BaseController.API_SUCCESS, util.format(self.ls.g('generic.RESET_SETTINGS_SUCCESS'), uid));
+            cb({content: json});
         });
     };
 
@@ -194,22 +193,21 @@ module.exports = function(pb) {
     PluginApiController.prototype.initialize = function(uid, cb) {
         var self = this;
 
-        this.pluginService.getPlugin(uid, function(err, plugin) {
+        this.pluginService.getPluginBySite(uid, function(err, plugin) {
             if (util.isError(err)) {
-                var content = BaseController.apiResponse(BaseController.API_FAILURE, util.format(self.ls.get('INITIALIZATION_FAILED'), uid), [err.message]);
+                var content = BaseController.apiResponse(BaseController.API_FAILURE, util.format(self.ls.g('generic.INITIALIZATION_FAILED'), uid), [err.message]);
                 cb({content: content, code: 500});
                 return;
             }
 
             self.pluginService.initPlugin(plugin, function(err, results) {
-                if (util.isError(err)) {
-                    var content = BaseController.apiResponse(BaseController.API_FAILURE, util.format(self.ls.get('INITIALIZATION_FAILED'), uid), [err.message]);
-                    cb({content: content, code: 400});
-                    return;
-                }
+                var content = util.isError(err) ? BaseController.apiResponse(BaseController.API_FAILURE, util.format(self.ls.g('generic.INITIALIZATION_FAILED'), uid), [err.message]) :
+                    BaseController.apiResponse(BaseController.API_SUCCESS, util.format(self.ls.g('generic.INITIALIZATION_SUCCESS'), uid));
 
-                var content = BaseController.apiResponse(BaseController.API_SUCCESS, util.format(self.ls.get('INITIALIZATION_SUCCESS'), uid));
-                cb({content: content});
+                cb({
+                    content: content,
+                    code: util.isError(err) ? 400 : 200
+                });
             });
         });
     };
@@ -224,9 +222,9 @@ module.exports = function(pb) {
         var self = this;
 
         //retrieve plugin
-        this.pluginService.getPlugin(uid, function(err, plugin) {
+        this.pluginService.getPluginBySite(uid, function(err, plugin) {
             if (uid !== RequestHandler.DEFAULT_THEME && util.isError(err)) {
-                var content = BaseController.apiResponse(BaseController.API_FAILURE, util.format(self.ls.get('SET_THEME_FAILED'), uid), [err.message]);
+                var content = BaseController.apiResponse(BaseController.API_FAILURE, util.format(self.ls.g('generic.SET_THEME_FAILED'), uid), [err.message]);
                 cb({content: content, code: 500});
                 return;
             }
@@ -238,15 +236,15 @@ module.exports = function(pb) {
             }
 
             var theme = plugin ? plugin.uid : uid;
-            pb.settings.set('active_theme', theme, function(err, result) {
-                if (util.isError(err)) {
-                    var content = BaseController.apiResponse(BaseController.API_FAILURE, util.format(self.ls.get('SET_THEME_FAILED'), uid), [err.message]);
-                    cb({content: content, code: 500});
-                    return;
-                }
+            self.settings.set('active_theme', theme, function(err, result) {
+                var content = util.isError(err) ? BaseController.apiResponse(BaseController.API_FAILURE, util.format(self.ls.g('generic.SET_THEME_FAILED'), uid), [err.message]) :
+                    BaseController.apiResponse(BaseController.API_SUCCESS, util.format(self.ls.g('generic.SET_THEME_SUCCESS'), uid));
 
-                var content = BaseController.apiResponse(BaseController.API_SUCCESS, util.format(self.ls.get('SET_THEME_SUCCESS'), uid));
-                cb({content: content});
+
+                return cb({
+                    content: content,
+                    code: util.isError(err) ? 500 : 200
+                });
             });
         });
     };

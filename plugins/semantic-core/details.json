@@ -3,7 +3,7 @@
   "name": "Semantic Theme Core",
   "description": "This is the core component plugin of the Semantic theme. It must be installed as a prerequisite of any semantic theme layout",
   "version": "0.0.1",
-  "pb_version": "0.4.x",
+  "pb_version": ">=0.5.x <1.x",
   "icon": "/imgs/sample.ico",
   "author": {
     "name": "Alex Griciuc",
@@ -11,76 +11,78 @@
     "website": "https://plus.google.com/u/0/+AlexGriciuc/",
     "contributors": []
   },
-  "settings": [{
-    "name": "full_width",
-    "value": true
-  }, {
-    "name": "simpletextrotator_css_src",
-    "value": "/public/semantic-core/css/simpletextrotator.css"
-  }, {
-    "name": "et_line_font_css_src",
-    "value": "/public/semantic-core/css/et-line-font.css"
-  }, {
-    "name": "magnific_popup_css_src",
-    "value": "/public/semantic-core/css/magnific-popup.css"
-  }, {
-    "name": "flexslider_css_src",
-    "value": "/public/semantic-core/css/flexslider.css"
-  }, {
-    "name": "animate_css_src",
-    "value": "/public/semantic-core/css/animate.css"
-  }, {
-    "name": "style_css_src",
-    "value": "/public/semantic-core/css/style.css"
-  }, {
-    "name": "custom_css_src",
-    "value": "/public/semantic-core/css/custom.css"
-  }, {
-    "name": "YTPlayer_js_src",
-    "value": "/public/semantic-core/js/jquery.mb.YTPlayer.min.js"
-  }, {
-    "name": "appear_js_src",
-    "value": "/public/semantic-core/js/appear.js"
-  }, {
-    "name": "simple_text_rotator_js_src",
-    "value": "/public/semantic-core/js/jquery.simple-text-rotator.min.js"
-  }, {
-    "name": "jq_bootstrap_validation_js_src",
-    "value": "/public/semantic-core/js/jqBootstrapValidation.js"
-  }, {
-    "name": "gmaps_api_js_src",
-    "value": "https://maps.google.com/maps/api/js?sensor=true"
-  }, {
-    "name": "gmaps_custom_js_src",
-    "value": "/public/semantic-core/js/gmaps.js"
-  }, {
-    "name": "isotope_js_src",
-    "value": "/public/semantic-core/js/isotope.pkgd.min.js"
-  }, {
-    "name": "images_loaded_js_src",
-    "value": "/public/semantic-core/js/imagesloaded.pkgd.js"
-  }, {
-    "name": "jquery_flexislider_js_src",
-    "value": "/public/semantic-core/js/jquery.flexslider-min.js"
-  }, {
-    "name": "jquery_magnific_popup_js_src",
-    "value": "/public/semantic-core/js/jquery.magnific-popup.min.js"
-  }, {
-    "name": "jquery_fitvids_js_src",
-    "value": "/public/semantic-core/js/jquery.fitvids.js"
-  }, {
-    "name": "smoothscroll_js_src",
-    "value": "/public/semantic-core/js/smoothscroll.js"
-  }, {
-    "name": "wow_js_src",
-    "value": "/public/semantic-core/js/wow.min.js"
-  }, {
-    "name": "contact_js_src",
-    "value": "/public/semantic-core/js/contact.js"
-  }, {
-    "name": "custom_js_src",
-    "value": "/public/semantic-core/js/custom.js"
-  }],
+  "settings": [
+    {
+      "name": "full_width",
+      "value": true
+    }, {
+      "name": "simpletextrotator_css_src",
+      "value": "/public/semantic-core/css/simpletextrotator.css"
+    }, {
+      "name": "et_line_font_css_src",
+      "value": "/public/semantic-core/css/et-line-font.css"
+    }, {
+      "name": "magnific_popup_css_src",
+      "value": "/public/semantic-core/css/magnific-popup.css"
+    }, {
+      "name": "flexslider_css_src",
+      "value": "/public/semantic-core/css/flexslider.css"
+    }, {
+      "name": "animate_css_src",
+      "value": "/public/semantic-core/css/animate.css"
+    }, {
+      "name": "style_css_src",
+      "value": "/public/semantic-core/css/style.css"
+    }, {
+      "name": "custom_css_src",
+      "value": "/public/semantic-core/css/custom.css"
+    }, {
+      "name": "YTPlayer_js_src",
+      "value": "/public/semantic-core/js/jquery.mb.YTPlayer.min.js"
+    }, {
+      "name": "appear_js_src",
+      "value": "/public/semantic-core/js/appear.js"
+    }, {
+      "name": "simple_text_rotator_js_src",
+      "value": "/public/semantic-core/js/jquery.simple-text-rotator.min.js"
+    }, {
+      "name": "jq_bootstrap_validation_js_src",
+      "value": "/public/semantic-core/js/jqBootstrapValidation.js"
+    }, {
+      "name": "gmaps_api_js_src",
+      "value": "https://maps.google.com/maps/api/js?sensor=true"
+    }, {
+      "name": "gmaps_custom_js_src",
+      "value": "/public/semantic-core/js/gmaps.js"
+    }, {
+      "name": "isotope_js_src",
+      "value": "/public/semantic-core/js/isotope.pkgd.min.js"
+    }, {
+      "name": "images_loaded_js_src",
+      "value": "/public/semantic-core/js/imagesloaded.pkgd.js"
+    }, {
+      "name": "jquery_flexislider_js_src",
+      "value": "/public/semantic-core/js/jquery.flexslider-min.js"
+    }, {
+      "name": "jquery_magnific_popup_js_src",
+      "value": "/public/semantic-core/js/jquery.magnific-popup.min.js"
+    }, {
+      "name": "jquery_fitvids_js_src",
+      "value": "/public/semantic-core/js/jquery.fitvids.js"
+    }, {
+      "name": "smoothscroll_js_src",
+      "value": "/public/semantic-core/js/smoothscroll.js"
+    }, {
+      "name": "wow_js_src",
+      "value": "/public/semantic-core/js/wow.min.js"
+    }, {
+      "name": "contact_js_src",
+      "value": "/public/semantic-core/js/contact.js"
+    }, {
+      "name": "custom_js_src",
+      "value": "/public/semantic-core/js/custom.js"
+    }
+  ],
   "permissions": {
     "ACCESS_USER": [],
     "ACCESS_WRITER": [],

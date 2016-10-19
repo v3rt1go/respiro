@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2015  PencilBlue, LLC
+    Copyright (C) 2016  PencilBlue, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -14,13 +14,14 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+'use strict';
 
 module.exports = function(pb) {
-    
+
     //pb dependencies
     var util           = pb.util;
     var BaseController = pb.BaseController;
-    
+
     /**
      * Search for headline or subheading matching search term
      */
@@ -59,14 +60,15 @@ module.exports = function(pb) {
             where: {
                 $or: [
                     {headline: pattern},
-                    {subheading: pattern},
+                    {subheading: pattern}
                 ]
             },
             order: pb.DAO.NATURAL_ORDER,
             limit: MAX_RESULTS
         };
-        var dao = new pb.DAO();
-        dao.q(type, opts, function(err, items) {
+
+        var queryService = new pb.SiteQueryService({site: this.site, onlyThisSite: true});
+        queryService.q(type, opts, function(err, items) {
             if (util.isError(err)) {
                 var content = BaseController.apiResponse(BaseController.API_FAILURE, '', '');
                 return cb({content: content, code: 500});

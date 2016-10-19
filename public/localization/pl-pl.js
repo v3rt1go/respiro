@@ -1,17 +1,7 @@
-/*
- * PencilBlue 0.3.1 localisation file for Polish.
- * Version:     0.1
- * Author:      Lukasz Galuszka
- * Change Log:
- *              20/01/2015 Initial version
- *
- */
-
-var loc =
-{
-    generic:
-    {
-        PENCILBLUE: 'pencilblue',
+module.exports = {
+    generic: {
+        LOCALE_DISPLAY: 'Polski (Polska)',
+        PENCILBLUE: 'PencilBlue',
         ALL_RIGHTS: 'Wszystkie prawa zastrzeżone',
         NONE: 'Nic',
         LEFT: 'Lewo',
@@ -59,10 +49,10 @@ var loc =
         CONFIRM_DELETE: 'Czy na pewno chcesz usunąć',
         LOAD_FILE: 'Wczytaj plik',
         SELECT_FILE: 'Wybierz plik',
-        NO_ARTICLES: 'Nie ma artykułów spełniających dane kryteria',
+        NO_ARTICLES: 'Brak artykułów spełniających dane kryteria',
         ACCOUNT: 'Konto',
         EMAIL: 'Email',
-        PREFERENCES: 'Preferencje',
+        PREFERENCES: 'Ustawienia',
         COMMENT: 'Komentarz',
         COMMENTS: 'Komentarze',
         SUBMIT_COMMENT: 'Wyślij komentarz',
@@ -83,21 +73,21 @@ var loc =
 		UNINSTALL: 'Odinstaluj',
 		INSTALL: 'Zainstaluj',
 		ACTIVE_PLUGIN_DESCRIPTION: 'Zainstalowane wtyczki, które zostały uruchomione z powodzeniem podczas startu systemu.',
-		INACTIVE_PLUGIN_DESCRIPTION: 'Wtyczki, które pomimo instalacji nie uruchamiają się poprawnie.',
+		INACTIVE_PLUGIN_DESCRIPTION: 'Wtyczki, które pomimo instalacji nie uruchamiają się poprawnie.',
 		AVAILABLE_PLUGIN_DESCRIPTION: 'Wtyczki pobrane, gotowe do instalacji',
 		PLEASE_WAIT: 'Proszę zaczekaj',
-		VALID_ACTION_REQUIRED: 'A valid action is required',
-		VALID_IDENTIFIER_REQUIRED: 'A valid identifier is required',
+		VALID_ACTION_REQUIRED: 'Wymagana jest prawidłowa akcja',
+		VALID_IDENTIFIER_REQUIRED: 'Wymagany jest prawidłowy identyfikator',
 		INSTALL_FAILED: 'Próba instalacji wtyczki [%s] nie powiodła się',
-		INSTALL_SUCCESS: 'Pomyślenie zainstalowano wtyczkę [%s]',
+		INSTALL_SUCCESS: 'Instalacja wtyczki [%s] przebiegła pomyślnie',
 		UNINSTALL_FAILED: 'Próba odinstalowania wtyczki [%s] nie powiodła się',
-		UNINSTALL_SUCCESS: 'Pomyślnie odinstalowano wtyczkę [%s]',
-		PLUGIN_NOT_FOUND: 'Nie znaleziono wtyczki [%s]',
-		RESET_SETTINGS_FAILED: 'Próbka zresetowania ustawień wtyczki [%s] nie powiodła się',
-		RESET_SETTINGS_SUCCESS: 'Skutecznie zresetowano ustawienia wtyczki [%s]',
+		UNINSTALL_SUCCESS: 'Odinstalowanie wtyczki [%s] przebiegło pomyślnie',
+		PLUGIN_NOT_FOUND: 'Nie odnaleziono wtyczki [%s]',
+		RESET_SETTINGS_FAILED: 'Próba zresetowania ustawień wtyczki [%s] nie powiodła się',
+		RESET_SETTINGS_SUCCESS: 'Zresetowanie ustawień wtyczki [%s] przebiegła pomyślnie',
 		INITIALIZE: 'Inicjalizacja',
 		INITIALIZATION_FAILED: 'Próba inicjalizacji wtyczki [%s] nie powiodła się',
-		INITIALIZATION_SUCCESS: 'Skuteczna inicjalizacja wtyczki [%s]',
+		INITIALIZATION_SUCCESS: 'Inicjalizacja wtyczki [%s] przebiegła pomyślnie',
 		PERMISSION: 'Pozwolenie',
 		PERMISSIONS: 'Pozwolenia',
 		ACCESS_USER: 'Użytkownik',
@@ -105,7 +95,7 @@ var loc =
 		ACCESS_EDITOR: 'Redaktor',
 		ACCESS_MANAGING_EDITOR: 'Redaktor naczelny',
 		ACCESS_ADMINISTRATOR: 'Administrator',
-		UID: 'Unikalny IDentyfikator',
+		UID: 'Unikalny Identyfikator',
 		AUTHOR_INFORMATION: 'Informacje o autorze',
 		WEBSITE: 'Strona',
 		CONTRIBUTORS: 'Współautor',
@@ -117,12 +107,12 @@ var loc =
 		THEME_INFORMATION: 'Motyw - detale',
 		TEMPLATES: 'Szablony',
 		SET_THEME_FAILED: 'Próba ustawienia motywu [%s] nie powiodła się',
-		SET_THEME_SUCCESS: 'Skuteczna aktywacja motywu [%s]',
-		SAVE_PLUGIN_SETTINGS_SUCCESS: 'Skutecznie zapisano ustawienia',
+		SET_THEME_SUCCESS: 'Aktywacja motywu [%s] przebiegła pomyślnie',
+		SAVE_PLUGIN_SETTINGS_SUCCESS: 'Zapisanie ustawień  przebiegło pomyślnie',
 		SAVE_PUGIN_SETTINGS_FAILURE: 'Wystąpił bład poczas próby zapisu ustawień',
 		SET_THEME: 'Ustaw motyw',
 		SITE_LOGO_UPLOAD_FAILURE: 'Próba wgrania nowego logo strony nie powiodła się',
-		SITE_LOGO_UPLOAD_SUCCESS: 'Skuteczna aktualizacja logo strony',
+		SITE_LOGO_UPLOAD_SUCCESS: 'Aktualizacja logo strony przebiegło pomyślnie',
 		TYPE: 'Rodzaj',
 		CONTAINER: 'Container',
 		SECTION: 'Sekcja',
@@ -131,7 +121,7 @@ var loc =
 		URL: 'URL',
 		LINK: 'Link',
 		CONTENT_SEARCH_EXPLANATION: 'Wyszukaj strony lub artykułu poprzez nagłowki i podtytuły',
-		PARENT_NAV_ITEM: 'Ogólny elementem nawigacji',
+		PARENT_NAV_ITEM: 'Ogólny element nawigacji',
 		NAVIGATION: 'Nawigacja',
 		NAV_MAP: 'Mapa Nawigacji',
         NEW_NAV_ITEM: 'Nowa pozycja w Nawigacji',
@@ -151,17 +141,17 @@ var loc =
         USER: 'Użytkownik',
         SUBSCRIBE: 'Subksrybuj',
         PRIVACY_POLICY: 'Polityka prywatności',
-        MAKE_PB_BETTER: 'Przyczyń się do poprawy PencilBlue poprzez wysyłkę informacji na temat procesu instalacji',
+        MAKE_PB_BETTER: 'Przyczyń się do poprawy PencilBlue przez wysłanie informacji na temat procesu instalacji',
         CLOSE: 'Zamknij',
         APPLY_SETTINGS: 'Zastosuj ustawienia',
         CONFIGURATION_SETTINGS: 'Konfiguracja ustawień',
         EXISTING_CUSTOM_OBJECT: 'Niestandardowy obiekt o podanej nazwie już istnieje',
         OPTIONS_PARAM_MUST_BE_OBJECT: 'Parametr opcji musi być obiektem',
         WHERE_CLAUSE_MUST_BE_OBJECT: 'Parametr miejsca musi byc obiektem',
-        COLLECTION_MUST_BE_STR: 'The collection parameter must be a string',
-        COMMAND_MUST_BE_OBJECT: 'The command must be a valid object',
-        PROCEDURE_MUST_BE_OBJECT: 'A valid procedure object is required in order to execute the indexing operation',
-        OBJ_TO_PARAMS_MUST_BE: 'The obj must be an object and the to parameter must be a string',
+        COLLECTION_MUST_BE_STR: 'Parametr kolekcji musi być tekstem',
+        COMMAND_MUST_BE_OBJECT: 'Komenda musi być prawidłowym obiektem',
+        PROCEDURE_MUST_BE_OBJECT: 'Procedura musi być obiektem by wykonać operacje indeksowania',
+        OBJ_TO_PARAMS_MUST_BE: 'obj musi być obiektem oraz parametr musi być tekstem',
         EMAIL_NOT_CONFIGURED: 'Poczta elektroniczna nie została skonfigurowana na serwerze',
         INVALID_URL: 'Dostarczono niewłaściwy link',
         INVALID_MEDIA_URL: 'Dostarczony link nie zawiera wymaganych informacji w celu importu do systemu',
@@ -171,15 +161,18 @@ var loc =
         INVALID_FILE: 'Dostarczony plik jest niewłaściwy',
         COMPLETE: 'Gotowe',
         WYSIWYG: 'WYSIWYG',
-        THUMBNAIL: 'Thumbnail'
+        THUMBNAIL: 'Thumbnail',
+        ERROR_CREATING_USER: 'Wystąpił błąd podczas tworzenia nowego użytkownika',
+        ERROR_SETTING_ACTIVE_THEME: 'Wystąpił błąd podczas aktywacji motywu.',
+        ERROR_SETTING_CONTENT_SETTINGS: 'Wystąpił błąd podczas zmieniania ustawień zawartośći',
+        ERROR_SETTING_SYS_INITIALIZED: 'Wystąpił błąd podczas zmieniania ustawień zainicjalizowanych przez system',
+        ERROR_SETTING_CALLHOME: 'Wystąpił błąd podczas ustawiania system reporting preference'
     },
-    error:
-    {
+    error: {
     	ERROR: 'Błąd',
-        PAGE_NOT_FOUND: 'Strona nie może być zlokalizowana'
+        PAGE_NOT_FOUND: 'Nie można odnaleźć strony.'
     },
-    timestamp:
-    {
+    timestamp: {
         JAN: 'Styczeń',
         FEB: 'Luty',
         MAR: 'Marzec',
@@ -195,20 +188,18 @@ var loc =
         TIME_AM: 'AM',
         TIME_PM: 'PM'
     },
-    setup:
-    {
-        REGISTER_ADMIN: 'Proszę utworzyć konto admistratora serwisu.'
+    setup: {
+        REGISTER_ADMIN: 'Proszę utworzyć konto admistratora serwisu.'
     },
-    login:
-    {
+    login: {
         ADMIN_LOGIN: 'Logowanie: pisarz, redaktor, administrator',
         USERNAME_OR_EMAIL: 'Nazwa użytkownika lub adres email',
         INVALID_LOGIN: 'Nieprawidłowa kombinacja loginu i hasła',
-        READY_TO_USE: 'Zainstalowany pencilblue jest gotowy do użycia',
-        ACCOUNT_CREATED: 'Twoje konto zostało pomyślenie utworzone. Możesz się teraz zalogować'
+        READY_TO_USE: 'Zainstalowany PencilBlue jest gotowy do użycia',
+        ACCOUNT_CREATED: 'Twoje konto zostało pomyślenie utworzone. Możesz się teraz zalogować',
+        FORGOT_PASSWORD: 'Zapomniałem hasła'
     },
-    admin:
-    {
+    admin: {
         DASHBOARD: 'Dashboard',
         CONTENT: 'Treść',
         PAGES: 'Strony',
@@ -235,13 +226,13 @@ var loc =
         ACTIVE_TOPICS: 'Przeciągnij tu powiązane tematy',
         INACTIVE_TOPICS: 'Przeciągnij tu niepowiązane tematy',
         FOCUS_KEYWORD: 'Słowo klucz',
-        FOCUS_KEYWORD_PLACEHOLDER: '&nbsp;Najważniejsze&nbsp;słowo klucz&nbsp;powiązane&nbsp;z&nbsp;the&nbsp;treścią',
+        FOCUS_KEYWORD_PLACEHOLDER: '&nbsp;Najważniejsze&nbsp;słowo&nbsp;klucz&nbsp;powiązane&nbsp;z&nbsp;treścią',
         SEO_TITLE: 'SEO tytuł',
         SEO_TITLE_PLACEHOLDER: 'Ograniczone&nbsp;do&nbsp;70&nbsp;znaków',
         META_DESC: 'Meta opis',
         META_DESC_PLACEHOLDER: 'Ograniczony&nbsp;do&nbsp;156&nbsp;znaków',
         META_KEYWORDS: 'Meta słowa kluczowe',
-        META_KEYWORDS_PLACEHOLDER: 'Słowa kluczowe&nbsp;przedzielone kropką',
+        META_KEYWORDS_PLACEHOLDER: 'Słowa&nbsp;kluczowe&nbsp;przedzielone&nbsp;przecinkiem',
         CREATED: 'utworzony',
         ADDED: 'dodany',
         EDITED: 'edytowany',
@@ -249,10 +240,11 @@ var loc =
         SAVED: 'zapisany',
         NARROW_RESULTS: 'Zawężone wyniki',
         URL_KEY: 'URL klucz',
-        FEED_UNAVAILABLE: 'Nie można załadować aktualności.'
+        FEED_UNAVAILABLE: 'Nie można załadować aktualności.',
+        REQUESTS_TOTAL: 'Wszystkich Wnioski',
+        REQUESTS_CURRENT: 'Aktualne Wnioski'
     },
-    topics:
-    {
+    topics: {
         MANAGE_TOPICS: 'Zarządzaj tematami',
         NEW_TOPIC: 'Nowy temat',
         TOPIC_NAME: 'Nazwa tematu',
@@ -262,8 +254,7 @@ var loc =
         IMPORT_TOPICS_HELP: 'Tutaj możesz zaimportować plik .CVS opisujący nazwę tematu. Plik nie powinien zawierać żadnych dodatkowych informacji.',
         TOPICS_CSV_FILE: 'Plik CSV zawierający nazwy tematów',
     },
-    media:
-    {
+    media: {
         MANAGE_MEDIA: 'Zarządzaj multimediami ',
         NEW_MEDIA: 'Nowe multmedia',
         LINK_OR_UPLOAD: 'Wgraj lub podlinkuj',
@@ -282,11 +273,10 @@ var loc =
         LINK_TO_IMAGE: 'Link do obrazka',
         UPLOAD_IMAGE: 'Wgraj obrazek',
         IMAGE_URL: 'URL obrazka',
-        IMAGE_URL_PLACEHOLDER: '.jpg, .png, .gif, or .svg',
+        IMAGE_URL_PLACEHOLDER: '.jpg, .png, .gif, lub .svg',
         FILE_TOO_BIG: 'Rozmiar pliku przekracza dozwolony limit'
     },
-    pages:
-    {
+    pages: {
         MANAGE_PAGES: 'Zarządzaj stronami',
         NEW_PAGE: 'Nowa strona',
         PAGE_URL: 'Adres strony',
@@ -296,8 +286,7 @@ var loc =
         SUBHEADING: 'Podtytuł',
         PUBLISH_DATE: 'Data publikacji'
     },
-    articles:
-    {
+    articles: {
         MANAGE_ARTICLES: 'Zarządzaj artykułami',
         NEW_ARTICLE: 'Nowy artykuł',
         ARTICLE_URL: 'Adres artykułu',
@@ -311,11 +300,13 @@ var loc =
         PUBLISHED: 'Opublikowany',
         UNPUBLISHED: 'Nieopublikowany',
         DRAFT: 'Projekt',
+        ALLOW_COMMENTS: 'Pozwalaj użytkownikom na komentarze',
         INSERT_READ_MORE: 'Włóż czytaj więcej przerwę'
     },
     wysiwyg: {
         NORMAL_TEXT: 'Normalny tekst',
         QUOTE: 'Cytat',
+        PRE: 'Pre',
         HEADING_1: 'Nagłowek 1',
         HEADING_2: 'Nagłowek 2',
         HEADING_3: 'Nagłowek 3',
@@ -349,15 +340,13 @@ var loc =
         MARKDOWN_VIEW: 'widok Markdown',
         TOGGLE_FULLSCREEN: 'Przełącz na pełny ekran'
     },
-    comments:
-    {
+    comments: {
         MANAGE_COMMENTS: 'Zarządzaj komentarzami',
         CONFIRM_DELETE_COMMENT: 'Czy na pewno chcesz usunąć ten komentarz',
         COMMENTS_DISABLED: 'Komentarze zablokowane',
-        ENABLE_HERE: 'Włącz możliwość komentowania'
+        ENABLE_HERE: 'Włącz możliwość komentowania'
     },
-    custom_objects:
-    {
+    custom_objects: {
         MANAGE_OBJECT_TYPES: 'Zarządzaj kategoriami obiektów',
         NEW_OBJECT_TYPE: 'Nowa kategoria obiektów',
         MANAGE_OBJECTS: 'Zarządzaj obiektami',
@@ -367,7 +356,7 @@ var loc =
         ADD_FIELD: 'Dodaj pole',
         VALUE: 'Wartość',
         TEXT: 'tekst',
-        BOOLEAN: 'Wartość logiczna',
+        BOOLEAN: 'Wartość logiczna',
         NUMBER: 'numer',
         PEER_OBJECT: 'Obiekt równorzędny',
         CHILD_OBJECTS: 'Obiekt podrzędny',
@@ -380,8 +369,7 @@ var loc =
         DESCRIPTION: 'Opis',
         INVALID_FIELD: 'Pole zostało wypełnione nieprawidłowo. Upewnij się, że nie ma niezaznaczonych lub zduplikowanych pól.'
     },
-    users:
-    {
+    users: {
         MANAGE_USERS: 'Zarządzaj użytkownikami',
         UNVERIFIED_USERS: 'Użytkownicy niezweryfikowani',
         NEW_USER: 'Nowy użytkownik',
@@ -401,7 +389,7 @@ var loc =
         GENERATE: 'Generuj',
         USER_TYPE: 'Kategoria użytkownika',
         CREATE_USER: 'Stwórz użytkownika',
-        USER_DELETE_SELF: 'Użytkownicy nie mogą usuwać kont',
+        USER_DELETE_SELF: 'Użytkownicy nie mogą usuwać kont',
         PASSWORD_MISMATCH: 'Hasło się nie zgadza',
         EXISTING_USERNAME: 'Nazwa użytkownika jest zajęta',
         EXISTING_EMAIL: 'Podany adres e-mail jest już zajęty',
@@ -428,10 +416,10 @@ var loc =
         NO_PERMISSIONS: 'Żadna z zainstalowanych wtyczek nie ma ustawionych uprawnień',
         CONFIRM_VERIFY: 'Czy na pewno chcesz zweryfikować',
         VERIFY: 'Weryfikacja',
-        VERIFIED: 'Zweryfikowano'
+        VERIFIED: 'Zweryfikowano',
+        LOCALE_PREFERENCE: 'Locale Preferencje'
     },
-    plugins:
-    {
+    plugins: {
         MANAGE_PLUGINS: 'Zarządzaj wtyczkami',
         NO_ACTIVE_PLUGINS: 'Brak aktywnych wtyczek',
         NO_INACTIVE_PLUGINS: 'Brak nieaktwynych wtyczek',
@@ -443,16 +431,15 @@ var loc =
         ACTIVATING: 'Aktywacja',
         ACTION_ERROR: 'Podczas wykonywania operacji wystąpił błąd'
     },
-    themes:
-    {
+    themes: {
         MANAGE_THEMES: 'Zarządzaj motywami'
     },
-    site_settings:
-    {
+    site_settings: {
         CONFIGURATION: 'Konfiguracja',
         EDIT_CONFIGURATION: 'Aby zedytować ustawienia stwórz plik config.json w katalogu głównym',
         SITE_NAME: 'Nazwa strony',
         SITE_ROOT: 'Katalog główny strony',
+        MEDIA_ROOT: 'Korzeń mediów',
         DOCUMENT_ROOT: 'Document root',
         IP_ADDRESS: 'Adres IP',
         PORT: 'Port',
@@ -467,7 +454,7 @@ var loc =
         AUTO_BREAK_ARTICLES: 'Przerwy w artykule co # paragraf',
         READ_MORE_TEXT: 'Czytaj więcej',
         DONT_BREAK: 'Nie rób przerw',
-        TIMESTAMP: 'Datownik',
+        TIMESTAMP: 'Data',
         DISPLAY_TIMESTAMP: 'Wyświetl daty w tekście',
         DATE_FORMAT: 'Formatka daty',
         TWO_DIGIT_DATE: 'Zawsze wyświetlaj dni i miesiące w formacie dwucyfrowym',
@@ -478,7 +465,7 @@ var loc =
         DISPLAY_BYLINES: 'Wyświetlaj notkę o autorze',
         DISPLAY_AUTHOR_PHOTO: 'Wyświetlaj zdjęcie autora',
         DISPLAY_AUTHOR_POSITION: 'Wyświetlaj pozycję autora w notce',
-        ALLOW_COMMENTS: 'Pozwalaj użytkownikom na komentarz',
+        ALLOW_COMMENTS: 'Pozwalaj użytkownikom na komentarze',
         COMMENTS_ON: 'Pozwalaj na komentowanie domyślnie',
         REQUIRE_ACCOUNT: 'Wymagaj utworzenia konta do komentowania',
         REQUIRE_VERIFICATION: 'Wymagaj od nowych użytkowników weryfikacji e-maila',
@@ -501,13 +488,3 @@ var loc =
         TEST_EMAIL_SUCCESS: 'Próbny e-mail został wysłany'
     }
 };
-
-//Allows for both server and client use
-if(typeof global !== 'undefined') {
- global.loc = loc;
- global.localizationLanguage = 'en-us';
-}
-
-if(typeof module !== 'undefined') {
- module.exports = loc;
-}

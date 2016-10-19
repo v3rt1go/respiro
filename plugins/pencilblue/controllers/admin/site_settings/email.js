@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2015  PencilBlue, LLC
+    Copyright (C) 2016  PencilBlue, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -14,54 +14,55 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+'use strict';
 
 module.exports = function(pb) {
-    
+
     //pb dependencies
     var util = pb.util;
-    
+    var SiteService = pb.SiteService;
+
     /**
      * Interface for the site's email settings
      */
     function Email(){}
-    util.inherits(Email, pb.BaseController);
+    util.inherits(Email, pb.BaseAdminController);
 
     //statics
     var SUB_NAV_KEY = 'site_email_settings';
 
     Email.prototype.render = function(cb) {
         var self = this;
-
         var tabs =
         [
             {
                 active: 'active',
                 href: '#preferences',
                 icon: 'wrench',
-                title: self.ls.get('PREFERENCES')
+                title: self.ls.g('generic.PREFERENCES')
             },
             {
                 href: '#smtp',
                 icon: 'upload',
-                title: self.ls.get('SMTP')
+                title: self.ls.g('site_settings.SMTP')
             },
             {
                 href: '#test',
                 icon: 'flask',
-                title: self.ls.get('TEST')
+                title: self.ls.g('site_settings.TEST')
             }
         ];
 
-        var emailService = new pb.EmailService();
+        var emailService = new pb.EmailService({site: this.site});
         emailService.getSettings(function(err, emailSettings) {
             var angularObjects = pb.ClientJs.getAngularObjects({
-                navigation: pb.AdminNavigation.get(self.session, ['settings', 'site_settings'], self.ls),
-                pills: pb.AdminSubnavService.get(SUB_NAV_KEY, self.ls, 'email'),
+                navigation: pb.AdminNavigation.get(self.session, ['settings', 'site_settings'], self.ls, self.site),
+                pills: self.getAdminPills(SUB_NAV_KEY, self.ls, 'email', { site: self.site }),
                 tabs: tabs,
                 emailSettings: emailSettings
             });
 
-            self.setPageName(self.ls.get('EMAIL'));
+            self.setPageName(self.ls.g('generic.EMAIL'));
             self.ts.registerLocal('angular_objects', new pb.TemplateValue(angularObjects, false));
             self.ts.load('admin/site_settings/email', function(err, result) {
                 cb({content: result});
@@ -70,22 +71,29 @@ module.exports = function(pb) {
     };
 
     Email.getSubNavItems = function(key, ls, data) {
-        return [{
+
+        var pills = [{
             name: 'configuration',
-            title: ls.get('EMAIL'),
+            title: ls.g('generic.EMAIL'),
             icon: 'chevron-left',
             href: '/admin/site_settings'
         }, {
             name: 'content',
-            title: ls.get('CONTENT'),
+            title: ls.g('generic.CONTENT'),
             icon: 'quote-right',
             href: '/admin/site_settings/content'
-        }, {
-            name: 'libraries',
-            title: ls.get('LIBRARIES'),
-            icon: 'book',
-            href: '/admin/site_settings/libraries'
         }];
+
+        if(data && data.site === SiteService.GLOBAL_SITE) {
+            pills.push({
+                name: 'libraries',
+                title: ls.g('site_settings.LIBRARIES'),
+                icon: 'book',
+                href: '/admin/site_settings/libraries'
+            });
+        }
+
+        return pills;
     };
 
     //register admin sub-nav

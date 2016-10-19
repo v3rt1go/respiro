@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2015  PencilBlue, LLC
+    Copyright (C) 2016  PencilBlue, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -14,22 +14,23 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+'use strict';
 
 //dependencies
 var async = require('async');
 
 module.exports = function(pb) {
-    
+
     //pb dependencies
     var util = pb.util;
-    
+
     /**
      * Interface for editing an object
      * @class ObjectFormController
      * @constructor
      */
     function ObjectFormController() {}
-    util.inherits(ObjectFormController, pb.BaseController);
+    util.inherits(ObjectFormController, pb.BaseAdminController);
 
     var SUB_NAV_KEY = 'object_form';
 
@@ -83,10 +84,10 @@ module.exports = function(pb) {
 
             self.objectType = data.objectType;
             self.customObject = data.customObject;
-            data.pills = pb.AdminSubnavService.get(SUB_NAV_KEY, self.ls, SUB_NAV_KEY, {objectType: self.objectType, customObject: self.customObject});
+            data.pills = self.getAdminPills(SUB_NAV_KEY, self.ls, SUB_NAV_KEY, {objectType: self.objectType, customObject: self.customObject});
             var angularObjects = pb.ClientJs.getAngularObjects(data);
 
-            self.setPageName(self.customObject[pb.DAO.getIdField()] ? self.customObject.name : self.ls.get('NEW') + ' ' + self.objectType.name + ' ' + self.ls.get('OBJECT'));
+            self.setPageName(self.customObject[pb.DAO.getIdField()] ? self.customObject.name : self.ls.g('generic.NEW') + ' ' + self.objectType.name + ' ' + self.ls.g('custom_objects.OBJECT'));
             self.ts.registerLocal('angular_objects', new pb.TemplateValue(angularObjects, false));
             self.ts.load('admin/content/objects/object_form',  function(err, result) {
                 cb({content: result});
@@ -96,7 +97,7 @@ module.exports = function(pb) {
 
     ObjectFormController.prototype.gatherData = function(vars, cb) {
         var self = this;
-        var cos = new pb.CustomObjectService();
+        var cos = new pb.CustomObjectService(self.site, false);
 
         var tasks = {
             tabs: function(callback) {
@@ -105,7 +106,7 @@ module.exports = function(pb) {
                         active: 'active',
                         href: '#object_fields',
                         icon: 'list-ul',
-                        title: self.ls.get('FIELDS')
+                        title: self.ls.g('custom_objects.FIELDS')
                     }
                 ];
 
@@ -113,14 +114,17 @@ module.exports = function(pb) {
             },
 
             navigation: function(callback) {
-                callback(null, pb.AdminNavigation.get(self.session, ['content', 'custom_objects'], self.ls));
+                callback(null, pb.AdminNavigation.get(self.session, ['content', 'custom_objects'], self.ls, self.site));
             },
 
             objectType: function(callback) {
                 cos.loadTypeById(vars.type_id, function(err, objectType) {
                     if(util.isError(err)) {
-                        callback(err, customObject);
-                        return;
+                        return callback(err);
+                    }
+
+                    if (!util.isObject(objectType)) {
+                        return self.reqHandler.serve404();
                     }
 
                     self.loadFieldOptions(cos, objectType, callback);
@@ -143,7 +147,6 @@ module.exports = function(pb) {
         var self         = this;
         var keys         = Object.keys(objectType.fields);
         var custObjTypes = {};
-        var dao          = new pb.DAO();
         var userService  = new pb.UserService();
 
         //wrapper function to load cust object type
@@ -190,8 +193,8 @@ module.exports = function(pb) {
                     return;
                 }
 
-                //TODO: This is REALLY bad for large systems.  This needs to move 
-                //to an API call (searchable and pagable)
+                //TODO: This is REALLY bad for large systems.  This needs to move
+                //to an API call (searchable and pageable)
                 var query = {
                     where: pb.DAO.ANYWHERE,
                     select: {
@@ -201,7 +204,7 @@ module.exports = function(pb) {
                         last_name: 1
                     }
                 };
-                dao.q(objectType.fields[key].object_type, query, function(err, availableObjects) {
+                self.siteQueryService.q(objectType.fields[key].object_type, query, function(err, availableObjects) {
                     if (util.isError(err)) {
                         return callback(err);
                     }
@@ -212,7 +215,7 @@ module.exports = function(pb) {
                         var descriptor = {
                             name: availableObjects[i].name || availableObjects[i].headline || userService.getFormattedName(availableObjects[i])
                         };
-                        descriptor[pb.DAO.getIdField()] = availableObjects[i][pb.DAO.getIdField()]
+                        descriptor[pb.DAO.getIdField()] = availableObjects[i][pb.DAO.getIdField()];
                         objectsInfo.push(descriptor);
                     }
 
@@ -227,11 +230,11 @@ module.exports = function(pb) {
             delete objectType.fields.name;
 
             var fieldsArray = [{name: 'name', field_type: 'text'}];
-            for(var key in objectType.fields) {
+            Object.keys(objectType.fields).forEach(function(key) {
                 var field = JSON.parse(JSON.stringify(objectType.fields[key]));
                 field.name = key;
                 fieldsArray.push(field);
-            }
+            });
 
             objectType.fields = fieldsArray;
             cb(err, objectType);
@@ -242,7 +245,7 @@ module.exports = function(pb) {
         return [
             {
                 name: 'manage_objects',
-                title: data.customObject[pb.DAO.getIdField()] ? ls.get('EDIT') + ' ' + data.customObject.name : ls.get('NEW') + ' ' + data.objectType.name + ' ' + ls.get('OBJECT'),
+                title: data.customObject[pb.DAO.getIdField()] ? ls.g('generic.EDIT') + ' ' + data.customObject.name : ls.g('generic.NEW') + ' ' + data.objectType.name + ' ' + ls.g('custom_objects.OBJECT'),
                 icon: 'chevron-left',
                 href: '/admin/content/objects/' + data.objectType[pb.DAO.getIdField()]
             },

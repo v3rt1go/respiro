@@ -1,5 +1,5 @@
 /*
-	Copyright (C) 2015  PencilBlue, LLC
+	Copyright (C) 2016  PencilBlue, LLC
 
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -14,52 +14,83 @@
 	You should have received a copy of the GNU General Public License
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+'use strict';
+
+//dependencies
+var async = require('async');
 
 module.exports = function(pb) {
-    
+
     //pb dependencies
-    var util           = pb.util;
-    var BaseController = pb.BaseController;
-    
+    var util = pb.util;
+    var BaseAdminController = pb.BaseAdminController;
+    var PluginService = pb.PluginService;
+
     /**
      * Interface for managing plugins
+     * @class ManagePlugins
+     * @extends BaseAdminController
      */
     function ManagePlugins(){}
-
-    //dependencies
-    var BaseController = pb.BaseController;
-
-    //inheritance
-    util.inherits(ManagePlugins, BaseController);
+    util.inherits(ManagePlugins, BaseAdminController);
 
     //statics
     var SUB_NAV_KEY = 'manage_plugins';
 
-    ManagePlugins.prototype.render = function(cb) {
+    /**
+     * See BaseController.initSync
+     * @method initSync
+     */
+    ManagePlugins.prototype.initSync = function(/*context*/) {
+
+        this.pluginService = new PluginService(this.getServiceContext());
+
+        this.globalPluginService = new PluginService({});
+    };
+
+    ManagePlugins.prototype.render = function (cb) {
         var self = this;
 
-        //get the data
-        var pluginService = new pb.PluginService();
-        pluginService.getPluginMap(function(err, map) {
+        var tasks = {
+            sitePluginMap: [util.wrapTask(this.pluginService, this.pluginService.getPluginMap)],
+            globalPluginMap: [util.wrapTask(this.globalPluginService, this.globalPluginService.getPluginMap)],
+            availablePluginsMinusGlobal: ['sitePluginMap', 'globalPluginMap', function(callback, results) {
+
+                //create lookup
+                var lookup = {};
+                results.globalPluginMap.active.forEach(function(plugin) {
+                    lookup[plugin.uid] = true;
+                });
+
+                //filter globally installed plugins out of inactive
+                var availablePluginsMinusGlobal = results.sitePluginMap.available.filter(function(val) {
+                    return !lookup[val.uid];
+                });
+                callback(null, availablePluginsMinusGlobal);
+            }],
+            angularObjects: ['availablePluginsMinusGlobal', function(callback, results) {
+
+                //setup angular
+                var angularObjects = pb.ClientJs.getAngularObjects({
+                    navigation: pb.AdminNavigation.get(self.session, ['plugins', 'manage'], self.ls, self.site),
+                    pills: self.getAdminPills(SUB_NAV_KEY, self.ls, null),
+                    installedPlugins: results.sitePluginMap.active,
+                    inactivePlugins: results.sitePluginMap.inactive,
+                    availablePlugins: results.availablePluginsMinusGlobal,
+                    globalActivePlugins: results.globalPluginMap.active,
+                    siteUid: self.site
+                });
+                //load the template
+                self.ts.registerLocal('angular_objects', new pb.TemplateValue(angularObjects, false));
+                callback();
+            }],
+            content: ['angularObjects', util.wrapTask(this.ts, this.ts.load, ['/admin/plugins/manage_plugins'])]
+        };
+        async.auto(tasks, 2, function(err, results) {
             if (util.isError(err)) {
-                self.reqHandler.serveError(err);
-                return;
+                return cb(err);
             }
-
-            //setup angular
-            var angularObjects = pb.ClientJs.getAngularObjects({
-                navigation: pb.AdminNavigation.get(self.session, ['plugins', 'manage'], self.ls),
-                pills: pb.AdminSubnavService.get(SUB_NAV_KEY, self.ls),
-                installedPlugins: map.active,
-                inactivePlugins: map.inactive,
-                availablePlugins: map.available
-            });
-
-            //load the template
-            self.ts.registerLocal('angular_objects', new pb.TemplateValue(angularObjects, false));
-            self.ts.load('/admin/plugins/manage_plugins', function(err, result) {
-                cb({content: result});
-            });
+            cb({content: results.content});
         });
     };
 
@@ -67,7 +98,7 @@ module.exports = function(pb) {
         return [
             {
                 name: 'manage_plugins',
-                title: ls.get('MANAGE_PLUGINS'),
+                title: ls.g('plugins.MANAGE_PLUGINS'),
                 icon: 'refresh',
                 href: '/admin/plugins'
             }

@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2015  PencilBlue, LLC
+    Copyright (C) 2016  PencilBlue, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -14,12 +14,13 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+'use strict';
 
 module.exports = function(pb) {
-    
+
     //pb dependencies
     var util = pb.util;
-    
+
     /**
      * Saves the site's content settings
      */
@@ -43,7 +44,7 @@ module.exports = function(pb) {
                 if(util.isError(data)) {
                     cb({
                         code: 500,
-                        content: pb.BaseController.apiResponse(pb.BaseController.API_FAILURE, self.ls.get('ERROR_SAVING'), result)
+                        content: pb.BaseController.apiResponse(pb.BaseController.API_FAILURE, self.ls.g('generic.ERROR_SAVING'), result)
                     });
                     return;
                 }
@@ -52,7 +53,7 @@ module.exports = function(pb) {
                     pb.TemplateService.registerGlobal(key + '_src', post[key]);
                 }
 
-                cb({content: pb.BaseController.apiResponse(pb.BaseController.API_SUCCESS, self.ls.get('LIBRARY_SETTINGS') + ' ' +  self.ls.get('EDITED') + '. ' + self.ls.get('LIBRARY_CLUSTER'))});
+                cb({content: pb.BaseController.apiResponse(pb.BaseController.API_SUCCESS, self.ls.g('site_settings.LIBRARY_SETTINGS') + ' ' +  self.ls.g('admin.EDITED') + '. ' + self.ls.g('site_settings.LIBRARY_CLUSTER'))});
             });
         });
     };

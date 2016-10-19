@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2015  PencilBlue, LLC
+    Copyright (C) 2016  PencilBlue, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -14,6 +14,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+'use strict';
 
 //dependencies
 var path = require('path');
@@ -21,10 +22,19 @@ var path = require('path');
 /**
  * Requirements - Responsible for declaring all of the system types and modules
  * needed to construct the system API object.
- * @copyright PencilBlue, all rights reserved.
+ * @class PB
+ * @param {Object} config
+ * @return {Object} The pb namespace
  */
 module.exports = function PB(config) {
-    
+
+    //older versions of node did not have process as a core module.  We ensure that we have access to it here and ensure
+    // it is set as a global variable
+    if (!global.process) {
+        console.log('Process module imported as require');
+        global.process = require('process');
+    }
+
     //define what will become the global entry point into the server api.
     var pb = {};
 
@@ -42,7 +52,8 @@ module.exports = function PB(config) {
 
     //initialize logging
     pb.log    = require(path.join(config.docRoot, '/include/utils/logging.js'))(config);
-    
+    pb.AsyncEventEmitter = require(path.join(config.docRoot, '/include/utils/async_event_emitter.js'))(pb);
+
     //setup the System instance
     pb.System = require(path.join(config.docRoot, 'include/system/system.js'));
     pb.system = new pb.System(pb);
@@ -63,7 +74,7 @@ module.exports = function PB(config) {
     var ValidationModule = require(path.join(config.docRoot, '/include/validation/validation_service.js'));
     pb.ValidationService = ValidationModule(pb);
     pb.validation        = pb.ValidationService;
-    
+
     //lock services
     pb.locks = {
         providers: {
@@ -77,6 +88,13 @@ module.exports = function PB(config) {
     var SessionModule = require(path.join(config.docRoot, '/include/session/session.js'));
     pb.SessionHandler = SessionModule(pb);
     pb.session        = new pb.SessionHandler(pb.SessionHandler.getSessionStoreInstance());
+
+    pb.BaseObjectService = require(path.join(config.docRoot, '/include/service/base_object_service.js'))(pb);
+
+    //setup site service
+    pb.SiteService = require(path.join(config.docRoot, '/include/service/entities/site_service.js'))(pb);
+    pb.SiteQueryService = require(path.join(config.docRoot, '/include/service/entities/site_query_service.js'))(pb);
+
 
     //setup object services
     pb.SimpleLayeredService         = require(path.join(config.docRoot, '/include/service/simple_layered_service.js'))(pb);
@@ -100,9 +118,9 @@ module.exports = function PB(config) {
     var Authentication                = require(path.join(config.docRoot, '/include/security/authentication'))(pb);
     pb.UsernamePasswordAuthentication = Authentication.UsernamePasswordAuthentication;
     pb.FormAuthentication             = Authentication.FormAuthentication;
+    pb.TokenAuthentication            = Authentication.TokenAuthentication;
 
     //setup user service
-    pb.BaseObjectService = require(path.join(config.docRoot, '/include/service/base_object_service.js'))(pb);
     pb.UserService       = require(path.join(config.docRoot, '/include/service/entities/user_service.js'))(pb);
     Object.defineProperty(pb, 'users', {
         get: function() {
@@ -118,11 +136,14 @@ module.exports = function PB(config) {
     pb.FormBodyParser      = BodyParsers.FormBodyParser;
     pb.BaseController      = require(path.join(config.docRoot, '/controllers/base_controller.js'))(pb);
     pb.BaseApiController   = require(path.join(config.docRoot, '/controllers/api/base_api_controller.js'))(pb);
+    pb.BaseAdminController = require(path.join(config.docRoot, '/controllers/admin/base_admin_controller.js'))(pb);
     pb.ViewController      = require(path.join(config.docRoot, '/controllers/view_controller.js'))(pb);
     pb.FormController      = require(path.join(config.docRoot, '/controllers/form_controller.js'))(pb);
     pb.DeleteController    = require(path.join(config.docRoot, '/controllers/delete_controller.js'))(pb);
     pb.ApiActionController = require(path.join(config.docRoot, '/controllers/api/api_action_controller.js'))(pb);
+    pb.ErrorViewController = require(path.join(config.docRoot, '/controllers/error_controller.js'))(pb);
     pb.RequestHandler      = require(path.join(config.docRoot, '/include/http/request_handler.js'))(pb);
+    pb.HttpStatus          = require('http-status-codes');
 
     //setup errors
     pb.PBError    = require(path.join(config.docRoot, '/include/error/pb_error.js'))(pb);
@@ -156,6 +177,10 @@ module.exports = function PB(config) {
     pb.PluginDependenciesJob = require(path.join(config.docRoot, '/include/service/jobs/plugins/plugin_dependencies_job.js'))(pb);
     pb.PluginInitializeJob   = require(path.join(config.docRoot, '/include/service/jobs/plugins/plugin_initialize_job.js'))(pb);
     pb.PluginInstallJob      = require(path.join(config.docRoot, '/include/service/jobs/plugins/plugin_install_job.js'))(pb);
+    pb.SiteJobRunner         = require(path.join(config.docRoot, '/include/service/jobs/sites/site_job_runner.js'))(pb);
+    pb.SiteActivateJob       = require(path.join(config.docRoot, '/include/service/jobs/sites/site_activate_job.js'))(pb);
+    pb.SiteDeactivateJob     = require(path.join(config.docRoot, '/include/service/jobs/sites/site_deactivate_job.js'))(pb);
+    pb.SiteCreateEditJob     = require(path.join(config.docRoot, '/include/service/jobs/sites/site_create_edit_job.js'))(pb);
 
     //Email settings and functions
     pb.EmailService = require(path.join(config.docRoot, '/include/email'))(pb);
@@ -182,13 +207,14 @@ module.exports = function PB(config) {
             pb.log.warn('PencilBlue: pb.js is deprecated.  Use pb.ClientJs instead');
             return pb.ClientJS;
         }
-    });						
+    });
     pb.AdminNavigation    = require(path.join(config.docRoot, '/include/admin_navigation'))(pb);			// Admin Navigation
     pb.AdminSubnavService = require(path.join(config.docRoot, '/include/service/admin/admin_subnav_service.js'))(pb);
     pb.AnalyticsManager   = require(path.join(config.docRoot, '/include/system/analytics_manager.js'))(pb);
     pb.UrlService         = require(path.join(config.docRoot, '/include/service/entities/url_service.js'))(pb);
     pb.CallHomeService    = require(path.join(config.docRoot, '/include/system/call_home_service.js'))(pb);
     pb.JobService         = require(path.join(config.docRoot, '/include/service/entities/job_service.js'))(pb);
+    pb.TokenService       = require(path.join(config.docRoot, '/include/service/entities/token_service.js'))(pb);
 
     //create plugin service
     pb.PluginService = require(path.join(config.docRoot, '/include/service/entities/plugin_service.js'))(pb);
@@ -199,12 +225,16 @@ module.exports = function PB(config) {
         }
     });
 
+    //create plugin setting service
+    pb.PluginSettingService = require(path.join(config.docRoot, '/include/service/entities/plugin_setting_service.js'))(pb);
+    pb.PluginRepository = require(path.join(config.docRoot, '/include/repository/plugin_repository.js'))(pb);
+
     //media renderers
     pb.media = {
         renderers: {
             BaseMediaRenderer: require(path.join(config.docRoot, '/include/service/media/renderers/base_media_renderer.js'))(pb),
         },
-        
+
         providers: {
             FsMediaProvider: require(path.join(config.docRoot, '/include/service/media/fs_media_provider.js'))(pb),
             MongoMediaProvider: require(path.join(config.docRoot, '/include/service/media/mongo_media_provider.js'))(pb)
@@ -220,25 +250,44 @@ module.exports = function PB(config) {
     pb.media.renderers.SlideShareMediaRenderer = require(path.join(config.docRoot, '/include/service/media/renderers/slideshare_media_renderer.js'))(pb),
     pb.media.renderers.TrinketMediaRenderer = require(path.join(config.docRoot, '/include/service/media/renderers/trinket_media_renderer.js'))(pb),
     pb.media.renderers.StorifyMediaRenderer = require(path.join(config.docRoot, '/include/service/media/renderers/storify_media_renderer.js'))(pb),
-    pb.media.renderers.KickStarterMediaRenderer = require(path.join(config.docRoot, '/include/service/media/renderers/kickstarter_media_renderer.js'))(pb)
-    
+    pb.media.renderers.KickStarterMediaRenderer = require(path.join(config.docRoot, '/include/service/media/renderers/kickstarter_media_renderer.js'))(pb);
+    pb.media.renderers.PdfMediaRenderer = require(path.join(config.docRoot, '/include/service/media/renderers/pdf_media_renderer.js'))(pb);
+
     //providers and service
     pb.MediaService = require(path.join(config.docRoot, '/include/service/entities/media_service.js'))(pb);
+    pb.MediaServiceV2 = require(path.join(config.docRoot, '/include/service/entities/content/media_service_v2.js'))(pb);
 
     //content services
     pb.SectionService = require(config.docRoot+'/include/service/entities/section_service.js')(pb);
     pb.TopMenuService = require(config.docRoot+'/include/theme/top_menu.js')(pb);
-    
+
     //object services
-    pb.TopicService      = require(path.join(config.docRoot, '/include/service/entities/topic_service.js'))(pb);
-    pb.ArticleServiceV2  = require(path.join(config.docRoot, '/include/service/entities/content/article_service_v2.js'))(pb);
-    pb.ArticleRenderer   = require(path.join(config.docRoot, '/include/service/entities/content/article_renderer.js'))(pb);
-    pb.ContentViewLoader = require(path.join(config.docRoot, '/include/service/entities/content/content_view_loader.js'))(pb);
-    
+    pb.TopicService         = require(path.join(config.docRoot, '/include/service/entities/topic_service.js'))(pb);
+    pb.ContentObjectService = require(path.join(config.docRoot, '/include/service/entities/content/content_object_service.js'))(pb);
+    pb.ArticleServiceV2     = require(path.join(config.docRoot, '/include/service/entities/content/article_service_v2.js'))(pb);
+    pb.ArticleRenderer      = require(path.join(config.docRoot, '/include/service/entities/content/article_renderer.js'))(pb);
+    pb.PageRenderer         = require(path.join(config.docRoot, '/include/service/entities/content/page_renderer.js'))(pb);
+    pb.PageService          = require(path.join(config.docRoot, '/include/service/entities/content/page_service.js'))(pb);
+    pb.ContentViewLoader    = require(path.join(config.docRoot, '/include/service/entities/content/content_view_loader.js'))(pb);
+
+    pb.SiteMapService = require(path.join(config.docRoot, '/include/service/entities/site_map_service.js'))(pb);
+
     var ArticleServiceModule = require(path.join(config.docRoot, '/include/service/entities/article_service.js'))(pb);
     pb.ArticleService        = ArticleServiceModule.ArticleService;
     pb.MediaLoader           = ArticleServiceModule.MediaLoader;
     pb.CommentService        = require(config.docRoot+'/include/theme/comments.js')(pb);
-    
+
+    pb.PluginValidationService = require(path.join(config.docRoot, '/include/service/entities/plugins/plugin_validation_service.js'))(pb);
+    pb.PluginDependencyService = require(path.join(config.docRoot, '/include/service/entities/plugins/plugin_dependency_service.js'))(pb);
+    pb.NpmPluginDependencyService = require(path.join(config.docRoot, '/include/service/entities/plugins/npm_plugin_dependency_service.js'))(pb);
+    pb.BowerPluginDependencyService = require(path.join(config.docRoot, '/include/service/entities/plugins/bower_plugin_dependency_service.js'))(pb);
+    pb.PluginResourceLoader = require(path.join(config.docRoot, '/include/service/entities/plugins/loaders/plugin_resource_loader.js'))(pb);
+    pb.PluginServiceLoader = require(path.join(config.docRoot, '/include/service/entities/plugins/loaders/plugin_service_loader.js'))(pb);
+    pb.PluginControllerLoader = require(path.join(config.docRoot, '/include/service/entities/plugins/loaders/plugin_controller_loader.js'))(pb);
+    pb.PluginLocalizationLoader = require(path.join(config.docRoot, '/include/service/entities/plugins/loaders/plugin_localization_loader.js'))(pb);
+    pb.PluginInitializationService = require(path.join(config.docRoot, '/include/service/entities/plugins/plugin_initialization_service.js'))(pb);
+
+    pb.PasswordResetService = require(path.join(config.docRoot, '/include/service/entities/password_reset_service.js'))(pb);
+
     return pb;
 };

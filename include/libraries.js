@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2015  PencilBlue, LLC
+    Copyright (C) 2016  PencilBlue, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -14,6 +14,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+'use strict';
 
 //dependencies
 var util = require('./util.js');
@@ -28,7 +29,7 @@ module.exports = function LibrariesServiceModule(pb) {
      * @constructor
      */
     function LibrariesService(){}
-    
+
     /**
      *
      * @private
@@ -38,7 +39,7 @@ module.exports = function LibrariesServiceModule(pb) {
      * @type {String}
      */
     var LIBRARIES_SETTINGS_REF = 'libraries_settings';
-    
+
     /**
      *
      * @private
@@ -73,9 +74,11 @@ module.exports = function LibrariesServiceModule(pb) {
         angular_upload_shim: '//cdnjs.cloudflare.com/ajax/libs/danialfarid-angular-file-upload/1.6.1/angular-file-upload-shim.min.js',
         ng_sortable_css: '/css/lib/ng-sortable/ng-sortable.min.css',
         ng_sortable_style_css: '/css/lib/ng-sortable/ng-sortable.style.min.css',
-        ng_sortable_js: '/js/lib/ng-sortable/ng-sortable.min.js'
+        ng_sortable_js: '/js/lib/ng-sortable/ng-sortable.min.js',
+        rangy: '//cdnjs.cloudflare.com/ajax/libs/rangy/1.3.0/rangy-core.min.js',
+        rangy_saverestore: '//cdnjs.cloudflare.com/ajax/libs/rangy/1.3.0/rangy-selectionsaverestore.min.js'
     });
-    
+
     /**
      *
      * @private
@@ -110,7 +113,9 @@ module.exports = function LibrariesServiceModule(pb) {
             angular_upload_shim: '/bower_components/danialfarid-angular-file-upload/dist/angular-file-upload-shim.min.js',
             ng_sortable_css: '/bower_components/ng-sortable/dist/ng-sortable.min.css',
             ng_sortable_style_css: '/bower_components/ng-sortable/dist/ng-sortable.style.min.css',
-            ng_sortable_js: '/bower_components/ng-sortable/dist/ng-sortable.min.js'
+            ng_sortable_js: '/bower_components/ng-sortable/dist/ng-sortable.min.js',
+            rangy: '/bower_components/rangy-release/rangy-core.min.js',
+            rangy_saverestore: '/bower_components/rangy-release/rangy-selectionsaverestore.js'
         });
 
     /**

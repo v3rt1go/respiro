@@ -11,17 +11,19 @@
 
 module.exports = {
     "siteName": "RespiroDental",
-    "siteRoot": "http://www.respirodental.ro",
+    "siteRoot": "http://localhost:8080",
+    "sitePort": 8080,
     "logging": {
         "level": "info"
     },
     "db": {
         "type": "mongo",
         "servers": [
-            "mongodb://respiroadmin:admin4respirodental@ds034198.mongolab.com:34198/respirodental"
+            "mongodb://127.0.0.1:27017/"
         ],
         "name": "respirodental",
-        "writeConcern": 1
+        "writeConcern": 1,
+        "query_logging": false
     },
     "cache": {
         "fake": true,
@@ -29,7 +31,7 @@ module.exports = {
         "port": 6379
     },
     "settings": {
-        "use_memory": true,
+        "use_memory": false,
         "use_cache": false
     },
     "templates": {
@@ -38,7 +40,7 @@ module.exports = {
     },
     "plugins": {
         "caching": {
-            "use_memory": true,
+            "use_memory": false,
             "use_cache": false
         }
     },
@@ -56,5 +58,9 @@ module.exports = {
         "workers": 1,
         "self_managed": true
     },
-    "siteIP": "0.0.0.0"
+    "multisite": {
+        "enabled": false,
+        "globalRoot": "http://global.localhost:8080"
+    }
 };
+

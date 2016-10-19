@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2015  PencilBlue, LLC
+    Copyright (C) 2016  PencilBlue, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -14,6 +14,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+'use strict';
 
 module.exports = function(pb) {
 
@@ -43,7 +44,7 @@ module.exports = function(pb) {
                 subject: 'Test email from PencilBlue',
                 layout: 'This is a successful test email from the PencilBlue system.'
             };
-            var emailService = new pb.EmailService();
+            var emailService = new pb.EmailService({site: self.site});
             emailService.sendFromLayout(options, function(err, response) {
                 if(err) {
                     return cb({
