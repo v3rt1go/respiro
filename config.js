@@ -18,7 +18,7 @@ module.exports = {
     "db": {
         "type": "mongo",
         "servers": [
-            "mongodb://respiroadmin:admin4respirodental@ds034198.mongolab.com:34198/respirodental"
+            "mongodb://respiroadmin:admin4respirodental@ds034198.mongolab.com:34198/"
         ],
         "name": "respirodental",
         "writeConcern": 1,
