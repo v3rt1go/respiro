@@ -381,7 +381,7 @@ Configuration.getBaseConfig = function(multisite) {
         localization: {
 
             //The default locale is the fallback when localization fails for the user's desired language.
-            defaultLocale: 'en-US'
+            defaultLocale: 'ro-RO'
         },
 
         //The locking service provides a common mechanism for processes to reserve

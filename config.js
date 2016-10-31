@@ -35,7 +35,7 @@ module.exports = {
         "use_cache": false
     },
     "templates": {
-        "use_memory": true,
+        "use_memory": false,
         "use_cache": false
     },
     "plugins": {
@@ -56,11 +56,14 @@ module.exports = {
     },
     "cluster": {
         "workers": 1,
-        "self_managed": true
+        "self_managed": false
     },
     "multisite": {
         "enabled": false,
         "globalRoot": "http://global.localhost:8080"
+    },
+    "localization": {
+        "defaultLocale": "ro-RO"
     }
 };
 

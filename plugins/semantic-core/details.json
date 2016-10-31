@@ -125,6 +125,13 @@
     {
       "file": "contact",
       "name": "Contact Template"
+    },
+    {
+      "file": "blog",
+      "name": "Blog Template"
     }]
+  },
+  "dependencies": {
+    "async": "0.9.0"
   }
 }
