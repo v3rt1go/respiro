@@ -1,0 +1,49 @@
+<!-- HEADER -->
+  ^tmp_head^
+<!-- /HEADER -->
+
+<!-- PRELOADER: page-loader plugin -->
+  ^tmp_elements=page-loader^
+<!-- /PRELOADER -->
+
+<!-- NAVIGATION: Varying depending on the installed navigation plugin -->
+  ^tmp_navigation=top_menu^
+<!-- /NAVIGATION -->
+
+<div class="wrapper">
+  <!-- HOME: Varying depending on the installed home plugin -->
+    ^tmp_elements=headers=blog-short-listing^
+  <!-- /HOME -->
+
+  <!-- BLOG GRID -->
+  <section class="module p-b-0">
+    <div class="container">
+      <div class="row multi-columns-row post-columns">
+        ^articles^
+      </div>
+    </div>
+
+    <!-- PAGINATION -->
+		<section class="module-small p-t-10">
+      <div class="container">
+				<div class="pagination font-inc text-uppercase">
+					<a href="#"><i class="fa fa-angle-left"></i> Inapoi</a>
+					<a href="#">Inainte <i class="fa fa-angle-right"></i></a>
+				</div>
+			</div>
+		</section>
+    <!-- /PAGINATION -->
+  </section>
+  <!-- /BLOG GRID -->
+
+  <!-- DIVIDER -->
+  	<hr class="divider-w">
+  <!-- /DIVIDER -->
+
+  <!-- CONTACT: Varying depending on the installed contact plugin -->
+    ^tmp_elements=contact^
+  <!-- /CONTACT -->
+
+  ^infinite_scroll^
+  ^angular^
+  ^tmp_footer^
