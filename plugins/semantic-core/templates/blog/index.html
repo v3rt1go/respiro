@@ -19,6 +19,11 @@
   <section class="module p-b-0">
     <div class="container">
       <div class="row multi-columns-row post-columns">
+        <div class="form-group" style="margin-bottom: 30px;">
+          <h4>Cauta</h4>
+          <input class="form-control" name="pb_search_form" id="search-input" placeholder="..." required="" type="text" aria-required="true" />
+        </div>
+        <div style="clear: both;"></div>
         ^articles^
       </div>
     </div>
@@ -43,7 +48,25 @@
   <!-- CONTACT: Varying depending on the installed contact plugin -->
     ^tmp_elements=contact^
   <!-- /CONTACT -->
-
+  <script src="https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/autocomplete.js/0/autocomplete.min.js"></script>
+  <script>
+    var client = algoliasearch('WR309NBEBA', '568975d2b92f2cce27908604998c899d')
+    var index = client.initIndex('articlesIndex');
+    autocomplete('#search-input', { hint: false }, [
+      {
+        source: autocomplete.sources.hits(index, { hitsPerPage: 10 }),
+        displayKey: 'headline',
+        templates: {
+          suggestion: function(suggestion) {
+            return suggestion._highlightResult.headline.value;
+          }
+        }
+      }
+    ]).on('autocomplete:selected', function(event, suggestion, dataset) {
+      window.location = '/article/' + suggestion.url;
+    });
+  </script>
   ^infinite_scroll^
   ^angular^
   ^tmp_footer^

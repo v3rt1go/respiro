@@ -17,6 +17,9 @@
 
 //dependencies
 var async = require('async');
+var algolia = require('algoliasearch');
+var algoliaClient = algolia('WR309NBEBA', '1ecc1de09e36c94a260704bba1927949');
+var searchIndex = algoliaClient.initIndex('articlesIndex');
 
 module.exports = function BlogModule(pb) {
 
@@ -87,6 +90,17 @@ module.exports = function BlogModule(pb) {
 
                                 // We want to load only the blog articles
                                 if (content[i].template === 'semantic-core|section') {
+                                    // Add item to index
+                                    searchIndex.addObject({
+                                        headline: content[i].headline,
+                                        subheading: content[i].subheading,
+                                        url: content[i].url,
+                                        seo_title: content[i].seo_title,
+                                        meta_desc: content[i].meta_desc
+                                    }, content[i].id, function(err, content) {
+                                        console.log('ERR >>>>>>', err);
+                                        console.log('objectID=' + content.objectID);
+                                    });
                                     self.renderContent(content[i], contentSettings, data.nav.themeSettings, i, callback);
                                 }
                             };
