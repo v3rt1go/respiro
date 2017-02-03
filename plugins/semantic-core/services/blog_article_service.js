@@ -36,8 +36,6 @@ module.exports = function BlogArticleServiceModule(pb) {
 		}
 
 		var self = this;
-		console.log('ARTICLE IS: >>>', article);
-
 		if (this.getContentType() === ARTICLE_TYPE) {
 			if (contentSettings.display_bylines) {
 

@@ -97,9 +97,7 @@ module.exports = function BlogModule(pb) {
                                         url: content[i].url,
                                         seo_title: content[i].seo_title,
                                         meta_desc: content[i].meta_desc
-                                    }, content[i].id, function(err, content) {
-                                        console.log('ERR >>>>>>', err);
-                                        console.log('objectID=' + content.objectID);
+                                    }, content[i].id, function(err, res) {
                                     });
                                     self.renderContent(content[i], contentSettings, data.nav.themeSettings, i, callback);
                                 }
@@ -299,7 +297,9 @@ module.exports = function BlogModule(pb) {
         ats.registerLocal('media_body_style', content.media_body_style ? content.media_body_style : '');
 
         ats.registerLocal('article_image', function(flag, cb) {
+            console.log('checking media ...');
             if (content.article_media.length > 0) {
+                console.log(content.article_media.length);
                 var mediaService = new pb.MediaService();
                 mediaService.renderById(content.article_media[0], function(err, html) {
                     if (err) {
@@ -326,6 +326,7 @@ module.exports = function BlogModule(pb) {
             });
         });
 
+        console.log('preparing to load view');
         ats.load('blog/articles', cb);
     };
 

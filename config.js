@@ -11,7 +11,7 @@
 
 module.exports = {
     "siteName": "RespiroDental",
-    "siteRoot": "http://www.respirodental.ro",
+    "siteRoot": "https://www.respirodental.ro",
     "logging": {
         "level": "info"
     },
