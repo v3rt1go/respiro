@@ -11,7 +11,7 @@
 
 module.exports = {
     "siteName": "RespiroDental",
-    "siteRoot": "https://respiro-test.herokuapp.com/",//"http://localhost:8080",//"https://www.respirodental.ro",
+    "siteRoot": "https://respiro-test2.herokuapp.com/",//"http://localhost:8080",//"https://www.respirodental.ro",
     //"sitePort": 8080,
     "logging": {
         "level": "info"
