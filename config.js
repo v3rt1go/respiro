@@ -11,16 +11,18 @@
 
 module.exports = {
     "siteName": "RespiroDental",
-    "siteRoot": "https://www.respirodental.ro",
+    "siteRoot": "https://respiro-test.herokuapp.com/",//"http://localhost:8080",//"https://www.respirodental.ro",
+    //"sitePort": 8080,
     "logging": {
         "level": "info"
     },
     "db": {
         "type": "mongo",
         "servers": [
-            "mongodb://respiroadmin:admin4respirodental@ds034198.mongolab.com:34198/"
+            //"mongodb://respiroadmin:admin4respirodental@ds034198.mongolab.com:34198/"
+            "mongodb://respiroadmin:admin4respirodental@ds046027.mlab.com:46027/"
         ],
-        "name": "respirodental",
+        "name": "respirodental-staging",//"respirodental",
         "writeConcern": 1,
         "query_logging": false
     },

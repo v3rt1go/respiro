@@ -827,7 +827,7 @@ module.exports = function(pb) {
      */
     BaseObjectService.getContentSanitizationRules = function() {
         return BaseObjectService.ContentSanitizationRulesOverride || {
-            allowedTags: [ 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'blockquote', 'p', 'a', 'ul', 'ol', 'nl', 'li', 'b', 'i', 'strong', 'em', 'strike', 'code', 'hr', 'br', 'div', 'table', 'thead', 'caption', 'tbody', 'tr', 'th', 'td', 'pre', 'img', 'u', 'span' ],
+            allowedTags: [ 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'blockquote', 'p', 'a', 'ul', 'ol', 'nl', 'li', 'b', 'i', 'strong', 'em', 'strike', 'code', 'hr', 'br', 'div', 'table', 'thead', 'caption', 'tbody', 'tr', 'th', 'td', 'pre', 'img', 'u', 'span', 'script' ],
             allowedAttributes: {
                 a: [ 'href', 'name', 'target', 'class', 'align'],
                 img: [ 'src', 'class', 'align'],

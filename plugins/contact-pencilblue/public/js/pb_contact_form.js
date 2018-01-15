@@ -12,9 +12,10 @@
     var postData = {
       name: $('#pb_contact_name').val(),
       email: $('#pb_contact_email').val(),
-      subject: $('#pb_contact_subject').val(),
+      date: $('#pb_contact_date').val(),
       comment: $('#pb_contact_comment').val()
     }
+    console.log(postData);
 
     $.post('/api/contact/pb_contact_submit', JSON.stringify(postData), function(result) {
       if(result.code > 1) {

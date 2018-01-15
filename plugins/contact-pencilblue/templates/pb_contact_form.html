@@ -1,18 +1,24 @@
 <h2 class="module-title font-alt">PROGRAMARI Clinica</h2>
-<form id="pb_contact_form" novalidate="" role="form">
+<p><small>Ca să eviți să aștepți la telefon, lasă-ne datele tale împreună cu intervalul orar în care ai putea veni la o consultație și te vom contacta noi pentru a confirma programarea.</small></p>
+<script>
+  $( function() {
+    $("#pb_contact_date").datetimepicker();
+  } );
+  </script>
+<form id="pb_contact_form" role="form">
   <div class="form-group">
     <label class="sr-only" for="pb_contact_name">Nume</label>
     <input aria-invalid="false" class="form-control" data-validation-required-message="Va rugam sa completati numele dumneavoastra." id="pb_contact_name" name="pb_contact_name" placeholder="Nume" required="" type="text">
     <p class="help-block text-danger"></p>
   </div>
   <div class="form-group">
-    <label class="sr-only" for="pb_contact_email">E-mail sau Telefon</label>
-    <input class="form-control" data-validation-required-message="Va rugam sa completati o modalitate de contact." id="pb_contact_email" name="pb_contact_email" placeholder="E-mail sau Telefon" required="" type="text">
+    <label class="sr-only" for="pb_contact_email">E-mail sau Telefon (*)</label>
+    <input class="form-control" data-validation-required-message="Va rugam sa completati o modalitate de contact." id="pb_contact_email" name="pb_contact_email" placeholder="E-mail sau Telefon*" required="" type="text">
     <p class="help-block text-danger"></p>
   </div>
   <div class="form-group">
-    <label class="sr-only" for="pb_contact_subject">Subiect</label>
-    <input class="form-control" data-validation-required-message="Va rugam sa completati motivul pentru care ne contactati." id="pb_contact_subject" name="pb_contact_subject" placeholder="Subiect" required="" type="text">
+    <label class="sr-only" for="pb_contact_subject">Data si ora</label>
+    <input class="form-control" data-validation-required-message="Va rugam sa data si ora programarii." id="pb_contact_date" name="pb_contact_date" placeholder="Data si ora programarii" required="" type="text">
     <p class="help-block text-danger"></p>
   </div>
   <div class="form-group">

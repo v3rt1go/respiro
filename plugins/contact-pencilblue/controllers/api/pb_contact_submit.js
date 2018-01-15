@@ -50,14 +50,16 @@ module.exports = function(pb) {
             name: post.name + ' (' + util.uniqueId() + ')',
             email: post.email,
             description: post.email,
-            subject: post.subject,
+            date: new Date(post.date),
             comment: post.comment,
-            date: new Date()
+            subject: ""
           };
+          console.log('contact is', contact);
 
           pb.CustomObjectService.formatRawForType(contact, contactType);
           var customObjectDocument = pb.DocumentCreator.create('custom_object', contact);
 
+          console.log('custom object is', customObjectDocument);
           cos.save(customObjectDocument, contactType, function(err, result) {
             if(util.isError(err)) {
               return cb({
@@ -72,6 +74,7 @@ module.exports = function(pb) {
               });
             }
 
+            console.log('Post for mail is', post);
             // NOTE: alexg added e-mail sending service
             var emailService = new pb.EmailService();
             var email = {
